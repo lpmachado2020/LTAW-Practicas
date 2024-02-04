@@ -12,3 +12,4 @@ Probando :)
 -------------------------------------
 Tercer cambio desde mi ordenador local
 
+![](Ejercicio2-img1.gif)
