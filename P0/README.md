@@ -13,3 +13,5 @@ Probando :)
 Tercer cambio desde mi ordenador local
 
 ![](Ejercicio2-img1.gif)
+
+Pequeño cambio de comprobacion de funcionamiento remoto
