@@ -3,6 +3,9 @@
 //-- URL para lanzar una petición: http://127.0.0.1:8080/
 //-- Significa: "Conéctate al puerto 8080 de tu propia máquina"
 
+//-- Usando curl se mandan peticiones desde línea de comandos
+//-- url -m 1 127.0.0.1:8080
+
 //-- El servidor se detiene pulsando: Ctrl-C
 
 
