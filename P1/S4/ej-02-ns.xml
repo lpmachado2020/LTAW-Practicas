@@ -4,8 +4,9 @@
      para dos etiquetas producto que tienen 
      estructuras diferentes -->
 
-<tienda xmlns:t1="Producto1"
-        xmlns:t2="Producto2">
+<!-- Se usan URLs para diferenciar los prefijos -->
+<tienda xmlns:t1="url1"
+        xmlns:t2="url2">
     
     <t1:producto>
         Un producto
