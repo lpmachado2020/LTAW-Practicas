@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Estructura de mi tienda -->
+<tienda>
+    <producto>
+        Un producto
+    </producto>
+    <producto>
+        Otro producto
+    </producto>
+
+    <hola></hola>
+    
+</tienda>
