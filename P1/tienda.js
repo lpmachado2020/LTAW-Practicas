@@ -48,6 +48,20 @@ const server = http.createServer((req, res) => {
         res.end();
     }
 
+    //-- Para servir los archivos de estilo
+    else if (url.pathname.endsWith('.css')) {
+        //-- Lee el contenido del archivo CSS
+        fs.readFile(path.join(__dirname, url.pathname), (err, content) => {
+            if (err) {
+                res.writeHead(404);
+                res.end('404 - Not Found');
+            } else {
+                res.writeHead(200, {'Content-Type': 'text/css'});
+                res.end(content, 'utf-8');
+            }
+        });        
+    }
+
     //-- Cualquier recurso que no sea la página principal genera un error
     else if (url.pathname != '/') {
         code = 404;
