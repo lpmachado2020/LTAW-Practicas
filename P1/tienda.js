@@ -14,71 +14,53 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-//-- Puerto de esucha del servidor
+//-- Puerto de escucha del servidor
 const PUERTO = 9090;
 
-//-- Leer el contenido de index.html y error.html
-const pagina_main = fs.readFileSync(path.join(__dirname, 'index.html'));
-const pagina_error = fs.readFileSync(path.join(__dirname, 'error.html'));
+// Rutas de los archivos index y de error
+const RUTA_INDEX = path.join(__dirname, 'index.html');
+const RUTA_ERROR = path.join(__dirname, 'error.html');
+
+// Tipos MIME para diferentes extensiones de archivos
+const TIPOS_MIME = {
+    '.html': 'text/html',
+    '.css': 'text/css',
+    '.jpg': 'image/jpeg',
+};
+
+// Función para servir archivos estáticos
+function servirArchivo(res, rutaArchivo, contentType) {
+    fs.readFile(rutaArchivo, (err, contenido) => {
+        // Si hay un error al leer el archivo
+        if (err) {
+            res.writeHead(404);
+            res.end();
+        // Sino envía el código de éxito 200 y el tipo MIME correspondiente
+        } else {
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(contenido, 'utf-8');
+        }
+    });
+}
 
 //-- Crear el servidor
 const server = http.createServer((req, res) => {
-    
-    //-- Indicamos que se ha recibido una petición
     console.log("Petición recibida!");
-
-    //-- Analizar el recurso
-    //-- Construir el objeto url con la url de la solicitud
     const url = new URL(req.url, 'http://' + req.headers['host']);
-    console.log(url.pathname);
-
-    //-- Si el recurso es '/' sirve la página principal
-    if (url.pathname == '/') {
-        //-- Valores de la respuesta por defecto
-        code = 200;
-        code_msg = "OK";
-        page = pagina_main;
-
-        //-- Generar la respusta en función de las variables
-        //-- code, code_msg y page
-        res.statusCode = code;
-        res.statusMessage = code_msg;
-        res.setHeader('Content-Type','text/html');
-        res.write(page);
-        res.end();
-    }
-
-    //-- Para servir los archivos de estilo
-    else if (url.pathname.endsWith('.css')) {
-        //-- Lee el contenido del archivo CSS
-        fs.readFile(path.join(__dirname, url.pathname), (err, content) => {
-            if (err) {
-                res.writeHead(404);
-                res.end('404 - Not Found');
-            } else {
-                res.writeHead(200, {'Content-Type': 'text/css'});
-                res.end(content, 'utf-8');
-            }
-        });        
-    }
-
-    //-- Cualquier recurso que no sea la página principal genera un error
-    else if (url.pathname != '/') {
-        code = 404;
-        code_msg = "Not Found";
-        page = pagina_error;
-
-        //-- Generar la respusta en función de las variables
-        //-- code, code_msg y page
-        res.statusCode = code;
-        res.statusMessage = code_msg;
-        res.setHeader('Content-Type','text/html');
-        res.write(page);
-        res.end();
+    const extension = path.extname(url.pathname);
+    
+    // Si la URL es la raíz del sitio
+    if (url.pathname === '/') {
+        servirArchivo(res, RUTA_INDEX, 'text/html');
+    // Si la extensión del archivo está definida en los tipos MIME
+    } else if (TIPOS_MIME[extension]) {
+        servirArchivo(res, path.join(__dirname, url.pathname), TIPOS_MIME[extension]);
+    // Sino se encuentra la extensión del archivo solicitado
+    } else {
+        servirArchivo(res, RUTA_ERROR, 'text/html');
     }
 });
   
 //-- Activar el servidor: ¡Que empiece la fiesta!
 server.listen(PUERTO);
-
 console.log("Server activado!. Escuchando en puerto: " + PUERTO);
