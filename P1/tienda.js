@@ -26,6 +26,7 @@ const TIPOS_MIME = {
     '.html': 'text/html',
     '.css': 'text/css',
     '.jpg': 'image/jpeg',
+    '.png': 'image/png',
 };
 
 // Función para servir archivos estáticos

@@ -2,7 +2,7 @@ nav{
    display:grid;
    grid-template-columns: 1fr auto;
    align-items: center;
-   background: rgb(255, 255, 79);
+   background: #EDC557;
    font-family: sans-serif;
    position:fixed;
    top:0;
@@ -27,4 +27,9 @@ nav .barnav div:hover{
 .contenido{
    height: 1100px;
    margin-top: 60px; 
+}
+
+img {
+   width: 470px;
+   height: 470px;
 }
