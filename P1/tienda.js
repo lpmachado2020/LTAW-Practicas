@@ -2,7 +2,7 @@
 
 /*
 Activar servidor en el terminal: node tienda.js
-URL para lanzar una petición: http://127.0.0.1:9090/
+URL para lanzar una petición: http://127.0.0.1:9090/ o http://localhost:9090/
 Significa: "Conéctate al puerto 9090 de tu propia máquina"
 Usando curl se mandan peticiones desde línea de comandos
 curl -m 1 127.0.0.1:9090
@@ -20,13 +20,12 @@ const PUERTO = 9090;
 // Rutas de los archivos index y de error
 const RUTA_INDEX = path.join(__dirname, 'index.html');
 const RUTA_ERROR = path.join(__dirname, 'error.html');
+const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 
 // Tipos MIME para diferentes extensiones de archivos
 const TIPOS_MIME = {
     '.html': 'text/html',
-    '.css': 'text/css',
-    '.jpg': 'image/jpeg',
-    '.png': 'image/png',
+    '.css': 'text/css'
 };
 
 // Función para servir archivos estáticos
@@ -58,6 +57,10 @@ const server = http.createServer((req, res) => {
     } else if (TIPOS_MIME[extension]) {
         console.log("Petición recursos")
         servirArchivo(res, path.join(__dirname, url.pathname), TIPOS_MIME[extension]);
+    // Si la extensión es .jpg, servir desde la carpeta imagenes/
+    } else if (extension === '.jpg' || extension === '.png') {
+        console.log("Petición imágenes")
+        servirArchivo(res, path.join(CARPETA_IMAGENES, path.basename(url.pathname)), 'image/jpeg');
     // Sino se encuentra la extensión del archivo solicitado
     } else {
         console.log("Página error servida")

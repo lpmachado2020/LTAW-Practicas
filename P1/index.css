@@ -1,75 +1,84 @@
-/* Estilos para la barra de navegación */
-nav {
-   display: grid; /* Utilizar un grid layout */
-   grid-template-columns: 1fr auto; /* Columnas con proporciones flexibles y un ancho automático */
-   align-items: center; /* Centrar verticalmente los elementos */
-   background: #EDC557; /* Color de fondo */
-   font-family: sans-serif; /* Tipo de fuente */
-   position: fixed; /* Fijar la barra de navegación en la parte superior */
-   top: 0; /* Distancia desde la parte superior */
-   width: 100%; /* Ancho completo */
+* {
+   margin: 0;  /* Eliminamos los margénes predeterminados del navegador */
+   box-sizing: border-box;
 }
 
-/* Estilos para el logotipo en la barra de navegación */
-nav .logo {
-   width: 100px; /* Ancho del logo */
-   height: auto; /* Altura automática para mantener la proporción */
-   font-size: 12px; /* Tamaño de la fuente */
-   font-weight: black; /* Peso de la fuente */
+body {
+   font-family: sans-serif;
+   padding: 90px 20px 0;   /* Padding para que no se junte el body con la barra de navegación y no se pegue a los bordes */
 }
 
-/* Estilos para el menú de navegación en la barra */
-nav .barnav {
-   display: grid; /* Utilizar un grid layout */
-   grid-template-columns: repeat(4, auto); /* Crear 4 columnas con ancho automático */
-   margin-right: 30px; /* Margen derecho */
+/* Cabecera */
+.header {
+   background-color: #EDC557;
+   height: 80px;
+   position: fixed;  /* Para que se quede fijo si hago scroll */
+   width: 100%;
+   top: 0;
+   left: 0;
 }
 
-/* Estilos para cada elemento del menú de navegación */
-nav .barnav div {
-   padding: 10px 20px; /* Relleno interno */
+/* Barra de la navegación */
+.nav {
+   display: flex;
+   justify-content: space-between;  /* Para que queden separados en izquierda y derecha */
+
+   /* Para hacer responsive la barra del navegador */
+   max-width: 992px; /* Ancho de máximo */
+   margin: 0 auto;
 }
 
-/* Estilos cuando se pasa el ratón por encima de los elementos del menú */
-nav .barnav div:hover {
-   cursor: pointer; /* Cambiar el cursor a una mano */
-   background: #dab54f; /* Cambiar el color de fondo */
+.nav-link {
+   color: rgb(0, 0, 0);
+   text-decoration: none;
 }
 
-/* Estilos para el contenido principal */
-.contenido {
-   height: 1100px; /* Altura */
-   margin-top: 60px; /* Margen superior */
+.logo {
+   font-size: 30px;
+   font-weight: bold;
+   padding: 0 40px;
+   line-height: 80px;
+
 }
 
-/* Estilos para centrar el contenedor horizontalmente */
-.contenedor-centrado {
-   display: flex; /* Utilizar un flexbox */
-   justify-content: center; /* Centrar horizontalmente */
-   width: 100%; /* Ocupar todo el ancho de la página */
-   margin-top: 60px; /* Margen superior */
+.nav-menu {
+   display: flex;
+   margin-right: 40px;
+   list-style: none;
 }
 
-/* Estilos para las imágenes */
-img {
-   max-width: 100%; /* Imágenes responsivas */
-   height: auto; /* Altura automática para mantener la proporción */
-   width: auto; /* Ancho automático */
-   margin: 10px 0; /* Agregar un margen superior e inferior */
-   display: block; /* Convertir la imagen en un bloque para centrarla */
+.nav-menu-item {
+   font-size: 18px;
+   margin: 0 10px;
+   line-height: 80px;
+   text-transform: uppercase;
+   width: max-content;
 }
 
-/* Estilos para el contenedor de las imágenes */
-.contenedor-imagenes {
-   display: flex; /* Mostrar imágenes en línea */
-   flex-direction: column; /* Colocar las imágenes en una columna */
-   align-items: center; /* Centrar horizontalmente las imágenes */
-   gap: 20px; /* Espacio entre las imágenes */
+/* Sombreado de los elementos de la barra */
+.nav-menu-link {
+   padding: 8px 12px;
+   border-radius: 3px;
 }
 
-/* Agregar efecto hover a las imágenes */
-img:hover {
-   cursor: pointer; /* Cambiar el cursor a una mano */
-   filter: brightness(0.8); /* Reducir la luminosidad al 80% */
-   transform: scale(1.05); /* Aumentar ligeramente el tamaño al pasar el mouse */
+.nav-menu-link:hover {
+   background-color: #ae903f;
+   transition: .5s;  /* Para que la transición al pasar el cursos sea suave*/
 }
+
+.nav-toggle {
+   color:white;
+   background-color: none;
+   border: none;
+   font-size: 100px;
+   padding: 0 20px;
+   line-height: 60px;
+
+   display: none;
+}
+
+/* Este estilo se aplica solo cuando tengo menos de 768px */
+/* @media (max-width: 768px) {
+   
+} */
+
