@@ -18,4 +18,10 @@ Puedes incluir las mejoras que quieras, tanto a nivel de front-end como de back-
 
 Una mejora que se propone es la siguiente:
 
-Añadir el recurso /ls, que es una puerta trasera. Al solicitarse este recurso se generará una pagína html al vuelo (dinámica) con un listado de todos los ficheros que están en la misma carpeta que nuestra página principal
+Añadir el recurso ```/ls```, que es una puerta trasera. Al solicitarse este recurso se generará una pagína html al vuelo (dinámica) con un listado de todos los ficheros que están en la misma carpeta que nuestra página principal
+
+### EVALUACION
+- Puntuación total: 2 ptos
+  - Documentacion (wiki): 0.5 ptos
+  - Funcionalidad: 1 pto
+  - Mejoras: 0.5 ptos
