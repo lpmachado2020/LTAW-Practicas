@@ -56,6 +56,12 @@ const server = http.createServer((req, res) => {
     // Si la extensión del archivo está definida en los tipos MIME
     } else if (TIPOS_MIME[extension]) {
         servirArchivo(res, path.join(__dirname, url.pathname), TIPOS_MIME[extension]);
+    // Si se solicita un producto específico
+    } else if (url.pathname.startsWith('/productos/producto')) {
+        // Extraer el número de producto
+        const numProducto = url.pathname.slice(-6, -5); // Suponiendo que el formato es "productoX.html"
+        const rutaProducto = path.join(__dirname, 'productos', `producto${numProducto}.html`);
+        servirArchivo(res, rutaProducto, 'text/html');
     // Sino se encuentra la extensión del archivo solicitado
     } else {
         servirArchivo(res, RUTA_ERROR, 'text/html');

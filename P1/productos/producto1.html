@@ -11,6 +11,23 @@
     <h1>Producto 1</h1>
     <p>Croquetas 1</p>
 
-    <a href="../index.html">Volver a la página de inicio</a>
+    <button id="volverBtn">Volver a la página de inicio</button>
+
+    <script>
+        // Agregar un event listener al botón
+        document.getElementById("volverBtn").addEventListener("click", function() {
+            // Hacer una solicitud HTTP GET al servidor para obtener la página principal
+            fetch("/", {
+                method: "GET"
+            })
+            .then(response => {
+                // Redirigir a la página principal
+                window.location.href = response.url;
+            })
+            .catch(error => {
+                console.error("Error al redirigir a la página principal:", error);
+            });
+        });
+    </script>
 </body>
 </html>

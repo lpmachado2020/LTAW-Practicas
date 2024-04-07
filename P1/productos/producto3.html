@@ -5,12 +5,29 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Producto 3</title>
+    <title>Producto 2</title>
 </head>
 <body>
     <h1>Producto 3</h1>
     <p>Croquetas 3</p>
 
-    <a href="../index.html">Volver a la página de inicio</a>
+    <button id="volverBtn">Volver a la página de inicio</button>
+
+    <script>
+        // Agregar un event listener al botón
+        document.getElementById("volverBtn").addEventListener("click", function() {
+            // Hacer una solicitud HTTP GET al servidor para obtener la página principal
+            fetch("/", {
+                method: "GET"
+            })
+            .then(response => {
+                // Redirigir a la página principal
+                window.location.href = response.url;
+            })
+            .catch(error => {
+                console.error("Error al redirigir a la página principal:", error);
+            });
+        });
+    </script>
 </body>
 </html>
