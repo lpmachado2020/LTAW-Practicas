@@ -1,7 +1,7 @@
 //-- Servidor tienda.js
 
 /*
-Activar servidor: node tienda.js
+Activar servidor en el terminal: node tienda.js
 URL para lanzar una petición: http://127.0.0.1:9090/
 Significa: "Conéctate al puerto 9090 de tu propia máquina"
 Usando curl se mandan peticiones desde línea de comandos
