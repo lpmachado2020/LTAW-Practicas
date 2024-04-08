@@ -119,14 +119,11 @@ body {
    display: flex; /* Establecer como flex container */
    flex-direction: column; /* Colocar los elementos uno debajo del otro por defecto */
    align-items: center; /* Centrar los elementos horizontalmente */
-}
-
-.info-product {
    margin-bottom: 10px; /* Agregar margen inferior a todos los elementos hijos */
 }
 
 .info-product button {
-   margin-top: 5px; /* Agregar margen superior al botón */
+   margin: 10px; /* Agregar margen superior al botón */
 }
 
 .container-items {
