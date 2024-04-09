@@ -17,7 +17,7 @@ const path = require('path');
 //-- Puerto de escucha del servidor
 const PUERTO = 9090;
 
-// Rutas de los archivos index y de error
+// Rutas de los archivos index, error y carpeta imágenes
 const RUTA_INDEX = path.join(__dirname, 'index.html');
 const RUTA_ERROR = path.join(__dirname, 'error.html');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
@@ -25,7 +25,9 @@ const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 // Tipos MIME para diferentes extensiones de archivos
 const TIPOS_MIME = {
     '.html': 'text/html',
-    '.css': 'text/css'
+    '.css': 'text/css',
+    '.jpg': 'img/jpg',
+    '.png': 'img/png',
 };
 
 // Función para servir archivos estáticos
@@ -37,15 +39,14 @@ function servirArchivo(res, rutaArchivo, contentType) {
             res.end();
         // Sino envía el código de éxito 200 y el tipo MIME correspondiente
         } else {
-            res.writeHead(200, { 'Content-Type': contentType });
+            res.writeHead(200, {'Content-Type': contentType});
             res.end(contenido, 'utf-8');
         }
     });
 }
 
-//-- Crear el servidor
+//-- Creación del servidor
 const server = http.createServer((req, res) => {
-    // console.log("Petición recibida!");
     const url = new URL(req.url, 'http://' + req.headers['host']);
     const extension = path.extname(url.pathname);
     
@@ -57,11 +58,15 @@ const server = http.createServer((req, res) => {
     } else if (TIPOS_MIME[extension]) {
         console.log("Petición recursos")
         servirArchivo(res, path.join(__dirname, url.pathname), TIPOS_MIME[extension]);
-    // Si la extensión es .jpg, servir desde la carpeta imagenes/
-    } else if (extension === '.jpg' || extension === '.png') {
-        console.log("Petición imágenes")
-        servirArchivo(res, path.join(CARPETA_IMAGENES, path.basename(url.pathname)), 'image/jpeg');
-    // Sino se encuentra la extensión del archivo solicitado
+    // Si la extensión es .jpg, servir desde la carpeta imagenes/...
+    } else if (extension === '.jpg') {
+        console.log("Petición imágenes .jpg")
+        servirArchivo(res, path.join(CARPETA_IMAGENES, path.basename(url.pathname)), 'image/jpg');
+    // Si la extensión es .jpg, servir desde la carpeta imagenes/...
+    } else if (extension === '.png') {
+        console.log("Petición imágenes .png")
+        servirArchivo(res, path.join(CARPETA_IMAGENES, path.basename(url.pathname)), 'image/png');
+    // En cualquier otro caso sirve la página de error
     } else {
         console.log("Página error servida")
         servirArchivo(res, RUTA_ERROR, 'text/html');
