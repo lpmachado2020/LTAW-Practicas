@@ -21,6 +21,7 @@ const PUERTO = 9090;
 const RUTA_INDEX = path.join(__dirname, 'index.html');
 const RUTA_ERROR = path.join(__dirname, 'error.html');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
+const CARPETA_JS = path.join(__dirname, 'js');
 
 // Tipos MIME para diferentes extensiones de archivos
 const TIPOS_MIME = {
@@ -64,6 +65,10 @@ const server = http.createServer((req, res) => {
     } else if (extension === '.png') {
         console.log("Petición imágenes .png")
         servirArchivo(res, path.join(CARPETA_IMAGENES, path.basename(url.pathname)), 'image/png');
+    // Si la extensión es .js, servir desde la carpeta js/...
+    } else if (extension === '.js') {
+        console.log("Petición javascript")
+        servirArchivo(res, path.join(CARPETA_JS, path.basename(url.pathname)), 'text/javascript');
     // En cualquier otro caso sirve la página de error
     } else {
         console.log("Página error servida")
