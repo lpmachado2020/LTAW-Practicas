@@ -20,6 +20,7 @@ const PUERTO = 9090;
 // Rutas de los archivos index, error y carpetas
 const RUTA_INDEX = path.join(__dirname, 'ficheros', 'index.html');
 const RUTA_ERROR = path.join(__dirname, 'ficheros', 'error.html');
+const CARPETA_FICHEROS = path.join(__dirname, 'ficheros');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const CARPETA_ESTILO = path.join(__dirname, 'estilo');
 const CARPETA_JS = path.join(__dirname, 'js');
@@ -39,6 +40,37 @@ function servirArchivo(res, rutaArchivo, contentType) {
     });
 }
 
+// Función para generar la lista de archivos donde se encuentra la página principal
+function listarArchivosHTML(res) {
+    fs.readdir(CARPETA_FICHEROS, (err, files) => {
+        if (err) {
+            console.error('Error al leer el directorio:', err);
+            res.writeHead(500);
+            res.end();
+        } else {
+            const html = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Lista de archivos</title>
+                </head>
+                <body>
+                    <h1>Archivos en la carpeta principal:</h1>
+                    <ul>
+                        ${files.map(file => `<li>${file}</li>`).join('')}
+                    </ul>
+                </body>
+                </html>
+            `;
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.end(html);
+        }
+    });
+}
+
 //-- Creación del servidor
 const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://' + req.headers['host']);
@@ -52,6 +84,10 @@ const server = http.createServer((req, res) => {
     } else if (url.pathname === '/error.html') {
         console.log("Petición error");
         servirArchivo(res, RUTA_ERROR, 'text/html');
+    // Si la URL es /ls, mostrar la lista de archivos en la carpeta principal
+    } else if (url.pathname === '/ls') {
+        console.log("Petición listado de archivos");
+        listarArchivosHTML(res);
     // Si la extensión es .html, servir desde la carpeta fichero/...
     } else if (extension === '.html') {
         console.log("Petición recursos");
