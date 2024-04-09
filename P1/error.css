@@ -1,3 +1,4 @@
+/* Barra de navegación */
 * {
    margin: 0;  /* Eliminamos los margénes predeterminados del navegador */
    box-sizing: border-box;
@@ -95,74 +96,26 @@ body {
    display: none;
 }
 
-/* De momento no voy a hacer responsive la barra */
-/* Este estilo se aplica solo cuando tengo menos de 768px */
-/* @media (max-width: 768px) {
-   
-} */
-
-.cart {
-   background-color: #EDC557;
-   color: white;
-   border: none;
-   padding: 8px 16px;
-   cursor: pointer;
-   transition: background-color 0.3s;
-}
-
-.cart:hover {
-   background-color: #c7a549;
-}
-
-.info-product {
-   padding: 20px;
+ /* Diseño página error */
+.error {
    display: flex; /* Establecer como flex container */
-   flex-direction: column; /* Colocar los elementos uno debajo del otro por defecto */
+   flex-direction: column; /* Para colocar los elementos uno debajo del otro */
    align-items: center; /* Centrar los elementos horizontalmente */
-   margin-bottom: 10px; /* Agregar margen inferior a todos los elementos hijos */
+   padding: 20px; /* Padding entre los elementos */
+   text-align: center; /* Centrar el texto */
+   overflow: hidden; /* Para ocular todo el alineamieto duera del contenedor */
+ }
+
+.error img {
+width: 250px;
+height: auto;
 }
 
-.info-product button {
-   margin: 10px; /* Agregar margen superior al botón */
+.error h1 {
+   padding: 20px;
+   font-size: 40px;
 }
 
-.container-items {
-   display: flex;
-   flex-wrap: wrap; /* Hacer que los elementos se envuelvan en filas */
-   justify-content: space-between; /* Distribuir los elementos horizontalmente */
-   padding: 0 20px; /* Padding a los laterales */
-   margin-top: 20px; /* Espacio superior */
+.error p {
+   font-size: 20px;
 }
-
-.item {
-   width: calc(33.33% - 20px); /* Calculamos el ancho de cada elemento para que haya tres por fila */
-   margin-bottom: 20px; /* Agregamos margen inferior para separar las filas */
-}
-
-.item img {
-   max-width: 100%; /* Establecer el ancho máximo como el ancho de su contenedor */
-   height: auto; /* Asegurar que la altura se ajuste automáticamente para mantener la proporción */
-   object-fit: cover;   /* Para que la imagen no se deforme */
-   transition: .6s;
-}
-
-/* Efecto zoom imágenes */
-.item img:hover {
-   transform: scale(1.05);  /* Para que al pasar el curso se escale a 1.2*/
-}
-
-.description {
-   font-family: sans-serif; /* Fuente sans-serif */
-   color: black; /* Color negro */
-   text-decoration: none; /* Sin subrayado */
-   margin: 10px 0; /* Margen superior e inferior */
-}
-
-/*.info-tienda {
-   font-size: 30px;
-   text-align: center; /* Centrar el texto horizontalmente */
-   /*padding: 350px 40px; /* Añadir espaciado interno al div */
-   /*width: 100%; /* Ocupar toda la horizontal */
-   /*box-sizing: border-box; /* Incluir el padding en el ancho del elemento */
-   /*font-weight: bold;
-}*/
