@@ -17,17 +17,12 @@ const path = require('path');
 //-- Puerto de escucha del servidor
 const PUERTO = 9090;
 
-// Rutas de los archivos index, error y carpeta imágenes
-const RUTA_INDEX = path.join(__dirname, 'index.html');
-const RUTA_ERROR = path.join(__dirname, 'error.html');
+// Rutas de los archivos index, error y carpetas
+const RUTA_INDEX = path.join(__dirname, 'ficheros', 'index.html');
+const RUTA_ERROR = path.join(__dirname, 'ficheros', 'error.html');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const CARPETA_ESTILO = path.join(__dirname, 'estilo');
 const CARPETA_JS = path.join(__dirname, 'js');
-
-// Tipos MIME para diferentes extensiones de archivos
-const TIPOS_MIME = {
-    '.html': 'text/html',
-};
 
 // Función para servir archivos estáticos
 function servirArchivo(res, rutaArchivo, contentType) {
@@ -51,31 +46,35 @@ const server = http.createServer((req, res) => {
     
     // Si la URL es la raíz del sitio
     if (url.pathname === '/') {
-        console.log("Petición main")
+        console.log("Petición main");
         servirArchivo(res, RUTA_INDEX, 'text/html');
-    // Si la extensión del archivo está definida en los tipos MIME
-    } else if (TIPOS_MIME[extension]) {
-        console.log("Petición recursos")
-        servirArchivo(res, path.join(__dirname, url.pathname), TIPOS_MIME[extension]);
+    // Si la URL es la página de error
+    } else if (url.pathname === '/error.html') {
+        console.log("Petición error");
+        servirArchivo(res, RUTA_ERROR, 'text/html');
+    // Si la extensión es .html, servir desde la carpeta fichero/...
+    } else if (extension === '.html') {
+        console.log("Petición recursos");
+        servirArchivo(res, path.join(__dirname, 'ficheros', url.pathname), 'text/html');
     // Si la extensión es .css, servir desde la carpeta estilo/...
     } else if (extension === '.css') {
-        console.log("Petición estilo .css")
+        console.log("Petición estilo .css");
         servirArchivo(res, path.join(CARPETA_ESTILO, path.basename(url.pathname)), 'text/css');
     // Si la extensión es .jpg, servir desde la carpeta imagenes/...
     } else if (extension === '.jpg') {
-        console.log("Petición imágenes .jpg")
+        console.log("Petición imágenes .jpg");
         servirArchivo(res, path.join(CARPETA_IMAGENES, path.basename(url.pathname)), 'image/jpg');
-    // Si la extensión es .jpg, servir desde la carpeta imagenes/...
+    // Si la extensión es .png, servir desde la carpeta imagenes/...
     } else if (extension === '.png') {
-        console.log("Petición imágenes .png")
+        console.log("Petición imágenes .png");
         servirArchivo(res, path.join(CARPETA_IMAGENES, path.basename(url.pathname)), 'image/png');
     // Si la extensión es .js, servir desde la carpeta js/...
     } else if (extension === '.js') {
-        console.log("Petición javascript")
+        console.log("Petición javascript");
         servirArchivo(res, path.join(CARPETA_JS, path.basename(url.pathname)), 'text/javascript');
     // En cualquier otro caso sirve la página de error
     } else {
-        console.log("Página error servida")
+        console.log("Página error servida");
         servirArchivo(res, RUTA_ERROR, 'text/html');
     }
 });
