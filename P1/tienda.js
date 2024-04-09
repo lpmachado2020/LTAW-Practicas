@@ -21,12 +21,12 @@ const PUERTO = 9090;
 const RUTA_INDEX = path.join(__dirname, 'index.html');
 const RUTA_ERROR = path.join(__dirname, 'error.html');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
+const CARPETA_ESTILO = path.join(__dirname, 'estilo');
 const CARPETA_JS = path.join(__dirname, 'js');
 
 // Tipos MIME para diferentes extensiones de archivos
 const TIPOS_MIME = {
     '.html': 'text/html',
-    '.css': 'text/css',
 };
 
 // Función para servir archivos estáticos
@@ -57,6 +57,10 @@ const server = http.createServer((req, res) => {
     } else if (TIPOS_MIME[extension]) {
         console.log("Petición recursos")
         servirArchivo(res, path.join(__dirname, url.pathname), TIPOS_MIME[extension]);
+    // Si la extensión es .css, servir desde la carpeta estilo/...
+    } else if (extension === '.css') {
+        console.log("Petición estilo .css")
+        servirArchivo(res, path.join(CARPETA_ESTILO, path.basename(url.pathname)), 'text/css');
     // Si la extensión es .jpg, servir desde la carpeta imagenes/...
     } else if (extension === '.jpg') {
         console.log("Petición imágenes .jpg")
