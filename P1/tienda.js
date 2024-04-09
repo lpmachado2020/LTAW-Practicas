@@ -26,8 +26,6 @@ const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const TIPOS_MIME = {
     '.html': 'text/html',
     '.css': 'text/css',
-    '.jpg': 'img/jpg',
-    '.png': 'img/png',
 };
 
 // Función para servir archivos estáticos
