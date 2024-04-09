@@ -112,18 +112,17 @@ body {
 .description {
    float: right;
    width: 50%;
+   margin-top: 150px;
    padding-left: 20px;
    display: flex; /* Utilizamos flexbox para alinear verticalmente */
    flex-direction: column; /* Apilamos elementos verticalmente */
    justify-content: center; /* Centramos verticalmente */
-
    align-items: center; /* Centrado vertical */
-   height: 70vh; /* Ajusta el alto al 100% del viewport */
 }
 
 .description h1 {
    text-align: center;
-   margin: 20px;
+   margin: 20px 0;
 }
 
 .description p {

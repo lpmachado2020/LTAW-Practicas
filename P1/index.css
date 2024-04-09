@@ -126,6 +126,10 @@ body {
    margin: 10px; /* Agregar margen superior al botón */
 }
 
+.info-product h2 {
+   text-align: center;
+}
+
 .container-items {
    display: flex;
    flex-wrap: wrap; /* Hacer que los elementos se envuelvan en filas */
