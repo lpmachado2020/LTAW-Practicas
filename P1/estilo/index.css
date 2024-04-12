@@ -84,16 +84,7 @@ body {
    transition: .5s;  /* Para que la transición al pasar el cursos sea suave*/
 }
 
-.nav-toggle {
-   color:white;
-   background-color: none;
-   border: none;
-   font-size: 100px;
-   padding: 0 20px;
-   line-height: 60px;
 
-   display: none;
-}
 
 /* De momento no voy a hacer responsive la barra */
 /* Este estilo se aplica solo cuando tengo menos de 768px */
