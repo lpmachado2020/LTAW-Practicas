@@ -1,0 +1,163 @@
+* {
+   margin: 0;  /* Eliminamos los margénes predeterminados del navegador */
+   box-sizing: border-box;
+}
+
+body {
+   font-family: sans-serif;
+   padding: 90px 20px 0;   /* Padding para que no se junte el body con la barra de navegación y no se pegue a los bordes */
+}
+
+/* Cabecera */
+.header {
+   background-color: #EDC557;
+   height: 80px;
+   position: fixed;  /* Para que se quede fijo si hago scroll */
+   width: 100%;
+   top: 0;
+   left: 0;
+}
+
+/* Barra de la navegación. Para colocar los elementos dentro */
+.nav {
+   display: flex;
+   justify-content: space-between;  /* Para que queden separados en izquierda y derecha */
+
+   /* Para hacer responsive la barra del navegador */
+   /* Cuando llegue a este tamaño el contenido se centra */
+   /*max-width: 992px; /* Ancho de máximo */
+   /* margin: 0 auto; */
+}
+
+.nav-link {
+   color: rgb(255, 255, 255);
+   text-decoration: none;  /* Para que se quite lo subrayado o lo negrita al seleccionar */
+   font-weight: bold;
+}
+
+.name {
+   color: white;
+   font-size: 30px;
+   font-weight: bold;
+   padding: 0 40px;
+   line-height: 80px;
+   text-decoration: none;
+   text-transform: uppercase;
+
+   display: flex; /* Establecer como flex container */
+   align-items: center; /* Centrar verticalmente los elementos hijos */
+}
+
+.logo-img {
+   max-width: 100px; /* Ajusta el valor según lo necesites */
+   max-height: 60px; /* Ajusta el valor según lo necesites */
+   vertical-align: middle; /* Para alinear verticalmente la imagen con el texto */
+}
+
+.store-name {
+   margin-left: 10px; /* Espacio entre la imagen y el texto */
+   text-transform: uppercase; /* Pone en mayúsculas las letras */
+}
+
+.nav-menu {
+   display: flex;
+   margin-right: 40px;
+   list-style: none; /* Para quitar los puntos de la lista */
+}
+
+.nav-menu-item {
+   font-size: 18px;
+   margin: 0 10px;
+   line-height: 80px;
+   text-transform: uppercase; /* Para que quede alineado en horizontal */
+   width: max-content; /* Para que las palabras no se corten */
+}
+
+/* Sombreado de los elementos de la barra */
+.nav-menu-link {
+   padding: 8px 12px;
+   border-radius: 3px;
+}
+
+.nav-menu-link:hover {
+   background-color: #c7a549;
+   transition: .5s;  /* Para que la transición al pasar el cursos sea suave*/
+}
+
+
+
+/* De momento no voy a hacer responsive la barra */
+/* Este estilo se aplica solo cuando tengo menos de 768px */
+/* @media (max-width: 768px) {
+   
+} */
+
+.cart {
+   background-color: #EDC557;
+   color: white;
+   border: none;
+   padding: 8px 16px;
+   cursor: pointer;
+   transition: background-color 0.3s;
+}
+
+.cart:hover {
+   background-color: #c7a549;
+}
+
+.info-product {
+   padding: 20px;
+   display: flex; /* Establecer como flex container */
+   flex-direction: column; /* Colocar los elementos uno debajo del otro por defecto */
+   align-items: center; /* Centrar los elementos horizontalmente */
+   margin-bottom: 10px; /* Agregar margen inferior a todos los elementos hijos */
+}
+
+.info-product button {
+   margin: 10px; /* Agregar margen superior al botón */
+}
+
+.info-product h2 {
+   text-align: center;
+}
+
+.container-items {
+   display: flex;
+   flex-wrap: wrap; /* Hacer que los elementos se envuelvan en filas */
+   justify-content: space-between; /* Distribuir los elementos horizontalmente */
+   padding: 0 20px; /* Padding a los laterales */
+   margin-top: 20px; /* Espacio superior */
+}
+
+.item {
+   width: calc(33.33% - 20px); /* Calculamos el ancho de cada elemento para que haya tres por fila */
+   margin-bottom: 20px; /* Agregamos margen inferior para separar las filas */
+}
+
+.item img {
+   max-width: 100%; /* Establecer el ancho máximo como el ancho de su contenedor */
+   height: auto; /* Asegurar que la altura se ajuste automáticamente para mantener la proporción */
+   object-fit: cover;   /* Para que la imagen no se deforme */
+   transition: .6s;
+}
+
+/* Efecto zoom imágenes */
+.item img:hover {
+   transform: scale(1.05);  /* Para que al pasar el curso se escale a 1.2*/
+}
+
+.description {
+   font-family: sans-serif; /* Fuente sans-serif */
+   color: black; /* Color negro */
+   text-decoration: none; /* Sin subrayado */
+   margin: 10px 0; /* Margen superior e inferior */
+}
+
+/*.info-tienda {
+   font-size: 30px;
+   text-align: center; /* Centrar el texto horizontalmente */
+   /*padding: 350px 40px; /* Añadir espaciado interno al div */
+   /*width: 100%; /* Ocupar toda la horizontal */
+   /*box-sizing: border-box; /* Incluir el padding en el ancho del elemento */
+   /*font-weight: bold;
+}*/
