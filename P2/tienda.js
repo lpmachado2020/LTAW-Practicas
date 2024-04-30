@@ -20,6 +20,7 @@ const PUERTO = 9090;
 // Rutas de los archivos index, error y carpetas
 const RUTA_INDEX = path.join(__dirname, 'ficheros', 'index.html');
 const RUTA_ERROR = path.join(__dirname, 'ficheros', 'error.html');
+const RUTA_LOGIN = path.join(__dirname, 'ficheros', 'login.html');
 const CARPETA_FICHEROS = path.join(__dirname, 'ficheros');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const CARPETA_ESTILO = path.join(__dirname, 'estilo');
@@ -129,10 +130,7 @@ const server = http.createServer((req, res) => {
     if (url.pathname === '/') {
         console.log("Petición main");
         servirArchivo(res, RUTA_INDEX, 'text/html');
-    // Si la URL es la página de error
-    } else if (url.pathname === '/error.html') {
-        console.log("Petición error");
-        servirArchivo(res, RUTA_ERROR, 'text/html');
+    
     // Si la URL es /ls, mostrar la lista de archivos en la carpeta principal
     } else if (url.pathname === '/ls') {
         console.log("Petición listado de archivos");
@@ -141,7 +139,13 @@ const server = http.createServer((req, res) => {
     } else if (url.pathname === '/productos') {
         console.log("Petición listado de productos");
         mostrarProductos(res);
-    // Si la extensión es .html, servir desde la carpeta fichero/...
+
+    // Si se clica en LOGIN
+    } else if (url.pathname === '/login.html') {
+        console.log("Petición login");
+        servirArchivo(res, RUTA_LOGIN, 'text/html');
+    
+    // Si la extensión es .html, servir desde la carpeta ficheros/...
     } else if (extension === '.html') {
         console.log("Petición recursos");
         servirArchivo(res, path.join(__dirname, 'ficheros', url.pathname), 'text/html');
@@ -161,9 +165,10 @@ const server = http.createServer((req, res) => {
     } else if (extension === '.js') {
         console.log("Petición javascript");
         servirArchivo(res, path.join(CARPETA_JS, path.basename(url.pathname)), 'text/javascript');
-    // En cualquier otro caso sirve la página de error
+    
+        // En cualquier otro caso sirve la página de error
     } else {
-        console.log("Página error servida");
+        console.log("Página error");
         servirArchivo(res, RUTA_ERROR, 'text/html');
     }
 });

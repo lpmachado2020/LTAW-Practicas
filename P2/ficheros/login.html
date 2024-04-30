@@ -1,0 +1,42 @@
+<!-- Texto HTML del producto 1 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png">
+    <title>Log In - Croqueteando</title>
+
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="index.html" class="name">
+                <img src="logo.png" alt="Logo" class="logo-img">
+                <span class="store-name">Croqueteando</span>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-menu-item"><a href="index.html" class="nav-menu-link nav-link">Inicio</a></li>
+                <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Productos</a></li>
+                <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Contacto</a></li>
+                <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Carrito</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container-login">
+        <h1>Iniciar Sesión</h1>
+        <form action="/login" method="get">
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" name="username" required>
+            <br><br>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+            <br><br>
+            <input type="submit" value="Iniciar Sesión">
+        </form>
+    </div>
+</body>
+</html>
