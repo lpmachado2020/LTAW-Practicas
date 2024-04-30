@@ -24,6 +24,7 @@ const CARPETA_FICHEROS = path.join(__dirname, 'ficheros');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const CARPETA_ESTILO = path.join(__dirname, 'estilo');
 const CARPETA_JS = path.join(__dirname, 'js');
+const RUTA_TIENDA_JSON = path.join(__dirname, 'tienda.json');
 
 // Función para servir archivos estáticos
 function servirArchivo(res, rutaArchivo, contentType) {
@@ -71,6 +72,54 @@ function listarArchivosHTML(res) {
     });
 }
 
+// Función para generar la lista de productos desde el archivo tienda.json
+function mostrarProductos(res) {
+    fs.readFile(RUTA_TIENDA_JSON, (err, data) => {
+        if (err) {
+            console.error('Error al leer el archivo tienda.json:', err);
+            res.writeHead(500);
+            res.end();
+        } else {
+            const tiendaData = JSON.parse(data);
+            const productos = tiendaData.productos;
+            const disponibles = [];
+            const noDisponibles = [];
+            
+            productos.forEach(producto => {
+                if (producto.stock > 0) {
+                    disponibles.push(producto);
+                } else {
+                    noDisponibles.push(producto);
+                }
+            });
+            
+            const htmlProductos = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Productos disponibles</title>
+                </head>
+                <body>
+                    <h1>Productos disponibles:</h1>
+                    <ul>
+                        ${disponibles.map(producto => `<li>${producto.nombre} - Stock: ${producto.stock}</li>`).join('')}
+                    </ul>
+                    <h1>Productos no disponibles:</h1>
+                    <ul>
+                        ${noDisponibles.map(producto => `<li>${producto.nombre} - Stock: ${producto.stock}</li>`).join('')}
+                    </ul>
+                </body>
+                </html>
+            `;
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.end(htmlProductos);
+        }
+    });
+}
+
 //-- Creación del servidor
 const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://' + req.headers['host']);
@@ -88,6 +137,10 @@ const server = http.createServer((req, res) => {
     } else if (url.pathname === '/ls') {
         console.log("Petición listado de archivos");
         listarArchivosHTML(res);
+    // Si la URL es /productos, mostrar la lista de productos disponibles
+    } else if (url.pathname === '/productos') {
+        console.log("Petición listado de productos");
+        mostrarProductos(res);
     // Si la extensión es .html, servir desde la carpeta fichero/...
     } else if (extension === '.html') {
         console.log("Petición recursos");
