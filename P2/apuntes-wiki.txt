@@ -1,0 +1,3 @@
+- En los productos he añadido las unidades que tiene cada producto, diferente al stock que hay
+
+- 
