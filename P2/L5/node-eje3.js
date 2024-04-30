@@ -1,9 +1,14 @@
-//-- Crear una variable con la estructura definida en un fichero JSON
+//-- Ejercicio 3. L5
+// Incrementa el stock de todos los productos en 1 unidad
+// Guarda el resultado en el fichero tienda.json.
 
 const fs = require('fs');
 
 //-- Nombre del fichero JSON a leer
-const FICHERO_JSON = "tienda.json"
+const FICHERO_JSON = "tienda-eje3.json"
+
+//-- Nombre del fichero JSON de salida
+const FICHERO_JSON_OUT = "tienda-eje3-modificado.json"
 
 //-- Leer el fichero JSON
 const  tienda_json = fs.readFileSync(FICHERO_JSON);
@@ -12,40 +17,31 @@ const  tienda_json = fs.readFileSync(FICHERO_JSON);
 const tienda = JSON.parse(tienda_json);
 
 //------ Mostrar informacion sobre la tienda:
-console.log("\n---- Informacion sobre la tienda ----\n")
+console.log("\n---- Informacion sobre el stock de la tienda SIN incremento ----\n")
 
-//-- Número de usuarios registrados en la tienda
-console.log("Número de usuarios registrados en la tienda: " + tienda.usuarios.length);
-
-//-- Listado con los nombres de los usuarios
-console.log("\nListado de nombres de los usuarios:");
-tienda.usuarios.forEach(usuario => {
-    console.log(usuario.nombre);
-})
-
-//-- Número de productos en la tienda
-console.log("\nNúmero de productos en la tienda: " + tienda.productos.length);
-
-//-- Listado de los productos de la tienda
-console.log("Listado de los productos de la tienda:");
 tienda.productos.forEach(producto => {
-    console.log(producto.nombre);
-})
+    console.log("Stock del producto " + producto.nombre + ": " + producto.stock);
+});
 
-//-- Número de pedidos pendientes, y los detalles del pedido
-console.log("\nNúmero de pedidos pendientes: " + tienda.pedidos.length);
-console.log("Detalles del pedido:");
-tienda.pedidos.forEach(pedido =>{
-    console.log("Nombre de usuario: " + pedido.usuario);
-    console.log("Dirección de envío: " + pedido.direccion);
-    console.log("Número de tarjeta: " + pedido.tarjeta);
-    console.log("Lista de productos: ");
-    pedido.lista_productos.forEach(id_product => {
-        console.log("- " + id_product)
-    })
-})
+// Incrementa el stock de todos los productos en 1 unidad
+tienda.productos.forEach(producto =>{
+    producto.stock += 1;
+});
 
-console.log("\n---- Fin informacion sobre la tienda ----\n")
+// Guarda el resultado en el fichero tienda.json
+//-- Convertir la variable a cadena JSON
+let myJSON = JSON.stringify(tienda);
+
+//-- Guardarla en el fichero destino
+fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
+
+console.log("\n---- Informacion sobre el stock de la tienda CON incremento ----\n")
+
+tienda.productos.forEach(producto => {
+    console.log("Stock del producto " + producto.nombre + ": " + producto.stock);
+});
+
+console.log("\n---- Fin informacion sobre el stock la tienda ----\n")
 
 //-- También podemos hacer la operación inversa: pasar una variable a formato JSON. 
 //-- Se hace con el método: JSON.stringify(variable)
