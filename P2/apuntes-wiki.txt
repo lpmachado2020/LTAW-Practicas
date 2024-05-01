@@ -1,3 +1,17 @@
 - En los productos he añadido las unidades que tiene cada producto, diferente al stock que hay
 
-- Añadida password al login
+- Añadida password al login y al json
+
+- Añadido a al log in, tres opciones:
+    - Si está en la base de datos dar la bienvenida
+    - Si está en la base de datos pero se equivoca de contraseña, página nueva html
+    - Si no está en la base de datos el usuario, genera otra página nueva html con un formulario post, para que se registre
+
+- Añadido página de registro
+    - Si se introduce un usuario existente genera otra página nueva de registro
+    - si se introduce un corrreo existente genera otra página nueva de registro
+    - Si se introduce un email erróneo genera otra página nueva de registro
+    - Si todo va bien se registra y se añade al json
+
+- Añadido el log in en todas las páginas html: main, error y productos
+

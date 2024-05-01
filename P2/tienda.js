@@ -222,6 +222,38 @@ const server = http.createServer((req, res) => {
             });
         });
     
+    // Si la URL es /finalizar_compra, mostrar el formulario de finalizar compra
+    } else if (url.pathname === 'finalizar_compra.html') {
+        console.log("Petición finalizar compra");
+        servirArchivo(res, path.join(__dirname, 'ficheros', 'finalizar_compra.html'), 'text/html');
+    // Si la URL es /finalizar_compra, manejar la solicitud de finalizar compra
+    } else if (url.pathname === '/finalizar_compra' && req.method === 'GET') {
+        let direccion = url.searchParams.get('direccion');
+        let tarjeta = url.searchParams.get('tarjeta');
+
+            // Crear un nuevo objeto de pedido
+            const nuevoPedido = {
+                usuario: "prueba",
+                direccion: direccion,
+                tarjeta: tarjeta,
+                lista_productos: "prueba"
+            };
+
+            // Agregar el nuevo pedido al arreglo de pedidos en la tienda
+            tienda.pedidos.push(nuevoPedido);
+
+            // Guardar la lista actualizada de pedidos en el archivo tienda.json
+            fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), (err) => {
+                if (err) {
+                    console.error('Error al escribir en el archivo tienda.json:', err);
+                    res.writeHead(500);
+                    res.end();
+                } else {
+                    // Redirigir al usuario a una página de confirmación de compra exitosa
+                    res.writeHead(302, {'Location': '/compra-exitosa.html'});
+                    res.end();
+                }
+            });
         
     // Si la URL es la raíz del sitio
     } else if (url.pathname === '/') {

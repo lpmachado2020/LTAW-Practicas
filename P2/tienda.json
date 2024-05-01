@@ -73,6 +73,12 @@
         "Croquetas de Cocido",
         "Croquetas de Pollo Asado"
       ]
+    },
+    {
+      "usuario": "prueba",
+      "direccion": "prueba",
+      "tarjeta": "prueba",
+      "lista_productos": "prueba"
     }
   ]
 }

@@ -1,0 +1,44 @@
+<!-- Texto HTML de Formulario Finalizar compra -->
+<!DOCTYPE html>
+<html lang="es"><!--Esto es el idioma, español-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png">
+    <title>Finalizar Compra - Croqueteando</title>
+
+   <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="index.html" class="name">
+                <img src="logo.png" alt="Logo" class="logo-img">
+                <span class="store-name">Croqueteando</span>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-menu-item"><a href="index.html" class="nav-menu-link nav-link">Inicio</a></li>
+                <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Productos</a></li>
+                <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Contacto</a></li>
+                <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Carrito</a></li>
+                <li class="nav-menu-item"><a href="finalizar_compra.html" class="nav-menu-link nav-link">Finalizar compra</a></li>
+                <li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>
+            </ul>
+        </nav>
+    </header>
+<body>
+    <h1>Finalizar Compra</h1>
+    <form action="/finalizar_compra" method="get">
+        Dirección de Envío:
+        <input type="text" name="direccion"/>
+        <p></p>
+        Número de Tarjeta de Crédito:
+        <input type="tarjeta" name="tarjeta" />
+        <p></p>
+        <input type="submit" value="Finalizar Compra">
+    </form>
+</body>
+</html>
