@@ -157,11 +157,47 @@ const server = http.createServer((req, res) => {
             servirArchivo(res, RUTA_NO_REGISTRADO, 'text/html');
         }
 
-        // //-- Leer los parámetros de registro
-        // let username = url.searchParams.get('username');
-        // let name = url.searchParams.get('name');
-        // let email = url.searchParams.get('email');
-        // let password = url.searchParams.get('password');
+    // Si la URL es /registrar, manejar la solicitud de registro
+    } else if (url.pathname === '/registrar' && req.method === 'POST') {
+        let body = '';
+        
+        req.on('data', chunk => {
+            body += chunk.toString(); // Convertir el buffer a cadena
+        });
+        
+        req.on('end', () => {
+            // Parsear los datos del formulario
+            const formData = new URLSearchParams(body);
+            const username = formData.get('username');
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const password = formData.get('password');
+            
+            // Crear un nuevo objeto de usuario
+            const nuevoUsuario = {
+                usuario: username,
+                nombre: name,
+                correo: email,
+                contraseña: password
+            };
+            
+            // Agregar el nuevo usuario al arreglo de usuarios
+            usuarios.push(nuevoUsuario);
+            
+            // Guardar la lista actualizada de usuarios en el archivo tienda.json
+            fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), (err) => {
+                if (err) {
+                    console.error('Error al escribir en el archivo tienda.json:', err);
+                    res.writeHead(500);
+                    res.end();
+                } else {
+                    // Redirigir al usuario a una página de registro exitoso
+                    res.writeHead(302, {'Location': '/registro-exitoso.html'});
+                    res.end();
+                }
+            });
+        });
+    
         
     // Si la URL es la raíz del sitio
     } else if (url.pathname === '/') {
