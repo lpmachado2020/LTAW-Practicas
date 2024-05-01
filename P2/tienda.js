@@ -172,6 +172,30 @@ const server = http.createServer((req, res) => {
             const name = formData.get('name');
             const email = formData.get('email');
             const password = formData.get('password');
+
+            // Validar si el nombre de usuario ya existe
+            const usuarioExistente = usuarios.find(usuario => usuario.usuario === username);
+            if (usuarioExistente) {
+                // Redirigir a la página de error de nombre de usuario existente
+                res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20nombre%20de%20usuario%20ya%20existe'});
+                return res.end();
+            }
+
+            // Validar si el correo electrónico ya existe
+            const emailExistente = usuarios.find(usuario => usuario.correo === email);
+            if (emailExistente) {
+                // Redirigir a la página de error de correo electrónico existente
+                res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20correo%20electr%C3%B3nico%20ya%20existe'});
+                return res.end();
+            }
+
+            // Validar si el correo electrónico es válido
+            const emailValido = /\S+@\S+\.\S+/.test(email);
+            if (!emailValido) {
+                // Redirigir a la página de error de correo electrónico inválido
+                res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20correo%20electr%C3%B3nico%20no%20es%20v%C3%A1lido'});
+                return res.end();
+            }
             
             // Crear un nuevo objeto de usuario
             const nuevoUsuario = {
