@@ -51,15 +51,17 @@
 
     "usuarios": [
         {
-            "usuario": "usuario-root",
+            "usuario": "root",
             "nombre": "nombre-root",
-            "email": "root@email.com"
+            "email": "root@email.com",
+            "contaseña": "clave"
         },
         
         {
-            "usuario": "usuario-otro",
+            "usuario": "otro",
             "nombre": "nombre-otro",
-            "email": "otro@email.com"
+            "email": "otro@email.com",
+            "contaseña": "clave"
         }
     ],
 

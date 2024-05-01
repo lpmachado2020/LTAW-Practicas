@@ -1,4 +1,4 @@
-<!-- Texto HTML de Contraseña errónea, pero registrado -->
+<!-- Texto HTML de Usuario no registrado -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,14 +25,20 @@
             </ul>
         </nav>
     </header>
-<body>
+<body>    
     <div class="container-login">
         <h1>Iniciar Sesión</h1>
-        <p>¡Contraseña incorrecta!</p>
-        <p>Introduzca una contraseña válida</p>
+        <p>¡Ups! Parece que no existe ningún usuario con ese nombre</p>
+        <p>A continuación puedes registrarte</p>
         <form action="/procesar" method="get">
             Nombre de usuario:
             <input type="username" name="username"/>
+            <p></p>
+            Nombre:
+            <input type="text" name="name"/>
+            <p></p>
+            Correo electrónico:
+            <input type="email" name="email"/>
             <p></p>
             Contraseña:
             <input type="password" name="password" />

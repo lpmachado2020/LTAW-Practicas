@@ -27,8 +27,16 @@ const CARPETA_ESTILO = path.join(__dirname, 'estilo');
 const CARPETA_JS = path.join(__dirname, 'js');
 const RUTA_TIENDA_JSON = path.join(__dirname, 'tienda.json');
 
-//-- HTML de la página de respuesta
+//-- HTML de la página de respuesta LOGIN
 const RUTA_LOGIN_OK = path.join(__dirname, 'ficheros', 'login-ok.html');
+const RUTA_LOGIN_ERROR = path.join(__dirname, 'ficheros', 'login-error.html');
+const RUTA_NO_REGISTRADO = path.join(__dirname, 'ficheros', 'login-no-reg.html');
+
+//-- Leer el fichero JSON y creación de la estructura tienda a partir del contenido del fichero
+const  tienda_json = fs.readFileSync(RUTA_TIENDA_JSON);
+const tienda = JSON.parse(tienda_json);
+const productos = tienda.productos;
+const usuarios = tienda.usuarios;
 
 // Función para servir archivos estáticos
 function servirArchivo(res, rutaArchivo, contentType) {
@@ -78,51 +86,43 @@ function listarArchivosHTML(res) {
 
 // Función para generar la lista de productos desde el archivo tienda.json
 function mostrarProductos(res) {
-    fs.readFile(RUTA_TIENDA_JSON, (err, data) => {
-        if (err) {
-            console.error('Error al leer el archivo tienda.json:', err);
-            res.writeHead(500);
-            res.end();
+    const disponibles = [];
+    const noDisponibles = [];
+
+    productos.forEach(producto => {
+        if (producto.stock > 0) {
+            disponibles.push(producto);
         } else {
-            const tiendaData = JSON.parse(data);
-            const productos = tiendaData.productos;
-            const disponibles = [];
-            const noDisponibles = [];
-            
-            productos.forEach(producto => {
-                if (producto.stock > 0) {
-                    disponibles.push(producto);
-                } else {
-                    noDisponibles.push(producto);
-                }
-            });
-            
-            const htmlProductos = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Productos disponibles</title>
-                </head>
-                <body>
-                    <h1>Productos disponibles:</h1>
-                    <ul>
-                        ${disponibles.map(producto => `<li>${producto.nombre} - Stock: ${producto.stock}</li>`).join('')}
-                    </ul>
-                    <h1>Productos no disponibles:</h1>
-                    <ul>
-                        ${noDisponibles.map(producto => `<li>${producto.nombre} - Stock: ${producto.stock}</li>`).join('')}
-                    </ul>
-                </body>
-                </html>
-            `;
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            res.end(htmlProductos);
+            noDisponibles.push(producto);
         }
     });
+
+    const htmlProductos = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Productos disponibles</title>
+        </head>
+        <body>
+            <h1>Productos disponibles:</h1>
+            <ul>
+                ${disponibles.map(producto => `<li>${producto.nombre} - Stock: ${producto.stock}</li>`).join('')}
+            </ul>
+            <h1>Productos no disponibles:</h1>
+            <ul>
+                ${noDisponibles.map(producto => `<li>${producto.nombre} - Stock: ${producto.stock}</li>`).join('')}
+            </ul>
+        </body>
+        </html>
+    `;
+    
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end(htmlProductos);
 }
+
 
 //-- Creación del servidor
 const server = http.createServer((req, res) => {
@@ -131,13 +131,38 @@ const server = http.createServer((req, res) => {
 
     if (url.pathname == '/procesar') {
         //-- Leer los parámetros de inicio de sesión
-        let nombre = url.searchParams.get('nombre');
-        let apellidos = url.searchParams.get('apellidos');
-        console.log(" Nombre: " + nombre);
-        console.log(" Apellidos: " + apellidos);
+        let username = url.searchParams.get('username');
+        let password = url.searchParams.get('password');
+        // console.log("\n---- LOG IN ----");
+        // console.log("  Username: " + username);
+        // console.log("  Password: " + password);
+        // console.log();
 
-        servirArchivo(res, RUTA_LOGIN_OK, 'text/html')
+        let usuarioEncontrado = false;
 
+        usuarios.forEach(usuario => {
+            //-- Si el usuario y la contraseña coinciden
+            if (usuario.usuario === username && usuario.contaseña === password) {
+                servirArchivo(res, RUTA_LOGIN_OK, 'text/html');
+                usuarioEncontrado = true;
+            //-- Si el usuario coincide, pero no la contraseña
+            } else if (usuario.usuario === username && usuario.contaseña != password) {
+                servirArchivo(res, RUTA_LOGIN_ERROR, 'text/html');
+                usuarioEncontrado = true;
+            }
+        });
+
+        //-- Si el usuario no está en la base de datos
+        if (!usuarioEncontrado) {
+            servirArchivo(res, RUTA_NO_REGISTRADO, 'text/html');
+        }
+
+        // //-- Leer los parámetros de registro
+        // let username = url.searchParams.get('username');
+        // let name = url.searchParams.get('name');
+        // let email = url.searchParams.get('email');
+        // let password = url.searchParams.get('password');
+        
     // Si la URL es la raíz del sitio
     } else if (url.pathname === '/') {
         console.log("Petición main");
