@@ -27,6 +27,9 @@ const CARPETA_ESTILO = path.join(__dirname, 'estilo');
 const CARPETA_JS = path.join(__dirname, 'js');
 const RUTA_TIENDA_JSON = path.join(__dirname, 'tienda.json');
 
+//-- HTML de la página de respuesta
+const RUTA_LOGIN_OK = path.join(__dirname, 'ficheros', 'login-ok.html');
+
 // Función para servir archivos estáticos
 function servirArchivo(res, rutaArchivo, contentType) {
     fs.readFile(rutaArchivo, (err, contenido) => {
@@ -125,9 +128,18 @@ function mostrarProductos(res) {
 const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://' + req.headers['host']);
     const extension = path.extname(url.pathname);
-    
+
+    if (url.pathname == '/procesar') {
+        //-- Leer los parámetros de inicio de sesión
+        let nombre = url.searchParams.get('nombre');
+        let apellidos = url.searchParams.get('apellidos');
+        console.log(" Nombre: " + nombre);
+        console.log(" Apellidos: " + apellidos);
+
+        servirArchivo(res, RUTA_LOGIN_OK, 'text/html')
+
     // Si la URL es la raíz del sitio
-    if (url.pathname === '/') {
+    } else if (url.pathname === '/') {
         console.log("Petición main");
         servirArchivo(res, RUTA_INDEX, 'text/html');
     
