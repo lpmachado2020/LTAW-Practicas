@@ -162,9 +162,12 @@ const server = http.createServer((req, res) => {
         usuarios.forEach(usuario => {
             //-- Si el usuario y la contraseña coinciden
             if (usuario.usuario === username && usuario.contraseña === password) {
+
                 // Añadir el campo 'user' a la cookie de respuesta
                 res.setHeader('Set-Cookie', `user=${username}; SameSite=None`);
-                const textoHTMLExtra = '<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">Mi cuenta</a></li>';
+                // Agregar el nombre de usuario al texto extra
+                textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>`;
+                
                 servirArchivoSync(res, RUTA_INDEX, 'text/html', textoHTMLExtra);
                 usuarioEncontrado = true;
             //-- Si el usuario coincide, pero no la contraseña
@@ -273,7 +276,7 @@ const server = http.createServer((req, res) => {
                 }
             });
         
-    // Si la URL es la raíz del sitio
+    //-- Si la URL es la raíz del sitio
     } else if (url.pathname === '/') {
         console.log("Petición main");
         
@@ -284,8 +287,12 @@ const server = http.createServer((req, res) => {
         // Definir el texto a reemplazar en la página index.html
         let textoHTMLExtra = '';
         if (usuarioAutenticado) {
-            textoHTMLExtra = '<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">Mi cuenta</a></li>';
+            // Obtener el nombre de usuario de la cookie
+            const username = cookie.split('=')[1];
+            // Agregar el nombre de usuario al texto extra
+            textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>`;
         } else {
+            // Si el usuario no está autenticado, mostrar el enlace al login
             textoHTMLExtra = '<li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>';
         }
 
