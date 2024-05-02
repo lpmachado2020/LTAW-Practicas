@@ -38,7 +38,7 @@ const tienda = JSON.parse(tienda_json);
 const productos = tienda.productos;
 const usuarios = tienda.usuarios;
 
-// Función para servir archivos estáticos
+// Función para servir archivos estáticos de manera asíncrona
 function servirArchivo(res, rutaArchivo, contentType) {
     fs.readFile(rutaArchivo, (err, contenido) => {
         // Si hay un error al leer el archivo
@@ -51,6 +51,25 @@ function servirArchivo(res, rutaArchivo, contentType) {
             res.end(contenido, 'utf-8');
         }
     });
+}
+
+// Función para servir archivos estáticos de manera síncrona
+function servirArchivoSync(res, rutaArchivo, contentType, textoHTMLExtra) {
+    try {
+        // Leer el contenido del archivo de manera síncrona
+        let contenido = fs.readFileSync(rutaArchivo, 'utf8');
+
+        // Reemplazar el texto "HTML_EXTRA" con el enlace correspondiente
+        const nuevoContenido = contenido.replace('HTML_EXTRA', textoHTMLExtra);
+        
+        // Servir la página con el texto reemplazado
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.end(nuevoContenido, 'utf-8');
+    } catch (err) {
+        console.error(`Error al leer el archivo ${rutaArchivo}:`, err);
+        res.writeHead(500);
+        res.end();
+    }
 }
 
 // Función para generar la lista de archivos donde se encuentra la página principal
@@ -144,8 +163,9 @@ const server = http.createServer((req, res) => {
             //-- Si el usuario y la contraseña coinciden
             if (usuario.usuario === username && usuario.contraseña === password) {
                 // Añadir el campo 'user' a la cookie de respuesta
-                res.setHeader('Set-Cookie', `user=${username}`);
-                servirArchivo(res, RUTA_LOGIN_OK, 'text/html');
+                res.setHeader('Set-Cookie', `user=${username}; SameSite=None`);
+                const textoHTMLExtra = '<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">Mi cuenta</a></li>';
+                servirArchivoSync(res, RUTA_INDEX, 'text/html', textoHTMLExtra);
                 usuarioEncontrado = true;
             //-- Si el usuario coincide, pero no la contraseña
             } else if (usuario.usuario === username && usuario.contraseña != password) {
@@ -223,11 +243,6 @@ const server = http.createServer((req, res) => {
                 }
             });
         });
-    
-    // Si la URL es /finalizar_compra, mostrar el formulario de finalizar compra
-    } else if (url.pathname === 'finalizar_compra.html') {
-        console.log("Petición finalizar compra");
-        servirArchivo(res, path.join(__dirname, 'ficheros', 'finalizar_compra.html'), 'text/html');
 
     // Si la URL es /finalizar_compra, manejar la solicitud de finalizar compra
     } else if (url.pathname === '/finalizar_compra' && req.method === 'GET') {
@@ -261,7 +276,20 @@ const server = http.createServer((req, res) => {
     // Si la URL es la raíz del sitio
     } else if (url.pathname === '/') {
         console.log("Petición main");
-        servirArchivo(res, RUTA_INDEX, 'text/html');
+        
+        // Verificar si existe la cookie "user" y tiene un valor
+        const cookie = req.headers.cookie;
+        const usuarioAutenticado = cookie && cookie.includes('user=');
+
+        // Definir el texto a reemplazar en la página index.html
+        let textoHTMLExtra = '';
+        if (usuarioAutenticado) {
+            textoHTMLExtra = '<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">Mi cuenta</a></li>';
+        } else {
+            textoHTMLExtra = '<li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>';
+        }
+
+        servirArchivoSync(res, RUTA_INDEX, 'text/html', textoHTMLExtra);
     
     // Si la URL es /ls, mostrar la lista de archivos en la carpeta principal
     } else if (url.pathname === '/ls') {
@@ -271,11 +299,6 @@ const server = http.createServer((req, res) => {
     } else if (url.pathname === '/productos') {
         console.log("Petición listado de productos");
         mostrarProductos(res);
-
-    // // Si se clica en LOGIN
-    // } else if (url.pathname === '/login.html') {
-    //     console.log("Petición login");
-    //     servirArchivo(res, RUTA_LOGIN, 'text/html');
     
     // Si la extensión es .html, servir desde la carpeta ficheros/...
     } else if (extension === '.html') {
