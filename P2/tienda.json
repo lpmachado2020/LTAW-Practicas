@@ -48,13 +48,13 @@
       "usuario": "root",
       "nombre": "nombre-root",
       "email": "root@email.com",
-      "contaseña": "clave"
+      "contraseña": "clave"
     },
     {
       "usuario": "otro",
       "nombre": "nombre-otro",
       "email": "otro@email.com",
-      "contaseña": "clave"
+      "contraseña": "clave"
     },
     {
       "usuario": "nuevo",

@@ -142,11 +142,11 @@ const server = http.createServer((req, res) => {
 
         usuarios.forEach(usuario => {
             //-- Si el usuario y la contraseña coinciden
-            if (usuario.usuario === username && usuario.contaseña === password) {
+            if (usuario.usuario === username && usuario.contraseña === password) {
                 servirArchivo(res, RUTA_LOGIN_OK, 'text/html');
                 usuarioEncontrado = true;
             //-- Si el usuario coincide, pero no la contraseña
-            } else if (usuario.usuario === username && usuario.contaseña != password) {
+            } else if (usuario.usuario === username && usuario.contraseña != password) {
                 servirArchivo(res, RUTA_LOGIN_ERROR, 'text/html');
                 usuarioEncontrado = true;
             }
