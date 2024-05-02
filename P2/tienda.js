@@ -129,14 +129,14 @@ const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://' + req.headers['host']);
     const extension = path.extname(url.pathname);
 
-    if (url.pathname == '/procesar') {
+    if (url.pathname == '/login') {
         //-- Leer los parámetros de inicio de sesión
         let username = url.searchParams.get('username');
         let password = url.searchParams.get('password');
-        // console.log("\n---- LOG IN ----");
-        // console.log("  Username: " + username);
-        // console.log("  Password: " + password);
-        // console.log();
+        console.log("\n---- LOG IN ----");
+        console.log("  Username: " + username);
+        console.log("  Password: " + password);
+        console.log();
 
         let usuarioEncontrado = false;
 
