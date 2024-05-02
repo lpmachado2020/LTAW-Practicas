@@ -15,7 +15,7 @@ Cuando el servidor detecta que llega un **mensaje que empieza por el carácter '
 
 Debes hacer una **documentación técnica** y un **manual de usuario**, ambos en _markdown_ en la wiki de la práctica P3. Si haces mejoras, índicalas explícitamente en la documentación.
 
-### Mejoras
+### Mejoras
 
 Puedes incluir las mejoras que consideres (¡Imaginación al poder!). No olvides indicarlas en la documentación. Algunas propuestas de mejoras:
 
