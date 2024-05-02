@@ -25,7 +25,7 @@ Puedes incluir las mejoras que consideres (¡Imaginación al poder!). No olvides
 * Mostrar los usuarios que están conectados
 * Mensajes directos entre usuarios
 
-### EVALUACION
+### EVALUACION
 
 * **Puntuación total**: 2 ptos
   * **Documentacion (wiki)**: 0.5 ptos
