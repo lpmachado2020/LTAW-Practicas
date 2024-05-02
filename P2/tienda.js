@@ -143,6 +143,8 @@ const server = http.createServer((req, res) => {
         usuarios.forEach(usuario => {
             //-- Si el usuario y la contraseña coinciden
             if (usuario.usuario === username && usuario.contraseña === password) {
+                // Añadir el campo 'user' a la cookie de respuesta
+                res.setHeader('Set-Cookie', `user=${username}`);
                 servirArchivo(res, RUTA_LOGIN_OK, 'text/html');
                 usuarioEncontrado = true;
             //-- Si el usuario coincide, pero no la contraseña
@@ -226,6 +228,7 @@ const server = http.createServer((req, res) => {
     } else if (url.pathname === 'finalizar_compra.html') {
         console.log("Petición finalizar compra");
         servirArchivo(res, path.join(__dirname, 'ficheros', 'finalizar_compra.html'), 'text/html');
+
     // Si la URL es /finalizar_compra, manejar la solicitud de finalizar compra
     } else if (url.pathname === '/finalizar_compra' && req.method === 'GET') {
         let direccion = url.searchParams.get('direccion');
@@ -269,10 +272,10 @@ const server = http.createServer((req, res) => {
         console.log("Petición listado de productos");
         mostrarProductos(res);
 
-    // Si se clica en LOGIN
-    } else if (url.pathname === '/login.html') {
-        console.log("Petición login");
-        servirArchivo(res, RUTA_LOGIN, 'text/html');
+    // // Si se clica en LOGIN
+    // } else if (url.pathname === '/login.html') {
+    //     console.log("Petición login");
+    //     servirArchivo(res, RUTA_LOGIN, 'text/html');
     
     // Si la extensión es .html, servir desde la carpeta ficheros/...
     } else if (extension === '.html') {
