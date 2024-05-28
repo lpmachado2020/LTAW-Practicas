@@ -257,7 +257,7 @@ const server = http.createServer((req, res) => {
                 usuario: "prueba",
                 direccion: direccion,
                 tarjeta: tarjeta,
-                lista_productos: "prueba"
+                lista_productos: ["prueba"]  // Tiene que ser una lista
             };
 
             // Agregar el nuevo pedido al arreglo de pedidos en la tienda

@@ -76,9 +76,11 @@
     },
     {
       "usuario": "prueba",
-      "direccion": "prueba",
-      "tarjeta": "prueba",
-      "lista_productos": "prueba"
+      "direccion": "pedido prueba",
+      "tarjeta": "1234 prueba",
+      "lista_productos": [
+        "prueba"
+      ]
     }
   ]
 }
