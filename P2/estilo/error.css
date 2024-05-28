@@ -17,6 +17,7 @@ body {
    width: 100%;
    top: 0;
    left: 0;
+   z-index: 1000;  /* Asegurarse de que esté en primer plano */
 }
 
 /* Barra de la navegación. Para colocar los elementos dentro */
