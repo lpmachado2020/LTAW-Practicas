@@ -37,6 +37,8 @@ const tienda = JSON.parse(tienda_json);
 const productos = tienda.productos;
 const usuarios = tienda.usuarios;
 
+
+//---------------------------------------- Funciones ----------------------------------------//
 // Función para servir archivos estáticos de manera asíncrona
 function servirArchivo(res, rutaArchivo, contentType) {
     fs.readFile(rutaArchivo, (err, contenido) => {
@@ -68,6 +70,71 @@ function servirArchivoSync(res, rutaArchivo, contentType, textoHTMLExtra) {
         res.writeHead(500);
         res.end();
     }
+}
+
+// Función para manejar la solicitud de añadir al carrito
+function productosCarrito(req, res) {
+    const cookie = req.headers.cookie;
+    console.log("Cookies recibidas:", cookie);
+
+    let usuarioAutenticado = false;
+    let username = '';
+
+    // Separar y procesar las cookies
+    if (cookie) {
+        const cookies = cookie.split(';').map(c => c.trim());
+        cookies.forEach(c => {
+            if (c.startsWith('user=')) {
+                usuarioAutenticado = true;
+                username = c.split('=')[1];
+            }
+        });
+    }
+
+    // Log de la cookie del usuario
+    if (usuarioAutenticado) {
+        console.log("Cookie del usuario:", `user=${username}`);
+    } else {
+        // Si no está autenticado, redirigir al login
+        res.writeHead(302, {'Location': '/login.html'});
+        res.end();
+        return;
+    }
+
+    const url = new URL(req.url, 'http://' + req.headers['host']);
+    const producto = url.searchParams.get('producto');
+
+    if (!producto) {
+        res.writeHead(400, {'Content-Type': 'text/plain'});
+        res.end('Producto no especificado');
+        return;
+    }
+
+    // Obtener la cookie del carrito
+    let carrito = '';
+    if (cookie) {
+        const match = cookie.match(/carrito=([^;]+)/);
+        if (match) {
+            carrito = match[1];
+        }
+    }
+
+    // Añadir el producto al carrito
+    if (carrito) {
+        carrito += `:${producto}`;
+    } else {
+        carrito = producto;
+    }
+
+    // Log de la cookie del carrito
+    console.log("Productos en el carrito:", carrito.split(':').join(', '));
+
+    // Establecer la cookie del carrito
+    res.setHeader('Set-Cookie', `carrito=${carrito}; Path=/; SameSite=None`);
+
+    // Redirigir a la página del producto o alguna confirmación
+    res.writeHead(302, {'Location': '/'});
+    res.end();
 }
 
 // Función para generar la lista de archivos donde se encuentra la página principal
@@ -140,12 +207,14 @@ function mostrarProductos(res) {
 }
 
 
-//-- Creación del servidor
+//---------------------------------------- Creación del servidor ----------------------------------------//
 const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://' + req.headers['host']);
     const extension = path.extname(url.pathname);
 
-    if (url.pathname == '/login') {
+    if (url.pathname === '/agregar_carrito') {
+        productosCarrito(req, res);
+    } else if (url.pathname == '/login') {
         //-- Leer los parámetros de inicio de sesión
         let username = url.searchParams.get('username');
         let password = url.searchParams.get('password');

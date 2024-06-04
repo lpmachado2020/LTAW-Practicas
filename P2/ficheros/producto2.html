@@ -10,6 +10,13 @@
 
     <link rel="stylesheet" href="productos.css">
 </head>
+
+<script>
+    function agregarAlCarrito(producto) {
+        window.location.href = `/agregar_carrito?producto=${producto}`;
+    }
+</script>
+
 <body>
     <header class="header">
         <nav class="nav">
@@ -27,18 +34,18 @@
     </header>
 
     <div class="imagen">
-        <img src="foto2.jpg" alt="Croquetas de Jamón">
+        <img src="foto2.jpg" alt="Croquetas de Bacalao">
     </div>
 
     <div class="description">
-        <h1>Croquetas de Bacalo</h1>
+        <h1>Croquetas de Bacalao</h1>
         <p>¡Si quieres algo diferente, estas son tus croquetas! 
             El sabor único y la textura crujiente por fuera y suave por dentro te conquistarán al primer bocado.
             Acompañadas con una salsa de ali-oli casera.
         </p>
         <p class="unidades">5 Unidades</p>
         <p class="price">8€</p>
-        <button class="cart">Añadir al carrito</button>
+        <button class="cart" onclick="agregarAlCarrito('Croquetas de Bacalao')">Añadir al carrito</button>
     </div>
 </body>
 </html>

@@ -27,6 +27,12 @@
         </nav>
     </header>
 
+    <script>
+        function agregarAlCarrito(producto) {
+            window.location.href = `/agregar_carrito?producto=${producto}`;
+        }
+    </script>
+
     <!-- <div class="info-tienda">
         <p>¡Bienvenidx a Croqueteando! Aquí encontrarás croquetas de diferentes sabores y lo mejor es que son sin lactosa.</p>
     </div> -->
@@ -38,7 +44,7 @@
                 <h2>Croquetas de Jamón</h2>
                 <p class="description">6 Unidades</p>
                 <p class="price">9€</p>
-                <button class="cart">Añadir al carrito</button>
+                <button class="cart" onclick="agregarAlCarrito('Croquetas de Jamon')">Añadir al carrito</button>
             </div>
         </div>
 
@@ -48,7 +54,7 @@
                 <h2>Croquetas de Bacalao</h2>
                 <p class="description">5 Unidades</p>
                 <p class="price">8€</p>
-                <button class="cart">Añadir al carrito</button>
+                <button class="cart" onclick="agregarAlCarrito('Croquetas de Bacalao')">Añadir al carrito</button>
             </div>
         </div>
 
@@ -58,7 +64,7 @@
                 <h2>Croquetas de Cocido</h2>
                 <p class="description">6 Unidades</p>
                 <p class="price">9€</p>
-                <button class="cart">Añadir al carrito</button>
+                <button class="cart" onclick="agregarAlCarrito('Croquetas de Cocido')">Añadir al carrito</button>
             </div>
         </div>
 
@@ -68,7 +74,7 @@
                 <h2>Croquetas de Pollo Asado</h2>
                 <p class="description">6 Unidades</p>
                 <p class="price">9€</p>
-                <button class="cart">Añadir al carrito</button>
+                <button class="cart" onclick="agregarAlCarrito('Croquetas de Pollo Asado')">Añadir al carrito</button>
             </div>
         </div>
 
@@ -78,7 +84,7 @@
                 <h2>Croquetas de Boletus</h2>
                 <p class="description">5 Unidades</p>
                 <p class="price">8€</p>
-                <button class="cart">Añadir al carrito</button>
+                <button class="cart" onclick="agregarAlCarrito('Croquetas de Boletus')">Añadir al carrito</button>
             </div>
         </div>
 
@@ -88,7 +94,7 @@
                 <h2>Croquetas de Espinacas con Piñones</h2>
                 <p class="description">6 Unidades</p>
                 <p class="price">8€</p>
-                <button class="cart">Añadir al carrito</button>
+                <button class="cart" onclick="agregarAlCarrito('Croquetas de Espinacas con Piñones')">Añadir al carrito</button>
             </div>
         </div>
 

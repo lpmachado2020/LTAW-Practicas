@@ -10,6 +10,13 @@
 
     <link rel="stylesheet" href="productos.css">
 </head>
+
+<script>
+    function agregarAlCarrito(producto) {
+        window.location.href = `/agregar_carrito?producto=${producto}`;
+    }
+</script>
+
 <body>
     <header class="header">
         <nav class="nav">
@@ -38,7 +45,7 @@
         </p>
         <p class="unidades">6 Unidades</p>
         <p class="price">9€</p>
-        <button class="cart">Añadir al carrito</button>
+        <button class="cart" onclick="agregarAlCarrito('Croquetas de Pollo Asado')">Añadir al carrito</button>
     </div>
 </body>
 </html>
