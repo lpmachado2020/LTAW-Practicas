@@ -28,9 +28,8 @@ const CARPETA_JS = path.join(__dirname, 'js');
 const RUTA_TIENDA_JSON = path.join(__dirname, 'tienda.json');
 
 //-- HTML de la página de respuesta LOGIN
-const RUTA_LOGIN_OK = path.join(__dirname, 'ficheros', 'login-ok.html');
 const RUTA_LOGIN_ERROR = path.join(__dirname, 'ficheros', 'login-error.html');
-const RUTA_NO_REGISTRADO = path.join(__dirname, 'ficheros', 'login-no-reg.html');
+const RUTA_NO_REGISTRADO = path.join(__dirname, 'ficheros', 'registro.html');
 
 //-- Leer el fichero JSON y creación de la estructura tienda a partir del contenido del fichero
 const  tienda_json = fs.readFileSync(RUTA_TIENDA_JSON);
@@ -56,10 +55,9 @@ function servirArchivo(res, rutaArchivo, contentType) {
 // Función para servir archivos estáticos de manera síncrona
 function servirArchivoSync(res, rutaArchivo, contentType, textoHTMLExtra) {
     try {
-        // Leer el contenido del archivo de manera síncrona
         let contenido = fs.readFileSync(rutaArchivo, 'utf8');
 
-        // Reemplazar el texto "HTML_EXTRA" con el enlace correspondiente
+        // Reemplazar el texto "HTML_EXTRA" con el textoHTMLExtra
         const nuevoContenido = contenido.replace('HTML_EXTRA', textoHTMLExtra);
         
         // Servir la página con el texto reemplazado
