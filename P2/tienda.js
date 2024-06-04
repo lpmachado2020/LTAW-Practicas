@@ -29,7 +29,7 @@ const RUTA_TIENDA_JSON = path.join(__dirname, 'tienda.json');
 
 //-- HTML de la página de respuesta LOGIN
 const RUTA_LOGIN_ERROR = path.join(__dirname, 'ficheros', 'login-error.html');
-const RUTA_SINGUP = path.join(__dirname, 'ficheros', 'registro.html');
+const RUTA_SINGUP = path.join(__dirname, 'ficheros', 'registro-error.html');
 
 //-- Leer el fichero JSON y creación de la estructura tienda a partir del contenido del fichero
 const  tienda_json = fs.readFileSync(RUTA_TIENDA_JSON);
