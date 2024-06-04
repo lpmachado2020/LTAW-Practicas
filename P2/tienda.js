@@ -254,7 +254,12 @@ const server = http.createServer((req, res) => {
                     res.end();
                 } else {
                     // Redirigir al usuario a una página index.html
-                    res.writeHead(302, {'Location': '/registro-exitoso.html'});
+                    // Añadir el campo 'user' a la cookie de respuesta
+                    res.setHeader('Set-Cookie', `user=${username}; SameSite=None`);
+                    // Agregar el nombre de usuario al texto extra
+                    textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>`;
+                    
+                    servirArchivoSync(res, RUTA_INDEX, 'text/html', textoHTMLExtra);
                     res.end();
                 }
             });
@@ -298,7 +303,6 @@ const server = http.createServer((req, res) => {
         const usuarioAutenticado = cookie && cookie.includes('user=');
 
         // Definir el texto a reemplazar en la página index.html
-        let textoHTMLExtra = '';
         if (usuarioAutenticado) {
             // Obtener el nombre de usuario de la cookie
             const username = cookie.split('=')[1];
