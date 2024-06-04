@@ -72,6 +72,38 @@ function servirArchivoSync(res, rutaArchivo, contentType, textoHTMLExtra) {
     }
 }
 
+//-- Analizar la cookie y devolver el nombre del usuario si existe, o null en caso contrario
+function get_user(req) {
+    //-- Leer la Cookie recibida
+    const cookie = req.headers.cookie;
+  
+    //-- Hay cookie
+    if (cookie) {
+      //-- Obtener un array con todos los pares nombre-valor
+      let pares = cookie.split(";");
+      
+      //-- Variable para guardar el usuario
+      let user;
+  
+      //-- Recorrer todos los pares nombre-valor
+      pares.forEach((element, index) => {
+  
+        //-- Obtener los nombres y valores por separado
+        let [nombre, valor] = element.split('=');
+  
+        //-- Leer el usuario
+        //-- Solo si el nombre es 'user'
+        if (nombre.trim() === 'user') {
+          user = valor;
+        }
+      });
+  
+      //-- Si la variable user no está asignada
+      //-- se devuelve null
+      return user || null;
+    }
+}
+
 // Función para manejar la solicitud de añadir al carrito
 function productosCarrito(req, res) {
     const cookie = req.headers.cookie;
@@ -248,7 +280,6 @@ const server = http.createServer((req, res) => {
         //-- Si el usuario no está en la base de datos
         if (!usuarioEncontrado) {
             textoHTMLExtra = `<p>Usuario no encontrado. Por favor, regístrese.</p>`;
-
             servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
         }
 
@@ -272,10 +303,7 @@ const server = http.createServer((req, res) => {
             const usuarioExistente = usuarios.find(usuario => usuario.usuario === username);
             if (usuarioExistente) {
                 // Redirigir a la página de error de nombre de usuario existente
-                // res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20nombre%20de%20usuario%20ya%20existe'});
-                // return res.end();
                 textoHTMLExtra = `<p>Nombre de usuario existente</p><p>Introduzca un nombre de usuario diferente</p>`;
-
                 servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
                 return res.end();
             }
@@ -284,10 +312,7 @@ const server = http.createServer((req, res) => {
             const emailExistente = usuarios.find(usuario => usuario.correo === email);
             if (emailExistente) {
                 // Redirigir a la página de error de correo electrónico existente
-                // res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20correo%20electr%C3%B3nico%20ya%20existe'});
-                // return res.end();
                 textoHTMLExtra = `<p>Correo electrónico existente.</p><p>Introduzca una dirección diferente</p>`;
-
                 servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
                 return res.end();
             }
@@ -296,10 +321,7 @@ const server = http.createServer((req, res) => {
             const emailValido = /\S+@\S+\.\S+/.test(email);
             if (!emailValido) {
                 // Redirigir a la página de error de correo electrónico inválido
-                // res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20correo%20electr%C3%B3nico%20no%20es%20v%C3%A1lido'});
-                // return res.end();
                 textoHTMLExtra = `<p>Correo electrónico no válido</p>`;
-
                 servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
                 return res.end();
             }
@@ -367,14 +389,16 @@ const server = http.createServer((req, res) => {
     } else if (url.pathname === '/') {
         console.log("Petición main");
         
+        let usuarioAutenticado = false;
         // Verificar si existe la cookie "user" y tiene un valor
         const cookie = req.headers.cookie;
-        const usuarioAutenticado = cookie && cookie.includes('user=');
+        const cookie_split = cookie.split(';');
+        usuarioAutenticado = cookie_split && cookie_split.includes('user=');
 
         // Definir el texto a reemplazar en la página index.html
         if (usuarioAutenticado) {
             // Obtener el nombre de usuario de la cookie
-            const username = cookie.split('=')[1];
+            const username = usuarioAutenticado.split('=')[1];
             // Agregar el nombre de usuario al texto extra
             textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>`;
         } else {
