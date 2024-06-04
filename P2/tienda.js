@@ -29,7 +29,7 @@ const RUTA_TIENDA_JSON = path.join(__dirname, 'tienda.json');
 
 //-- HTML de la página de respuesta LOGIN
 const RUTA_LOGIN_ERROR = path.join(__dirname, 'ficheros', 'login-error.html');
-const RUTA_NO_REGISTRADO = path.join(__dirname, 'ficheros', 'registro.html');
+const RUTA_SINGUP = path.join(__dirname, 'ficheros', 'registro.html');
 
 //-- Leer el fichero JSON y creación de la estructura tienda a partir del contenido del fichero
 const  tienda_json = fs.readFileSync(RUTA_TIENDA_JSON);
@@ -135,7 +135,6 @@ function mostrarProductos(res) {
         </body>
         </html>
     `;
-    
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.end(htmlProductos);
 }
@@ -170,14 +169,18 @@ const server = http.createServer((req, res) => {
                 usuarioEncontrado = true;
             //-- Si el usuario coincide, pero no la contraseña
             } else if (usuario.usuario === username && usuario.contraseña != password) {
-                servirArchivo(res, RUTA_LOGIN_ERROR, 'text/html');
+                textoHTMLExtra = `<p>¡Contraseña incorrecta!</p><p>Introduzca una contraseña válida</p>`;
+
+                servirArchivoSync(res, RUTA_LOGIN_ERROR, 'text/html', textoHTMLExtra);
                 usuarioEncontrado = true;
             }
         });
 
         //-- Si el usuario no está en la base de datos
         if (!usuarioEncontrado) {
-            servirArchivo(res, RUTA_NO_REGISTRADO, 'text/html');
+            textoHTMLExtra = `<p>Usuario no encontrado. Por favor, regístrese.</p>`;
+
+            servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
         }
 
     // Si la URL es /registrar, manejar la solicitud de registro
@@ -200,7 +203,11 @@ const server = http.createServer((req, res) => {
             const usuarioExistente = usuarios.find(usuario => usuario.usuario === username);
             if (usuarioExistente) {
                 // Redirigir a la página de error de nombre de usuario existente
-                res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20nombre%20de%20usuario%20ya%20existe'});
+                // res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20nombre%20de%20usuario%20ya%20existe'});
+                // return res.end();
+                textoHTMLExtra = `<p>Nombre de usuario existente</p><p>Introduzca un nombre de usuario diferente</p>`;
+
+                servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
                 return res.end();
             }
 
@@ -208,7 +215,11 @@ const server = http.createServer((req, res) => {
             const emailExistente = usuarios.find(usuario => usuario.correo === email);
             if (emailExistente) {
                 // Redirigir a la página de error de correo electrónico existente
-                res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20correo%20electr%C3%B3nico%20ya%20existe'});
+                // res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20correo%20electr%C3%B3nico%20ya%20existe'});
+                // return res.end();
+                textoHTMLExtra = `<p>Correo electrónico existente.</p><p>Introduzca una dirección diferente</p>`;
+
+                servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
                 return res.end();
             }
 
@@ -216,7 +227,11 @@ const server = http.createServer((req, res) => {
             const emailValido = /\S+@\S+\.\S+/.test(email);
             if (!emailValido) {
                 // Redirigir a la página de error de correo electrónico inválido
-                res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20correo%20electr%C3%B3nico%20no%20es%20v%C3%A1lido'});
+                // res.writeHead(302, {'Location': '/registro-error.html?mensaje=El%20correo%20electr%C3%B3nico%20no%20es%20v%C3%A1lido'});
+                // return res.end();
+                textoHTMLExtra = `<p>Correo electrónico no válido</p>`;
+
+                servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
                 return res.end();
             }
             
@@ -238,7 +253,7 @@ const server = http.createServer((req, res) => {
                     res.writeHead(500);
                     res.end();
                 } else {
-                    // Redirigir al usuario a una página de registro exitoso
+                    // Redirigir al usuario a una página index.html
                     res.writeHead(302, {'Location': '/registro-exitoso.html'});
                     res.end();
                 }
