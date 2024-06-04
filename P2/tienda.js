@@ -389,16 +389,9 @@ const server = http.createServer((req, res) => {
     } else if (url.pathname === '/') {
         console.log("Petición main");
         
-        let usuarioAutenticado = false;
-        // Verificar si existe la cookie "user" y tiene un valor
-        const cookie = req.headers.cookie;
-        const cookie_split = cookie.split(';');
-        usuarioAutenticado = cookie_split && cookie_split.includes('user=');
+        username = get_user(req);
 
-        // Definir el texto a reemplazar en la página index.html
-        if (usuarioAutenticado) {
-            // Obtener el nombre de usuario de la cookie
-            const username = usuarioAutenticado.split('=')[1];
+        if (username) {
             // Agregar el nombre de usuario al texto extra
             textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>`;
         } else {
