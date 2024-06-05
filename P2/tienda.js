@@ -107,26 +107,17 @@ function get_user(req) {
 // Función para manejar la solicitud de añadir al carrito
 function productosCarrito(req, res) {
     const cookie = req.headers.cookie;
-    console.log("Cookies recibidas:", cookie);
 
-    let usuarioAutenticado = false;
-    let username = '';
+    let username = false;
 
-    // Separar y procesar las cookies
+    // Obtener el usuario
     if (cookie) {
-        const cookies = cookie.split(';').map(c => c.trim());
-        cookies.forEach(c => {
-            if (c.startsWith('user=')) {
-                usuarioAutenticado = true;
-                username = c.split('=')[1];
-            }
-        });
+        username = get_user(req);
+        console.log("Cookie del usuario:", `user=${username}`);
     }
 
-    // Log de la cookie del usuario
-    if (usuarioAutenticado) {
-        console.log("Cookie del usuario:", `user=${username}`);
-    } else {
+    // Si no hay usuario redirigir a la página del log in
+    if (!username) {
         // Si no está autenticado, redirigir al login
         res.writeHead(302, {'Location': '/login.html'});
         res.end();
@@ -158,15 +149,37 @@ function productosCarrito(req, res) {
         carrito = producto;
     }
 
-    // Log de la cookie del carrito
-    console.log("Productos en el carrito:", carrito.split(':').join(', '));
-
     // Establecer la cookie del carrito
     res.setHeader('Set-Cookie', `carrito=${carrito}; Path=/; SameSite=None`);
 
-    // Redirigir a la página del producto o alguna confirmación
-    res.writeHead(302, {'Location': '/'});
-    res.end();
+    // Encontrar el usuario y agregar el producto al carrito
+    let usuarioEncontrado = false;
+    usuarios.forEach(usuario => {
+        if (usuario.usuario === username) {
+            if (!usuario.carrito) {
+                usuario.carrito = [];
+            }
+            usuario.carrito.push(producto);
+            usuarioEncontrado = true;
+        }
+    });
+
+    if (usuarioEncontrado) {
+        // Guardar la lista actualizada de usuarios en el archivo tienda.json
+        fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), (err) => {
+            if (err) {
+                console.error('Error al escribir en el archivo tienda.json:', err);
+                res.writeHead(500);
+                res.end();
+            } else {
+                res.writeHead(302, {'Location': '/'});
+                res.end();
+            }
+        });
+    } else {
+        res.writeHead(400, {'Content-Type': 'text/plain'});
+        res.end('Usuario no encontrado');
+    }
 }
 
 // Función para generar la lista de archivos donde se encuentra la página principal
@@ -244,8 +257,18 @@ const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://' + req.headers['host']);
     const extension = path.extname(url.pathname);
 
-    if (url.pathname === '/agregar_carrito') {
+    //-- Si la URL es /logout, manejar el log out eliminando la cookie del user
+    if (url.pathname === '/logout') {
+        res.setHeader('Set-Cookie', [
+            'user=; Max-Age=0; SameSite=None; Path=/',
+            'carrito=; Max-Age=0; SameSite=None; Path=/'
+        ]);
+        res.writeHead(302, { 'Location': '/' });
+        res.end();
+    //-- Si la URL es /agregar_carrito, manejar añadir un producto a la cookie carrito desde el cliente
+    } else if (url.pathname === '/agregar_carrito') {
         productosCarrito(req, res);
+    //-- Si la URL es /login, manejar la solicitud de log in
     } else if (url.pathname == '/login') {
         //-- Leer los parámetros de inicio de sesión
         let username = url.searchParams.get('username');
@@ -263,8 +286,9 @@ const server = http.createServer((req, res) => {
 
                 // Añadir el campo 'user' a la cookie de respuesta
                 res.setHeader('Set-Cookie', `user=${username}; SameSite=None`);
-                // Agregar el nombre de usuario al texto extra
-                textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>`;
+                // Agregar el nombre de usuario y el botón de log out al texto extra
+                textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
+                                  <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
                 
                 servirArchivoSync(res, RUTA_INDEX, 'text/html', textoHTMLExtra);
                 usuarioEncontrado = true;
@@ -347,8 +371,9 @@ const server = http.createServer((req, res) => {
                     // Redirigir al usuario a una página index.html
                     // Añadir el campo 'user' a la cookie de respuesta
                     res.setHeader('Set-Cookie', `user=${username}; SameSite=None`);
-                    // Agregar el nombre de usuario al texto extra
-                    textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>`;
+                    // Agregar el nombre de usuario y el botón de log out al texto extra
+                    textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
+                                    <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
                     
                     servirArchivoSync(res, RUTA_INDEX, 'text/html', textoHTMLExtra);
                     res.end();
@@ -392,8 +417,9 @@ const server = http.createServer((req, res) => {
         username = get_user(req);
 
         if (username) {
-            // Agregar el nombre de usuario al texto extra
-            textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>`;
+            // Agregar el nombre de usuario y el botón de log out al texto extra
+            textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
+                              <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
         } else {
             // Si el usuario no está autenticado, mostrar el enlace al login
             textoHTMLExtra = '<li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>';
