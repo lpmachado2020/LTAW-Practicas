@@ -29,7 +29,7 @@ const RUTA_TIENDA_JSON = path.join(__dirname, 'tienda.json');
 
 //-- HTML de la página de respuesta LOGIN
 const RUTA_LOGIN_ERROR = path.join(__dirname, 'ficheros', 'login-error.html');
-const RUTA_SINGUP = path.join(__dirname, 'ficheros', 'registro-error.html');
+const RUTA_SINGUP_ERROR = path.join(__dirname, 'ficheros', 'registro-error.html');
 
 //-- Leer el fichero JSON y creación de la estructura tienda a partir del contenido del fichero
 const  tienda_json = fs.readFileSync(RUTA_TIENDA_JSON);
@@ -55,12 +55,12 @@ function servirArchivo(res, rutaArchivo, contentType) {
 }
 
 // Función para servir archivos estáticos de manera síncrona
-function servirArchivoSync(res, rutaArchivo, contentType, textoHTMLExtra) {
+function replaceTexto(res, rutaArchivo, contentType, textoReemplazo, textoHTMLExtra) {
     try {
         let contenido = fs.readFileSync(rutaArchivo, 'utf8');
 
         // Reemplazar el texto "HTML_EXTRA" con el textoHTMLExtra
-        const nuevoContenido = contenido.replace('HTML_EXTRA', textoHTMLExtra);
+        const nuevoContenido = contenido.replace(textoReemplazo, textoHTMLExtra);
         
         // Servir la página con el texto reemplazado
         res.writeHead(200, { 'Content-Type': contentType });
@@ -339,13 +339,13 @@ const server = http.createServer((req, res) => {
                 textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
                                 <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
                 
-                servirArchivoSync(res, RUTA_INDEX, 'text/html', textoHTMLExtra);
+                replaceTexto(res, RUTA_INDEX, 'text/html', 'HTML_EXTRA', textoHTMLExtra);
                 usuarioEncontrado = true;
             //-- Si el usuario coincide, pero no la contraseña
             } else if (usuario.usuario === username && usuario.contraseña != password) {
                 textoHTMLExtra = `<p>¡Contraseña incorrecta!</p><p>Introduzca una contraseña válida</p>`;
 
-                servirArchivoSync(res, RUTA_LOGIN_ERROR, 'text/html', textoHTMLExtra);
+                replaceTexto(res, RUTA_LOGIN_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
                 usuarioEncontrado = true;
             }
         });
@@ -353,7 +353,7 @@ const server = http.createServer((req, res) => {
         //-- Si el usuario no está en la base de datos
         if (!usuarioEncontrado) {
             textoHTMLExtra = `<p>Usuario no encontrado. Por favor, regístrese.</p>`;
-            servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
+            replaceTexto(res, RUTA_SINGUP_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
         }
 
     // Si la URL es /registrar, manejar la solicitud de registro
@@ -377,7 +377,7 @@ const server = http.createServer((req, res) => {
             if (usuarioExistente) {
                 // Redirigir a la página de error de nombre de usuario existente
                 textoHTMLExtra = `<p>Nombre de usuario existente</p><p>Introduzca un nombre de usuario diferente</p>`;
-                servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
+                replaceTexto(res, RUTA_SINGUP_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
                 return res.end();
             }
 
@@ -386,7 +386,7 @@ const server = http.createServer((req, res) => {
             if (emailExistente) {
                 // Redirigir a la página de error de correo electrónico existente
                 textoHTMLExtra = `<p>Correo electrónico existente.</p><p>Introduzca una dirección diferente</p>`;
-                servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
+                replaceTexto(res, RUTA_SINGUP_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
                 return res.end();
             }
 
@@ -395,7 +395,7 @@ const server = http.createServer((req, res) => {
             if (!emailValido) {
                 // Redirigir a la página de error de correo electrónico inválido
                 textoHTMLExtra = `<p>Correo electrónico no válido</p>`;
-                servirArchivoSync(res, RUTA_SINGUP, 'text/html', textoHTMLExtra);
+                replaceTexto(res, RUTA_SINGUP_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
                 return res.end();
             }
             
@@ -425,7 +425,7 @@ const server = http.createServer((req, res) => {
                     textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
                                     <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
                     
-                    servirArchivoSync(res, RUTA_INDEX, 'text/html', textoHTMLExtra);
+                    replaceTexto(res, RUTA_INDEX, 'text/html', 'HTML_EXTRA', textoHTMLExtra);
                     res.end();
                 }
             });
@@ -477,7 +477,7 @@ const server = http.createServer((req, res) => {
             textoHTMLExtra = '<li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>';
         }
 
-        servirArchivoSync(res, RUTA_INDEX, 'text/html', textoHTMLExtra);
+        replaceTexto(res, RUTA_INDEX, 'text/html', 'HTML_EXTRA', textoHTMLExtra);
     
     // Si la URL es /ls, mostrar la lista de archivos en la carpeta principal
     } else if (url.pathname === '/ls') {

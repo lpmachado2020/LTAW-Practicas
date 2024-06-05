@@ -1,6 +1,7 @@
 {
   "productos": [
     {
+      "id": "producto1",
       "nombre": "Croquetas de Jamón",
       "descripcion": "Cada bocado es una explosión de sabor, con trozos jugosos de jamón ibérico envueltos en una cremosa bechamel. ¡Las clásicas, no te las puedes perder!",
       "unidades": "6 Unidades",
@@ -8,6 +9,7 @@
       "precio": 9
     },
     {
+      "id": "producto2",
       "nombre": "Croquetas de Bacalao",
       "descripcion": "Si quieres algo diferente, estas son tus croquetas! El sabor único y la textura crujiente por fuera y suave por dentro te conquistarán al primer bocado. Acompañadas con una salsa de ali-oli casera.",
       "unidades": "5 Unidades",
@@ -15,6 +17,7 @@
       "precio": 8
     },
     {
+      "id": "producto3",
       "nombre": "Croquetas de Cocido",
       "descripcion": "Nuestra especialidad, un pequeño bocado lleno de sabor. Inspiradas en el clásico plato clásico de cocido, estas croquetas están rellenas de ternura y nostalgia. Cada mordisco es un viaje sensorial que te transporta a la mesa de la abuela. ¡No podrás parar!",
       "unidades": "6 Unidades",
@@ -22,6 +25,7 @@
       "precio": 9
     },
     {
+      "id": "producto4",
       "nombre": "Croquetas de Pollo Asado",
       "descripcion": "Eleva tu paladar con nuestras exquisitas croquetas de pollo asado. Cada una está repleta de los sabores intensos y jugosos del pollo asado, envueltos en una suave y cremosa masa. Una verdadera explosión de sabor que te hará volver por más una y otra vez.",
       "unidades": "6 Unidades",
@@ -29,6 +33,7 @@
       "precio": 9
     },
     {
+      "id": "producto5",
       "nombre": "Croquetas de Boletus",
       "descripcion": "Descubre la sofisticación en cada bocado con nuestras croquetas de boletus. El intenso sabor a setas se combina armoniosamente con una cremosa textura, creando una experiencia culinaria digna de los paladares más exigentes. Una opción gourmet que deleitará tus sentidos.",
       "unidades": "5 Unidades",
@@ -36,6 +41,7 @@
       "precio": 8
     },
     {
+      "id": "producto6",
       "nombre": "Croquetas de Espinacas con Piñones",
       "descripcion": "Déjate seducir por la frescura de nuestras croquetas de espinacas con piñones. Cada croqueta está repleta de espinacas frescas y piñones crujientes, envueltas en una delicada masa cremosa. ¡No te defraudarán!",
       "unidades": "6 Unidades",
