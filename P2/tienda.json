@@ -60,7 +60,21 @@
       "usuario": "nuevo",
       "nombre": "nuevo",
       "correo": "nuevo@email.com",
-      "contraseña": "nuevo"
+      "contraseña": "nuevo",
+      "carrito": [
+        "Croquetas de Bacalao"
+      ]
+    },
+    {
+      "usuario": "laura",
+      "nombre": "laura",
+      "correo": "laura@email.com",
+      "contraseña": "laura",
+      "carrito": [
+        "Croquetas de Bacalao",
+        "Croquetas de Cocido",
+        "Croquetas de Jamon"
+      ]
     }
   ],
   "pedidos": [
@@ -75,11 +89,13 @@
       ]
     },
     {
-      "usuario": "prueba",
-      "direccion": "pedido prueba",
-      "tarjeta": "1234 prueba",
+      "usuario": "laura",
+      "direccion": "calle la que sea",
+      "tarjeta": "1234 5678 9101",
       "lista_productos": [
-        "prueba"
+        "Croquetas de Bacalao",
+        "Croquetas de Cocido",
+        "Croquetas de Jamon"
       ]
     }
   ]
