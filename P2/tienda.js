@@ -156,6 +156,7 @@ function productosCarrito(req, res) {
     let usuarioEncontrado = false;
     usuarios.forEach(usuario => {
         if (usuario.usuario === username) {
+            //-- Si no tiene 
             if (!usuario.carrito) {
                 usuario.carrito = [];
             }
