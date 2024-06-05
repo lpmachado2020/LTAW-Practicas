@@ -276,8 +276,12 @@ const server = http.createServer((req, res) => {
             //-- Si el usuario y la contraseña coinciden
             if (usuario.usuario === username && usuario.contraseña === password) {
 
+                // Obtener el carrito del usuario, si existe
+                let carritoUsuario = usuario.carrito || '';
+
                 // Añadir el campo 'user' a la cookie de respuesta
-                res.setHeader('Set-Cookie', `user=${username}; SameSite=None`);
+                res.setHeader('Set-Cookie', [`user=${username}; SameSite=None`, `carrito=${carritoUsuario}; Path=/; SameSite=None`]);
+                
                 // Agregar el nombre de usuario y el botón de log out al texto extra
                 textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
                                 <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;

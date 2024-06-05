@@ -79,7 +79,7 @@
   ],
   "pedidos": [
     {
-      "usuario": "usuario-otro",
+      "usuario": "nombre-otro",
       "direccion": "Calle la que sea",
       "tarjeta": "0123 4567 8910 1112",
       "lista_productos": [
