@@ -46,15 +46,17 @@
   "usuarios": [
     {
       "usuario": "root",
-      "nombre": "nombre-root",
+      "nombre": "root",
       "email": "root@email.com",
-      "contraseña": "clave"
+      "contraseña": "clave",
+      "carrito": []
     },
     {
-      "usuario": "otro",
-      "nombre": "nombre-otro",
-      "email": "otro@email.com",
-      "contraseña": "clave"
+      "usuario": "laura",
+      "nombre": "laura",
+      "email": "laura@email.com",
+      "contraseña": "clave",
+      "carrito": []
     },
     {
       "usuario": "nuevo",
@@ -64,22 +66,11 @@
       "carrito": [
         "Croquetas de Bacalao"
       ]
-    },
-    {
-      "usuario": "laura",
-      "nombre": "laura",
-      "correo": "laura@email.com",
-      "contraseña": "laura",
-      "carrito": [
-        "Croquetas de Bacalao",
-        "Croquetas de Cocido",
-        "Croquetas de Jamon"
-      ]
     }
   ],
   "pedidos": [
     {
-      "usuario": "nombre-otro",
+      "usuario": "otro",
       "direccion": "Calle la que sea",
       "tarjeta": "0123 4567 8910 1112",
       "lista_productos": [
@@ -89,13 +80,11 @@
       ]
     },
     {
-      "usuario": "laura",
+      "usuario": "nuevo",
       "direccion": "calle la que sea",
       "tarjeta": "1234 5678 9101",
       "lista_productos": [
-        "Croquetas de Bacalao",
-        "Croquetas de Cocido",
-        "Croquetas de Jamon"
+        "Croquetas de Bacalao"
       ]
     }
   ]

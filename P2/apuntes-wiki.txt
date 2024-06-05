@@ -19,6 +19,8 @@
 
 - Añadido el log in en todas las páginas html: main
 
+- Añadido log out
+
 - Me he quedado en el lab 6 ejercicio 7 y 8
 
 - Para la implementación de la búsqueda

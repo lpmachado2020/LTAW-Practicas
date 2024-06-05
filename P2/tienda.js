@@ -155,7 +155,7 @@ function productosCarrito(req, res) {
     //-- Si encuentra el usuario
     if (usuarioEncontrado) {
         // Guardar la lista actualizada de usuarios en el archivo tienda.json
-        fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), (err) => {
+        fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), 'utf-8',(err) => {
             if (err) {
                 console.error('Error al escribir en el archivo tienda.json:', err);
                 res.writeHead(500);
@@ -168,6 +168,56 @@ function productosCarrito(req, res) {
     } else {
         res.writeHead(400, {'Content-Type': 'text/plain'});
         res.end('Usuario no encontrado');
+    }
+}
+
+// Función para obtener datos del producto y generar HTML dinámico
+function generarPaginaProducto(res, productoId) {
+    const producto = productos[productoId - 1];
+    if (producto) {
+        const plantillaProducto = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="icon" href="logo.png">
+            <title>${producto.nombre} - Croqueteando</title>
+            <link rel="stylesheet" href="productos.css">
+        </head>
+        <script src="js/index.js"></script>
+        <body>
+            <header class="header">
+                <nav class="nav">
+                    <a href="/" class="name">
+                        <img src="logo.png" alt="Logo" class="logo-img">
+                        <span class="store-name">Croqueteando</span>
+                    </a>
+                    <ul class="nav-menu">
+                        <li class="nav-menu-item"><a href="/" class="nav-menu-link nav-link">Inicio</a></li>
+                        <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Productos</a></li>
+                        <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Contacto</a></li>
+                        <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Carrito</a></li>
+                    </ul>
+                </nav>
+            </header>
+            <div class="imagen">
+                <img src="foto${productoId}.jpg" alt="${producto.nombre}">
+            </div>
+            <div class="description">
+                <h1>${producto.nombre}</h1>
+                <p class="description">${producto.descripcion}</p>
+                <p class="unidades">${producto.unidades}</p>
+                <p class="price">${producto.precio}€</p>
+                <button class="cart" onclick="agregarAlCarrito('${producto.nombre}')">Añadir al carrito</button>
+            </div>
+        </body>
+        </html>`;
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end(plantillaProducto);
+    } else {
+        servirArchivo(res, RUTA_ERROR, 'text/html');
     }
 }
 
@@ -250,10 +300,13 @@ const server = http.createServer((req, res) => {
     //-- Obtenemos las cookies
     const cookieData = get_cookies(req);
     const user = cookieData.user;
-    let carrito = cookieData.carrito || '';
+
+    if (url.pathname.startsWith('/producto') && !isNaN(url.pathname.split('/producto')[1])) {
+        const productoId = parseInt(url.pathname.split('/producto')[1], 10);
+        generarPaginaProducto(res, productoId);
 
     //-- Si la URL es /logout, manejar el log out eliminando las cookies de user y carrito
-    if (url.pathname === '/logout') {
+    } else if (url.pathname === '/logout') {
         res.setHeader('Set-Cookie', ['user=; Max-Age=0; SameSite=None; Path=/', 'carrito=; Max-Age=0; SameSite=None; Path=/']);
         res.writeHead(302, { 'Location': '/' });
         res.end();
@@ -359,7 +412,7 @@ const server = http.createServer((req, res) => {
             usuarios.push(nuevoUsuario);
             
             // Guardar la lista actualizada de usuarios en el archivo tienda.json
-            fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), (err) => {
+            fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), 'utf-8',(err) => {
                 if (err) {
                     console.error('Error al escribir en el archivo tienda.json:', err);
                     res.writeHead(500);
@@ -384,6 +437,7 @@ const server = http.createServer((req, res) => {
         let tarjeta = url.searchParams.get('tarjeta');
 
         // Convertir el carrito en una lista separada por comas
+        let carrito = cookieData.carrito;
         const listaProductos = carrito.split(':').join(',').split(',');
 
             // Crear un nuevo objeto de pedido
@@ -398,7 +452,7 @@ const server = http.createServer((req, res) => {
             tienda.pedidos.push(nuevoPedido);
 
             // Guardar la lista actualizada de pedidos en el archivo tienda.json
-            fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), (err) => {
+            fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), 'utf-8', (err) => {
                 if (err) {
                     console.error('Error al escribir en el archivo tienda.json:', err);
                     res.writeHead(500);
