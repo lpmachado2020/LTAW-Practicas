@@ -1,12 +1,11 @@
 //-- Servidor tienda.js
 
 /*
-Activar servidor en el terminal: node tienda.js
-URL para lanzar una petición: http://127.0.0.1:9090/ o http://localhost:9090/
-Significa: "Conéctate al puerto 9090 de tu propia máquina"
-Usando curl se mandan peticiones desde línea de comandos
-curl -m 1 127.0.0.1:9090
-El servidor se detiene pulsando: Ctrl-C
+- Activar servidor en el terminal: node tienda.js
+- URL para lanzar una petición: http://127.0.0.1:9090/ o http://localhost:9090/
+  Significa: "Conéctate al puerto 9090 de tu propia máquina"
+- Usando curl se mandan peticiones desde línea de comandos: curl -m 1 127.0.0.1:9090
+- El servidor se detiene pulsando: Ctrl-C
 */
 
 //-- Importar módulos de Node.js
@@ -20,7 +19,7 @@ const PUERTO = 9090;
 // Rutas de los archivos index, error y carpetas
 const RUTA_INDEX = path.join(__dirname, 'ficheros', 'index.html');
 const RUTA_ERROR = path.join(__dirname, 'ficheros', 'error.html');
-const RUTA_LOGIN = path.join(__dirname, 'ficheros', 'login.html');
+const RUTA_CARRITO = path.join(__dirname, 'ficheros', 'carrito.html');
 const CARPETA_FICHEROS = path.join(__dirname, 'ficheros');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const CARPETA_ESTILO = path.join(__dirname, 'estilo');
@@ -115,9 +114,8 @@ function productosCarrito(req, res) {
     const username = cookieData.user;
     let carrito = cookieData.carrito || '';
 
-    // Si no hay usuario redirigir a la página del log in
+    // Si no está autenticado, redirigir al login
     if (!username) {
-        // Si no está autenticado, redirigir al login
         res.writeHead(302, {'Location': '/login.html'});
         res.end();
         return;
@@ -125,12 +123,6 @@ function productosCarrito(req, res) {
 
     const url = new URL(req.url, 'http://' + req.headers['host']);
     const producto = url.searchParams.get('producto');
-
-    if (!producto) {
-        res.writeHead(400, {'Content-Type': 'text/plain'});
-        res.end('Producto no especificado');
-        return;
-    }
 
     // Añadir el producto al carrito
     carrito = carrito ? `${carrito}:${producto}` : producto;
@@ -171,56 +163,55 @@ function productosCarrito(req, res) {
     }
 }
 
-// Función para obtener datos del producto y generar HTML dinámico
-function generarPaginaProducto(res, productoId) {
-    const producto = productos[productoId - 1];
-    if (producto) {
-        const plantillaProducto = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="icon" href="logo.png">
-            <title>${producto.nombre} - Croqueteando</title>
-            <link rel="stylesheet" href="productos.css">
-        </head>
-        <script src="js/index.js"></script>
-        <body>
-            <header class="header">
-                <nav class="nav">
-                    <a href="/" class="name">
-                        <img src="logo.png" alt="Logo" class="logo-img">
-                        <span class="store-name">Croqueteando</span>
-                    </a>
-                    <ul class="nav-menu">
-                        <li class="nav-menu-item"><a href="/" class="nav-menu-link nav-link">Inicio</a></li>
-                        <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Productos</a></li>
-                        <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Contacto</a></li>
-                        <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Carrito</a></li>
-                    </ul>
-                </nav>
-            </header>
-            <div class="imagen">
-                <img src="foto${productoId}.jpg" alt="${producto.nombre}">
-            </div>
-            <div class="description">
-                <h1>${producto.nombre}</h1>
-                <p class="description">${producto.descripcion}</p>
-                <p class="unidades">${producto.unidades}</p>
-                <p class="price">${producto.precio}€</p>
-                <button class="cart" onclick="agregarAlCarrito('${producto.nombre}')">Añadir al carrito</button>
-            </div>
-        </body>
-        </html>`;
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(plantillaProducto);
-    } else {
-        servirArchivo(res, RUTA_ERROR, 'text/html');
-    }
-}
-
+// // Función para obtener datos del producto y generar HTML dinámico
+// function generarPaginaProducto(res, productoId) {
+//     const producto = productos[productoId - 1];
+//     if (producto) {
+//         const plantillaProducto = `
+//         <!DOCTYPE html>
+//         <html lang="en">
+//         <head>
+//             <meta charset="UTF-8">
+//             <meta http-equiv="X-UA-Compatible" content="IE=edge">
+//             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//             <link rel="icon" href="logo.png">
+//             <title>${producto.nombre} - Croqueteando</title>
+//             <link rel="stylesheet" href="productos.css">
+//         </head>
+//         <script src="js/index.js"></script>
+//         <body>
+//             <header class="header">
+//                 <nav class="nav">
+//                     <a href="/" class="name">
+//                         <img src="logo.png" alt="Logo" class="logo-img">
+//                         <span class="store-name">Croqueteando</span>
+//                     </a>
+//                     <ul class="nav-menu">
+//                         <li class="nav-menu-item"><a href="/" class="nav-menu-link nav-link">Inicio</a></li>
+//                         <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Productos</a></li>
+//                         <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Contacto</a></li>
+//                         <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Carrito</a></li>
+//                     </ul>
+//                 </nav>
+//             </header>
+//             <div class="imagen">
+//                 <img src="foto${productoId}.jpg" alt="${producto.nombre}">
+//             </div>
+//             <div class="description">
+//                 <h1>${producto.nombre}</h1>
+//                 <p class="description">${producto.descripcion}</p>
+//                 <p class="unidades">${producto.unidades}</p>
+//                 <p class="price">${producto.precio}€</p>
+//                 <button class="cart" onclick="agregarAlCarrito('${producto.nombre}')">Añadir al carrito</button>
+//             </div>
+//         </body>
+//         </html>`;
+//         res.writeHead(200, {'Content-Type': 'text/html'});
+//         res.end(plantillaProducto);
+//     } else {
+//         servirArchivo(res, RUTA_ERROR, 'text/html');
+//     }
+// }
 
 // Función para generar la lista de archivos donde se encuentra la página principal
 function listarArchivosHTML(res) {
@@ -300,13 +291,14 @@ const server = http.createServer((req, res) => {
     //-- Obtenemos las cookies
     const cookieData = get_cookies(req);
     const user = cookieData.user;
+    let carrito = cookieData.carrito || '';
 
-    if (url.pathname.startsWith('/producto') && !isNaN(url.pathname.split('/producto')[1])) {
-        const productoId = parseInt(url.pathname.split('/producto')[1], 10);
-        generarPaginaProducto(res, productoId);
+    // if (url.pathname.startsWith('/producto') && !isNaN(url.pathname.split('/producto')[1])) {
+    //     const productoId = parseInt(url.pathname.split('/producto')[1], 10);
+    //     generarPaginaProducto(res, productoId);
 
     //-- Si la URL es /logout, manejar el log out eliminando las cookies de user y carrito
-    } else if (url.pathname === '/logout') {
+    if (url.pathname === '/logout') {
         res.setHeader('Set-Cookie', ['user=; Max-Age=0; SameSite=None; Path=/', 'carrito=; Max-Age=0; SameSite=None; Path=/']);
         res.writeHead(302, { 'Location': '/' });
         res.end();
@@ -315,13 +307,10 @@ const server = http.createServer((req, res) => {
         productosCarrito(req, res);
     //-- Si la URL es /login, manejar la solicitud de log in
     } else if (url.pathname == '/login') {
+        console.log("Petición de login")
         //-- Leer los parámetros de inicio de sesión
         let username = url.searchParams.get('username');
         let password = url.searchParams.get('password');
-        console.log("\n---- LOG IN ----");
-        console.log("  Username: " + username);
-        console.log("  Password: " + password);
-        console.log();
 
         let usuarioEncontrado = false;
 
@@ -329,11 +318,8 @@ const server = http.createServer((req, res) => {
             //-- Si el usuario y la contraseña coinciden
             if (usuario.usuario === username && usuario.contraseña === password) {
 
-                // Obtener el carrito del usuario, si existe
-                let carritoUsuario = usuario.carrito || '';
-
                 // Añadir el campo 'user' a la cookie de respuesta
-                res.setHeader('Set-Cookie', [`user=${username}; SameSite=None`, `carrito=${carritoUsuario}; Path=/; SameSite=None`]);
+                res.setHeader('Set-Cookie', [`user=${username}; SameSite=None`, `carrito=${carrito}; Path=/; SameSite=None`]);
                 
                 // Agregar el nombre de usuario y el botón de log out al texto extra
                 textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
@@ -371,6 +357,14 @@ const server = http.createServer((req, res) => {
             const name = formData.get('name');
             const email = formData.get('email');
             const password = formData.get('password');
+
+            // Validar si todos los campos están completos
+            if (!username || !name || !email || !password) {
+                // Redirigir a la página de error de campos faltantes
+                textoHTMLExtra = `<p>Faltan campos por rellenar. Por favor, complete todos los campos.</p>`;
+                replaceTexto(res, RUTA_SINGUP_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
+                return res.end();
+            }
 
             // Validar si el nombre de usuario ya existe
             const usuarioExistente = usuarios.find(usuario => usuario.usuario === username);
@@ -433,11 +427,11 @@ const server = http.createServer((req, res) => {
 
     // Si la URL es /finalizar_compra, manejar la solicitud de finalizar compra
     } else if (url.pathname === '/finalizar_compra' && req.method === 'GET') {
+        console.log("Compra finalizada")
         let direccion = url.searchParams.get('direccion');
         let tarjeta = url.searchParams.get('tarjeta');
 
         // Convertir el carrito en una lista separada por comas
-        let carrito = cookieData.carrito;
         const listaProductos = carrito.split(':').join(',').split(',');
 
             // Crear un nuevo objeto de pedido
@@ -488,10 +482,38 @@ const server = http.createServer((req, res) => {
         console.log("Petición listado de productos");
         mostrarProductos(res);
     
+    //-- Si la URL es la raíz del sitio
+    } else if (url.pathname === '/carrito') {
+        console.log("Petición carrito");
+
+        // Si no está autenticado, redirigir al index
+        if (!user) {
+            res.writeHead(302, {'Location': '/index.html'});
+            res.end();
+            return;
+        }
+
+        // Agregar el nombre de usuario y el botón de log out al texto extra
+        textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
+                        <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
+
+        replaceTexto(res, RUTA_CARRITO, 'text/html', 'HTML_EXTRA', textoHTMLExtra);
+
     // Si la extensión es .html, servir desde la carpeta ficheros/...
     } else if (extension === '.html') {
         console.log("Petición recursos");
-        servirArchivo(res, path.join(__dirname, 'ficheros', url.pathname), 'text/html');
+
+        if (user) {
+            // Agregar el nombre de usuario y el botón de log out al texto extra
+            textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
+                            <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
+        } else {
+            // Si el usuario no está autenticado, mostrar el enlace al login
+            textoHTMLExtra = '<li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>';
+        }
+
+        replaceTexto(res, path.join(__dirname, 'ficheros', url.pathname), 'text/html', 'HTML_EXTRA', textoHTMLExtra);
+
     // Si la extensión es .css, servir desde la carpeta estilo/...
     } else if (extension === '.css') {
         console.log("Petición estilo .css");

@@ -55,14 +55,20 @@
       "nombre": "root",
       "email": "root@email.com",
       "contraseña": "clave",
-      "carrito": []
+      "carrito": [
+        "Croquetas de Jamón",
+        "Croquetas de Espinacas con Piñones"
+      ]
     },
     {
       "usuario": "laura",
       "nombre": "laura",
       "email": "laura@email.com",
       "contraseña": "clave",
-      "carrito": []
+      "carrito": [
+        "Croquetas de Jamón",
+        "Croquetas de Espinacas con Piñones"
+      ]
     },
     {
       "usuario": "nuevo",
