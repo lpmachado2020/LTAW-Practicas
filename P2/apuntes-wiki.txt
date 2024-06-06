@@ -20,6 +20,8 @@
 - Añadido el log in en todas las páginas html: main
 
 - Añadido log out
+- Añadido stock, cuando se compra se comprueba si hay stock y si no hay no te deja añadirlo al carrito
+- Cuendo se finaliza la compra, se vacia el carrito del usuario y se actualiza el valor de stock
 
 - Me he quedado en el lab 6 ejercicio 7 y 8
 
