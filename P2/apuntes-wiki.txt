@@ -30,3 +30,8 @@ Cuando el servidor recibe una petición construye un nuevo array con los resulta
 Estudia los métodos utilizados para esto. Y realiza búsquedas de información sobre ellos para entender cómo funcionan (push, startWith, toUpperCase...)
 El cliente tiene una función de retrollamada asociada al evento oninput que se genera cada vez que hay un cambio en la entrada de texto. De esta manera, cada vez que hay un cambio en el texto se realiza una petición AJAX al servidor
 
+
+- NO ENTIENDO QUÉ LE PASA A LA CODIFICACIÓN DE LAS TILDES Y LA Ñ
+
+- Tengo que terminar de modificar que los datos de los productos se lean de la base de datos
+- Me falta la búsqueda

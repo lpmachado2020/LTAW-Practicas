@@ -90,16 +90,22 @@ function get_cookies(req) {
             //-- Obtener los nombres y valores por separado
             let [nombre, valor] = element.split('=');
   
-            //-- Leer el usuario
-            //-- Solo si el nombre es 'user'
-            if (nombre.trim() === 'user') {
-                user = valor;
-            }
+            // //-- Leer el usuario
+            // //-- Solo si el nombre es 'user'
+            // if (nombre.trim() === 'user') {
+            //     user = valor;
+            // }
 
-            //-- Leer el carrito
-            //-- Solo si el nombre es 'carrito'
+            // //-- Leer el carrito
+            // //-- Solo si el nombre es 'carrito'
+            // if (nombre.trim() === 'carrito') {
+            //     carrito = valor;
+            // }
+            if (nombre.trim() === 'user') {
+                user = decodeURIComponent(valor.trim());
+            }
             if (nombre.trim() === 'carrito') {
-                carrito = valor;
+                carrito = decodeURIComponent(valor.trim());
             }
         });
     }
@@ -128,7 +134,8 @@ function productosCarrito(req, res) {
     carrito = carrito ? `${carrito}:${producto}` : producto;
 
     // Establecer la cookie del carrito
-    res.setHeader('Set-Cookie', `carrito=${carrito}; Path=/; SameSite=None`);
+    res.setHeader('Set-Cookie', `carrito=${encodeURIComponent(carrito)}; Path=/; charset=utf-8; SameSite=None`);
+    console.log("Carrito al agregar producto:", carrito);
 
     // Encontrar el usuario y agregar el producto al carrito
     let usuarioEncontrado = false;
@@ -162,56 +169,6 @@ function productosCarrito(req, res) {
         res.end('Usuario no encontrado');
     }
 }
-
-// // Función para obtener datos del producto y generar HTML dinámico
-// function generarPaginaProducto(res, productoId) {
-//     const producto = productos[productoId - 1];
-//     if (producto) {
-//         const plantillaProducto = `
-//         <!DOCTYPE html>
-//         <html lang="en">
-//         <head>
-//             <meta charset="UTF-8">
-//             <meta http-equiv="X-UA-Compatible" content="IE=edge">
-//             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-//             <link rel="icon" href="logo.png">
-//             <title>${producto.nombre} - Croqueteando</title>
-//             <link rel="stylesheet" href="productos.css">
-//         </head>
-//         <script src="js/index.js"></script>
-//         <body>
-//             <header class="header">
-//                 <nav class="nav">
-//                     <a href="/" class="name">
-//                         <img src="logo.png" alt="Logo" class="logo-img">
-//                         <span class="store-name">Croqueteando</span>
-//                     </a>
-//                     <ul class="nav-menu">
-//                         <li class="nav-menu-item"><a href="/" class="nav-menu-link nav-link">Inicio</a></li>
-//                         <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Productos</a></li>
-//                         <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Contacto</a></li>
-//                         <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Carrito</a></li>
-//                     </ul>
-//                 </nav>
-//             </header>
-//             <div class="imagen">
-//                 <img src="foto${productoId}.jpg" alt="${producto.nombre}">
-//             </div>
-//             <div class="description">
-//                 <h1>${producto.nombre}</h1>
-//                 <p class="description">${producto.descripcion}</p>
-//                 <p class="unidades">${producto.unidades}</p>
-//                 <p class="price">${producto.precio}€</p>
-//                 <button class="cart" onclick="agregarAlCarrito('${producto.nombre}')">Añadir al carrito</button>
-//             </div>
-//         </body>
-//         </html>`;
-//         res.writeHead(200, {'Content-Type': 'text/html'});
-//         res.end(plantillaProducto);
-//     } else {
-//         servirArchivo(res, RUTA_ERROR, 'text/html');
-//     }
-// }
 
 // Función para generar la lista de archivos donde se encuentra la página principal
 function listarArchivosHTML(res) {
@@ -288,18 +245,9 @@ const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://' + req.headers['host']);
     const extension = path.extname(url.pathname);
 
-    //-- Obtenemos las cookies
-    const cookieData = get_cookies(req);
-    const user = cookieData.user;
-    let carrito = cookieData.carrito || '';
-
-    // if (url.pathname.startsWith('/producto') && !isNaN(url.pathname.split('/producto')[1])) {
-    //     const productoId = parseInt(url.pathname.split('/producto')[1], 10);
-    //     generarPaginaProducto(res, productoId);
-
     //-- Si la URL es /logout, manejar el log out eliminando las cookies de user y carrito
     if (url.pathname === '/logout') {
-        res.setHeader('Set-Cookie', ['user=; Max-Age=0; SameSite=None; Path=/', 'carrito=; Max-Age=0; SameSite=None; Path=/']);
+        res.setHeader('Set-Cookie', ['user=; Max-Age=0; SameSite=None; Path=/', 'carrito=; Max-Age=0; charset=utf-8; SameSite=None; Path=/']);
         res.writeHead(302, { 'Location': '/' });
         res.end();
     //-- Si la URL es /agregar_carrito, manejar añadir un producto a la cookie carrito desde el cliente
@@ -318,8 +266,12 @@ const server = http.createServer((req, res) => {
             //-- Si el usuario y la contraseña coinciden
             if (usuario.usuario === username && usuario.contraseña === password) {
 
+                // Obtener el carrito del usuario
+                let carritoUsuario = usuario.carrito ? usuario.carrito.join(':') : '';
+
                 // Añadir el campo 'user' a la cookie de respuesta
-                res.setHeader('Set-Cookie', [`user=${username}; SameSite=None`, `carrito=${carrito}; Path=/; SameSite=None`]);
+                res.setHeader('Set-Cookie', [`user=${encodeURIComponent(username)}; SameSite=None`, `carrito=${encodeURIComponent(carritoUsuario)}; Path=/; charset=utf-8; SameSite=None`]);
+                console.log("Carrito en finalizar compra:", carritoUsuario);
                 
                 // Agregar el nombre de usuario y el botón de log out al texto extra
                 textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
@@ -414,7 +366,7 @@ const server = http.createServer((req, res) => {
                 } else {
                     // Redirigir al usuario a una página index.html
                     // Añadir el campo 'user' a la cookie de respuesta
-                    res.setHeader('Set-Cookie', `user=${username}; SameSite=None`);
+                    res.setHeader('Set-Cookie', `user=${username}; charset=utf-8; SameSite=None`);
                     // Agregar el nombre de usuario y el botón de log out al texto extra
                     textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
                                     <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
@@ -431,15 +383,21 @@ const server = http.createServer((req, res) => {
         let direccion = url.searchParams.get('direccion');
         let tarjeta = url.searchParams.get('tarjeta');
 
-        // Convertir el carrito en una lista separada por comas
-        const listaProductos = carrito.split(':').join(',').split(',');
+        //-- Obtenemos las cookies
+        const cookieData = get_cookies(req);
+        const user = cookieData.user;
+        let carrito = cookieData.carrito;
+
+        if (carrito) {
+            const carritoUsuario = carrito.split(':');
+            console.log("Carrito en finalizar compra:", carritoUsuario);
 
             // Crear un nuevo objeto de pedido
             const nuevoPedido = {
                 usuario: user,
                 direccion: direccion,
                 tarjeta: tarjeta,
-                lista_productos: listaProductos
+                lista_productos: carritoUsuario
             };
 
             // Agregar el nuevo pedido al arreglo de pedidos en la tienda
@@ -457,10 +415,15 @@ const server = http.createServer((req, res) => {
                     res.end();
                 }
             });
-        
+        }
+
     //-- Si la URL es la raíz del sitio
     } else if (url.pathname === '/') {
         console.log("Petición main");
+
+        //-- Obtenemos las cookies
+        const cookieData = get_cookies(req);
+        const user = cookieData.user;
 
         if (user) {
             // Agregar el nombre de usuario y el botón de log out al texto extra
@@ -486,6 +449,10 @@ const server = http.createServer((req, res) => {
     } else if (url.pathname === '/carrito') {
         console.log("Petición carrito");
 
+        //-- Obtenemos las cookies
+        const cookieData = get_cookies(req);
+        const user = cookieData.user;
+
         // Si no está autenticado, redirigir al index
         if (!user) {
             res.writeHead(302, {'Location': '/index.html'});
@@ -502,6 +469,10 @@ const server = http.createServer((req, res) => {
     // Si la extensión es .html, servir desde la carpeta ficheros/...
     } else if (extension === '.html') {
         console.log("Petición recursos");
+
+        //-- Obtenemos las cookies
+        const cookieData = get_cookies(req);
+        const user = cookieData.user;
 
         if (user) {
             // Agregar el nombre de usuario y el botón de log out al texto extra

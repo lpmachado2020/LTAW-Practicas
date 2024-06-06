@@ -98,6 +98,15 @@
       "lista_productos": [
         "Croquetas de Bacalao"
       ]
+    },
+    {
+      "usuario": "laura",
+      "direccion": "calle la que sea",
+      "tarjeta": "1234 5678 9101",
+      "lista_productos": [
+        "Croquetas de Jamón",
+        "Croquetas de Espinacas con Piñones"
+      ]
     }
   ]
 }
