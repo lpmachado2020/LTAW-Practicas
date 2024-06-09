@@ -296,6 +296,10 @@ const server = http.createServer((req, res) => {
         console.log(result);
         content = JSON.stringify(result);
 
+        res.setHeader('Content-Type', 'application/json');
+        res.write(content);
+        res.end();
+
     } else if (url.pathname === '/js/busqueda.js') {
         //-- Leer fichero javascript
         fs.readFile(CLIENTE_JS, 'utf-8', (err, data) => {
