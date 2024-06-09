@@ -24,6 +24,7 @@ const CARPETA_FICHEROS = path.join(__dirname, 'ficheros');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const CARPETA_ESTILO = path.join(__dirname, 'estilo');
 const CARPETA_JS = path.join(__dirname, 'js');
+const CLIENTE_JS = path.join(__dirname, 'js', 'busqueda.js');
 const RUTA_TIENDA_JSON = path.join(__dirname, 'tienda.json');
 
 //-- HTML de la página de respuesta LOGIN
@@ -33,9 +34,8 @@ const RUTA_SINGUP_ERROR = path.join(__dirname, 'ficheros', 'registro-error.html'
 //-- Leer el fichero JSON y creación de la estructura tienda a partir del contenido del fichero
 const  tienda_json = fs.readFileSync(RUTA_TIENDA_JSON);
 const tienda = JSON.parse(tienda_json);
-const productos = tienda.productos;
+let productos = tienda.productos;
 const usuarios = tienda.usuarios;
-
 
 //---------------------------------------- Funciones ----------------------------------------//
 // Función para servir archivos estáticos de manera asíncrona
@@ -282,8 +282,37 @@ const server = http.createServer((req, res) => {
 
     console.log("Petición recibida:", url.pathname);
 
+    //-- Petición de productos
+    if (url.pathname === '/buscar') {
+
+        //-- Leer los parámetros
+        let param1 = url.searchParams.get('param1');
+        param1 = param1.toUpperCase();
+
+        console.log("  Param: " +  param1);
+
+        let result = productos.filter(prod => prod.nombre.toUpperCase().includes(param1));
+
+        console.log(result);
+        content = JSON.stringify(result);
+
+    } else if (url.pathname === '/js/busqueda.js') {
+        //-- Leer fichero javascript
+        fs.readFile(CLIENTE_JS, 'utf-8', (err, data) => {
+            if (err) {
+                console.log("Error: " + err);
+                res.statusCode = 500;
+                res.setHeader('Content-Type', 'text/html');
+                res.write(RUTA_ERROR);
+            } else {
+                res.setHeader('Content-Type', 'application/javascript');
+                res.write(data);
+            }
+            res.end();
+        });
+    
     //-- Si la URL es /logout, manejar el log out eliminando las cookies de user y carrito
-    if (url.pathname === '/logout') {
+    } else if (url.pathname === '/logout') {
         // console.log("Petición de log out")
         res.setHeader('Set-Cookie', ['user=; Max-Age=0; SameSite=None; Path=/', 'carrito=; Max-Age=0; charset=utf-8; SameSite=None; Path=/']);
         res.writeHead(302, { 'Location': '/' });
