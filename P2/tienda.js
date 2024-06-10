@@ -58,7 +58,7 @@ function replaceTexto(res, rutaArchivo, contentType, textoReemplazo, textoHTMLEx
     try {
         let contenido = fs.readFileSync(rutaArchivo, 'utf8');
 
-        // Reemplazar el texto "HTML_EXTRA" con el textoHTMLExtra
+        // Reemplazar el texto "<!-- HTML_EXTRA -->" con el textoHTMLExtra
         const nuevoContenido = contenido.replace(textoReemplazo, textoHTMLExtra);
         
         // Servir la página con el texto reemplazado
@@ -274,6 +274,105 @@ function mostrarProductos(res) {
     res.end(htmlProductos);
 }
 
+// Función para obtener y mostrar el carrito
+function mostrarCarrito(req, res) {
+    const cookieData = getCookies(req);
+    const username = cookieData.user;
+    const carrito = cookieData.carrito ? cookieData.carrito.split(':') : [];
+
+    if (!username) {
+        res.writeHead(302, { 'Location': '/login.html' });
+        res.end();
+        return;
+    }
+
+    // Crear un array único de productos
+    const productosUnicos = [...new Set(carrito)];
+
+    // Generar el HTML del carrito
+    const carritoHTML = productosUnicos.map(producto => {
+        // Contar cuántas veces aparece cada producto en el carrito
+        const cantidad = carrito.filter(item => item === producto).length;
+
+        // Crear el HTML para cada producto con su cantidad y los botones de añadir y eliminar
+        return `
+            <li>
+                ${cantidad} x ${producto} 
+                <button onclick="modificarCarrito('${producto}', 'add')">+</button>
+                <button onclick="modificarCarrito('${producto}', 'remove')">-</button>
+            </li>`;
+    }).join(''); // Unir todos los elementos del array resultante en una sola cadena
+
+    console.log(carritoHTML); // Esto es solo para verificar el resultado en la consola
+
+
+    // const html = `
+    //     <!DOCTYPE html>
+    //     <html lang="en">
+    //     <head>
+    //         <meta charset="UTF-8">
+    //         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    //         <title>Carrito</title>
+    //         <script src="/js/carrito.js"></script>
+    //     </head>
+    //     <body>
+    //         <h1>Tu Carrito</h1>
+    //         <ul>${carritoHTML}</ul>
+    //         <a href="/">Volver a la tienda</a>
+    //     </body>
+    //     </html>`;
+
+    // res.writeHead(200, { 'Content-Type': 'text/html' });
+    // res.end(html);
+
+    // Leer la plantilla HTML
+    fs.readFile(RUTA_CARRITO, 'utf8', (err, data) => {
+        if (err) {
+            res.status(500).send('Error al leer el archivo HTML');
+            return;
+        }
+
+        // Reemplazar el marcador de posición con el HTML del carrito
+        const updatedHTML = data.replace('<!-- PRODUCTOS -->', carritoHTML);
+
+        // Enviar la respuesta
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(updatedHTML);
+    });
+}
+
+// Función para actualizar el carrito
+function actualizarCarrito(req, res) {
+    const cookieData = getCookies(req);
+    const username = cookieData.user;
+    let carrito = cookieData.carrito ? cookieData.carrito.split(':') : [];
+
+    if (!username) {
+        res.writeHead(302, { 'Location': '/login.html' });
+        res.end();
+        return;
+    }
+
+    const url = new URL(req.url, 'http://' + req.headers['host']);
+    const producto = url.searchParams.get('producto');
+    const accion = url.searchParams.get('accion');
+
+    if (accion === 'add') {
+        carrito.push(producto);
+    } else if (accion === 'remove') {
+        const index = carrito.indexOf(producto);
+        if (index > -1) {
+            carrito.splice(index, 1);
+        }
+    }
+
+    const nuevoCarrito = carrito.join(':');
+    res.setHeader('Set-Cookie', `carrito=${encodeURIComponent(nuevoCarrito)}; Path=/; charset=utf-8; SameSite=None`);
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true }));
+}
+
 
 //---------------------------------------- Creación del servidor ----------------------------------------//
 const server = http.createServer((req, res) => {
@@ -300,8 +399,9 @@ const server = http.createServer((req, res) => {
         res.write(content);
         res.end();
 
+    //-- Petición de busqueda.js que usa el cliente en el navegador
     } else if (url.pathname === '/js/busqueda.js') {
-        //-- Leer fichero javascript
+        //-- Lee el fichero javascript
         fs.readFile(CLIENTE_JS, 'utf-8', (err, data) => {
             if (err) {
                 console.log("Error: " + err);
@@ -353,7 +453,7 @@ const server = http.createServer((req, res) => {
                 textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
                                 <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
                 
-                replaceTexto(res, RUTA_INDEX, 'text/html', 'HTML_EXTRA', textoHTMLExtra);
+                replaceTexto(res, RUTA_INDEX, 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
                 usuarioEncontrado = true;
             //-- Si el usuario coincide, pero no la contraseña
             } else if (usuario.usuario === username && usuario.contraseña != password) {
@@ -451,7 +551,7 @@ const server = http.createServer((req, res) => {
                     textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
                                     <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
                     
-                    replaceTexto(res, RUTA_INDEX, 'text/html', 'HTML_EXTRA', textoHTMLExtra);
+                    replaceTexto(res, RUTA_INDEX, 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
                     res.end();
                 }
             });
@@ -555,10 +655,10 @@ const server = http.createServer((req, res) => {
         } else {
             // Si el usuario no está autenticado, mostrar el enlace al login
             textoHTMLExtra = `<li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>
-                            <li class="nav-menu-item"><a href="registro.html" class="nav-menu-link nav-link">Sing Up</a></li>`;
+                            <li class="nav-menu-item"><a href="registro.html" class="nav-menu-link nav-link">Sign Up</a></li>`;
         }
 
-        replaceTexto(res, RUTA_INDEX, 'text/html', 'HTML_EXTRA', textoHTMLExtra);
+        replaceTexto(res, RUTA_INDEX, 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
     
     // Si la URL es /ls, mostrar la lista de archivos en la carpeta principal
     } else if (url.pathname === '/ls') {
@@ -574,9 +674,10 @@ const server = http.createServer((req, res) => {
     } else if (url.pathname === '/carrito') {
         // console.log("Petición carrito");
 
-        //-- Obtenemos las cookies
+        // Obtener las cookies
         const cookieData = getCookies(req);
         const user = cookieData.user;
+        let carrito = cookieData.carrito;
 
         // Si no está autenticado, redirigir al login
         if (!user) {
@@ -585,11 +686,21 @@ const server = http.createServer((req, res) => {
             return;
         }
 
-        // Agregar el nombre de usuario y el botón de log out al texto extra
-        textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
-                        <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
+        mostrarCarrito(req, res);
 
-        replaceTexto(res, RUTA_CARRITO, 'text/html', 'HTML_EXTRA', textoHTMLExtra);
+        // // Agregar el nombre de usuario y el botón de log out al texto extra
+        // textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
+        //                 <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
+
+        // replaceTexto(res, RUTA_CARRITO, 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
+
+    // Ruta para actualizar el carrito
+    } else if (url.pathname === '/actualizar_carrito') {
+        actualizarCarrito(req, res);
+
+    } else if (url.pathname === '/js/carrito.js') {
+        const filePath = path.join(CARPETA_JS, 'carrito.js');
+        servirArchivo(res, filePath, 'application/javascript');
 
     // Si la extensión es .html, servir desde la carpeta ficheros/...
     } else if (extension === '.html') {
@@ -607,9 +718,9 @@ const server = http.createServer((req, res) => {
         } else {
             // Si el usuario no está autenticado, mostrar el enlace al login
             textoHTMLExtra = `<li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>
-                            <li class="nav-menu-item"><a href="registro.html" class="nav-menu-link nav-link">Sing Up</a></li>`;        }
+                            <li class="nav-menu-item"><a href="registro.html" class="nav-menu-link nav-link">Sign Up</a></li>`;        }
 
-        replaceTexto(res, path.join(__dirname, 'ficheros', url.pathname), 'text/html', 'HTML_EXTRA', textoHTMLExtra);
+        replaceTexto(res, path.join(__dirname, 'ficheros', url.pathname), 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
 
     // Si la extensión es .css, servir desde la carpeta estilo/...
     } else if (extension === '.css') {

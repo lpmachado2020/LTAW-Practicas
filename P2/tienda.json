@@ -60,7 +60,12 @@
       "nombre": "laura",
       "email": "laura@email.com",
       "contraseña": "clave",
-      "carrito": []
+      "carrito": [
+        "Croquetas de Bacalao",
+        "Croquetas de Bacalao",
+        "Croquetas de Jamón",
+        "Croquetas de Jamón"
+      ]
     },
     {
       "usuario": "nuevo",

@@ -35,3 +35,5 @@ El cliente tiene una función de retrollamada asociada al evento oninput que se 
 - Me falta hacer la página carrito.html, quiero añadir un número cuando se añada algo al carrito
 - Tengo que terminar de modificar que los datos de los productos se lean de la base de datos
 - Me falta la búsqueda
+
+- Cambiar errata SIGN UP
