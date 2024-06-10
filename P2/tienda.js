@@ -20,6 +20,7 @@ const PUERTO = 9090;
 const RUTA_INDEX = path.join(__dirname, 'ficheros', 'index.html');
 const RUTA_ERROR = path.join(__dirname, 'ficheros', 'error.html');
 const RUTA_CARRITO = path.join(__dirname, 'ficheros', 'carrito.html');
+const RUTA_COMPRA = path.join(__dirname, 'ficheros', 'finalizar_compra.html');
 const CARPETA_FICHEROS = path.join(__dirname, 'ficheros');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const CARPETA_ESTILO = path.join(__dirname, 'estilo');
@@ -28,8 +29,8 @@ const CLIENTE_JS = path.join(__dirname, 'js', 'busqueda.js');
 const RUTA_TIENDA_JSON = path.join(__dirname, 'tienda.json');
 
 //-- HTML de la página de respuesta LOGIN
-const RUTA_LOGIN_ERROR = path.join(__dirname, 'ficheros', 'login-error.html');
-const RUTA_SINGUP_ERROR = path.join(__dirname, 'ficheros', 'registro-error.html');
+const RUTA_LOGIN = path.join(__dirname, 'ficheros', 'login.html');
+const RUTA_SIGNUP = path.join(__dirname, 'ficheros', 'registro.html');
 
 //-- Leer el fichero JSON y creación de la estructura tienda a partir del contenido del fichero
 const  tienda_json = fs.readFileSync(RUTA_TIENDA_JSON);
@@ -58,7 +59,7 @@ function replaceTexto(res, rutaArchivo, contentType, textoReemplazo, textoHTMLEx
     try {
         let contenido = fs.readFileSync(rutaArchivo, 'utf8');
 
-        // Reemplazar el texto "<!-- HTML_EXTRA -->" con el textoHTMLExtra
+        // Reemplazar texto con el textoHTMLExtra
         const nuevoContenido = contenido.replace(textoReemplazo, textoHTMLExtra);
         
         // Servir la página con el texto reemplazado
@@ -305,36 +306,20 @@ function mostrarCarrito(req, res) {
 
     console.log(carritoHTML); // Esto es solo para verificar el resultado en la consola
 
-
-    // const html = `
-    //     <!DOCTYPE html>
-    //     <html lang="en">
-    //     <head>
-    //         <meta charset="UTF-8">
-    //         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    //         <title>Carrito</title>
-    //         <script src="/js/carrito.js"></script>
-    //     </head>
-    //     <body>
-    //         <h1>Tu Carrito</h1>
-    //         <ul>${carritoHTML}</ul>
-    //         <a href="/">Volver a la tienda</a>
-    //     </body>
-    //     </html>`;
-
-    // res.writeHead(200, { 'Content-Type': 'text/html' });
-    // res.end(html);
-
-    // Leer la plantilla HTML
+    // Leer la carrito.html
     fs.readFile(RUTA_CARRITO, 'utf8', (err, data) => {
         if (err) {
             res.status(500).send('Error al leer el archivo HTML');
             return;
         }
 
-        // Reemplazar el marcador de posición con el HTML del carrito
-        const updatedHTML = data.replace('<!-- PRODUCTOS -->', carritoHTML);
+        textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
+                        <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
 
+        // Reemplazar el marcador de posición con el HTML del carrito
+        let updatedHTML = data.replace('<!-- HTML_EXTRA -->', textoHTMLExtra);
+        updatedHTML = updatedHTML.replace('<!-- PRODUCTOS -->', carritoHTML);
+        
         // Enviar la respuesta
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(updatedHTML);
@@ -460,7 +445,7 @@ const server = http.createServer((req, res) => {
                 //-- Añade un aviso indicando que la contraseña no es válida
                 textoHTMLExtra = `<p>¡Contraseña incorrecta!</p><p>Introduzca una contraseña válida</p>`;
 
-                replaceTexto(res, RUTA_LOGIN_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
+                replaceTexto(res, RUTA_LOGIN, 'text/html', '<!-- AVISO -->', textoHTMLExtra);
                 usuarioEncontrado = true;
             }
         });
@@ -469,7 +454,7 @@ const server = http.createServer((req, res) => {
         if (!usuarioEncontrado) {
             //-- Añade un aviso y redirige a la página de registro
             textoHTMLExtra = `<p>Usuario no encontrado. Por favor, regístrese.</p>`;
-            replaceTexto(res, RUTA_SINGUP_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
+            replaceTexto(res, RUTA_SIGNUP, 'text/html', '<!-- AVISO -->', textoHTMLExtra);
         }
 
     // Si la URL es /registrar, manejar la solicitud de registro
@@ -489,39 +474,34 @@ const server = http.createServer((req, res) => {
             const email = formData.get('email');
             const password = formData.get('password');
 
+            let mensajeError = '';
+
             // Validar si todos los campos están completos
             if (!username || !name || !email || !password) {
-                // Redirigir a la página de error con aviso
-                textoHTMLExtra = `<p>Faltan campos por rellenar. Por favor, complete todos los campos.</p>`;
-                replaceTexto(res, RUTA_SINGUP_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
-                return res.end();
+                mensajeError += `<p>Faltan campos por rellenar. Por favor, complete todos los campos.</p>`;
             }
-
+    
             // Validar si el nombre de usuario ya existe
             const usuarioExistente = usuarios.find(usuario => usuario.usuario === username);
             if (usuarioExistente) {
-                // Redirigir a la página de error con aviso
-                textoHTMLExtra = `<p>Nombre de usuario existente</p><p>Introduzca un nombre de usuario diferente</p>`;
-                replaceTexto(res, RUTA_SINGUP_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
-                return res.end();
+                mensajeError += `<p>Nombre de usuario existente. Introduzca un nombre de usuario diferente.</p>`;
             }
-
+    
             // Validar si el correo electrónico ya existe
-            const emailExistente = usuarios.find(usuario => usuario.correo === email);
+            const emailExistente = usuarios.find(usuario => usuario.email === email);
             if (emailExistente) {
-                // Redirigir a la página de error con aviso
-                textoHTMLExtra = `<p>Correo electrónico existente.</p><p>Introduzca una dirección diferente</p>`;
-                replaceTexto(res, RUTA_SINGUP_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
-                return res.end();
+                mensajeError += `<p>Correo electrónico existente. Introduzca una dirección diferente.</p>`;
             }
-
+    
             // Validar si el correo electrónico es válido
             const emailValido = /\S+@\S+\.\S+/.test(email);
             if (!emailValido) {
-                // Redirigir a la página de error con aviso
-                textoHTMLExtra = `<p>Correo electrónico no válido</p>`;
-                replaceTexto(res, RUTA_SINGUP_ERROR, 'text/html', 'AVISO', textoHTMLExtra);
-                return res.end();
+                mensajeError += `<p>Correo electrónico no válido.</p>`;
+            }
+    
+            if (mensajeError) {
+                replaceTexto(res, RUTA_SIGNUP, 'text/html', '<!-- AVISO -->', mensajeError);
+                return;
             }
             
             //-- Si se introducen valores válidos. Crear un nuevo objeto de usuario
@@ -567,12 +547,21 @@ const server = http.createServer((req, res) => {
     // Eliminar los espacios del número de la tarjeta
     tarjeta = tarjeta.replace(/\s+/g, '');
 
-    // Validar que la dirección y la tarjeta no sean nulos y que la tarjeta tenga 16 dígitos
-    if (!direccion || !tarjeta || tarjeta.length !== 16 || isNaN(tarjeta)) {
-        // Redirigir al usuario a la página de finalizar_compra de nuevo
-        res.writeHead(302, {'Location': '/finalizar_compra.html'});
-        res.end();
-        return;
+    let mensajeError = '';
+
+    // Validar que la dirección no sea nula
+    if (!direccion) {
+        mensajeError += '<p>La dirección no puede estar vacía.</p>';
+    }
+
+    // Validar que la tarjeta tenga 16 dígitos y sea un número
+    if (!tarjeta || tarjeta.length !== 16 || isNaN(tarjeta)) {
+        mensajeError += '<p>El número de tarjeta debe ser de 16 dígitos numéricos.</p>';
+    }
+
+    if (mensajeError) {
+        replaceTexto(res, RUTA_COMPRA, 'text/html', '<!-- AVISO -->', mensajeError);
+        return res.end();
     }
 
     // Obtener las cookies
@@ -677,7 +666,6 @@ const server = http.createServer((req, res) => {
         // Obtener las cookies
         const cookieData = getCookies(req);
         const user = cookieData.user;
-        let carrito = cookieData.carrito;
 
         // Si no está autenticado, redirigir al login
         if (!user) {
@@ -687,12 +675,6 @@ const server = http.createServer((req, res) => {
         }
 
         mostrarCarrito(req, res);
-
-        // // Agregar el nombre de usuario y el botón de log out al texto extra
-        // textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
-        //                 <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
-
-        // replaceTexto(res, RUTA_CARRITO, 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
 
     // Ruta para actualizar el carrito
     } else if (url.pathname === '/actualizar_carrito') {
