@@ -11,7 +11,7 @@
       "nombre": "Croquetas de Bacalao",
       "descripcion": "Si quieres algo diferente, estas son tus croquetas! El sabor único y la textura crujiente por fuera y suave por dentro te conquistarán al primer bocado. Acompañadas con una salsa de ali-oli casera.",
       "unidades": "5 Unidades",
-      "stock": 9,
+      "stock": 8,
       "precio": 8
     },
     {
@@ -39,7 +39,7 @@
       "nombre": "Croquetas de Espinacas con Piñones",
       "descripcion": "Déjate seducir por la frescura de nuestras croquetas de espinacas con piñones. Cada croqueta está repleta de espinacas frescas y piñones crujientes, envueltas en una delicada masa cremosa. ¡No te defraudarán!",
       "unidades": "6 Unidades",
-      "stock": 8,
+      "stock": 0,
       "precio": 8
     }
   ],
@@ -49,7 +49,10 @@
       "nombre": "root",
       "email": "root@email.com",
       "contraseña": "clave",
-      "carrito": []
+      "carrito": [
+        "Croquetas de Espinacas con Piñones",
+        "Croquetas de Jamón"
+      ]
     },
     {
       "usuario": "laura",
@@ -93,6 +96,14 @@
         "Croquetas de Espinacas con Piñones",
         "Croquetas de Pollo Asado",
         "Croquetas de Jamón"
+      ]
+    },
+    {
+      "usuario": "root",
+      "direccion": "calle la que sea",
+      "tarjeta": "1234567891011121",
+      "lista_productos": [
+        "Croquetas de Bacalao"
       ]
     }
   ]

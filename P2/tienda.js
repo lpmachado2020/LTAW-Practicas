@@ -72,22 +72,23 @@ function replaceTexto(res, rutaArchivo, contentType, textoReemplazo, textoHTMLEx
     }
 }
 
-//-- Función que maneja la actualización del stock y la validación de productos agotados
+//-- Función que maneja la actualización del stock y la validación de stock
 function procesoPedido(carrito) {
-    let itemsCarrito = carrito.split(':');
     let stockSuficiente = true;
+    let productosSinStock = [];
 
     // Comprobar el stock de cada producto en el carrito
-    itemsCarrito.forEach(item => {
+    carrito.forEach(item => {
         let producto = productos.find(p => p.nombre === item);
         if (producto && producto.stock <= 0) {
             stockSuficiente = false;
+            productosSinStock.push(item); // Agregar el producto sin stock a la lista
         }
     });
 
     // Si hay stock suficiente, reducir el stock de cada producto
     if (stockSuficiente) {
-        itemsCarrito.forEach(item => {
+        carrito.forEach(item => {
             let producto = productos.find(p => p.nombre === item);
             if (producto) {
                 producto.stock -= 1;
@@ -101,8 +102,14 @@ function procesoPedido(carrito) {
             }
         });
     }
-    return stockSuficiente;
+
+    // Retornar el resultado del proceso y la lista de productos sin stock
+    return {
+        success: stockSuficiente,
+        productosSinStock: productosSinStock
+    };
 }
+
 
 //-- Analizar la cookie y devolver el nombre del usuario y el carrito si existen
 function getCookies(req) {
@@ -155,15 +162,6 @@ function productosCarrito(req, res) {
 
     const url = new URL(req.url, 'http://' + req.headers['host']);
     const producto = url.searchParams.get('producto');
-
-    // Verificar el stock del producto
-    let productoObj = productos.find(p => p.nombre === producto);
-    if (productoObj && productoObj.stock <= 0) {
-        // Mostrar mensaje de que el producto no está disponible
-        res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
-        res.end(`<html><body><h1>El producto ${producto} no está disponible.</h1><a href="/">Volver a la tienda</a></body></html>`);
-        return;
-    }
 
     // Añadir el producto al carrito
     carrito = carrito ? `${carrito}:${producto}` : producto;
@@ -358,6 +356,32 @@ function actualizarCarrito(req, res) {
     res.end(JSON.stringify({ success: true }));
 }
 
+// Función para verificar si el carrito está vacío y si hay suficiente stock de los productos
+function verificarCarritoYStock(req, res, rutaArchivo, contentType) {
+    const cookieData = getCookies(req);
+    const carrito = cookieData.carrito ? cookieData.carrito.split(':') : [];
+
+    // Verificar si el carrito está vacío
+    if (carrito.length === 0) {
+        const avisoError = '<p>El carrito está vacío, no puedes finalizar la compra.</p>';
+        replaceTexto(res, RUTA_CARRITO, 'text/html', '<!-- AVISO -->', avisoError);
+        return false;
+    }
+
+    // Verificar si hay suficiente stock para cada producto en el carrito
+    for (let item of carrito) {
+        let producto = productos.find(p => p.nombre === item);
+        if (producto && producto.stock <= 0) {
+            const avisoError = `<p>El producto ${item} no tiene suficiente stock.</p>`;
+            replaceTexto(res, RUTA_CARRITO, 'text/html', '<!-- AVISO -->', avisoError);
+            return false;
+        }
+    }
+
+    // Si todo está bien, retornar true indicando que se puede proceder
+    return true;
+}
+
 
 //---------------------------------------- Creación del servidor ----------------------------------------//
 const server = http.createServer((req, res) => {
@@ -366,7 +390,7 @@ const server = http.createServer((req, res) => {
 
     console.log("Petición recibida:", url.pathname);
 
-    //-- Petición de productos
+    //-- Petición de busqueda de productos
     if (url.pathname === '/buscar') {
 
         //-- Leer los parámetros
@@ -537,52 +561,56 @@ const server = http.createServer((req, res) => {
             });
         });
 
-//-- Si la URL es /finalizar_compra, manejar la solicitud de finalizar la compra
-} else if (url.pathname === '/finalizar_compra' && req.method === 'GET') {
-    // console.log("Compra finalizada")
+    // Manejo de la solicitud para finalizar_compra.html
+     } else if (url.pathname === '/finalizar_compra.html') {
+        // Verificar carrito y stock antes de servir la página
+        if (verificarCarritoYStock(req, res, RUTA_COMPRA, 'text/html')) {
+            servirArchivo(res, RUTA_COMPRA, 'text/html');
+        }
 
-    let direccion = url.searchParams.get('direccion');
-    let tarjeta = url.searchParams.get('tarjeta');
+    //-- Si la URL es /finalizar_compra, manejar la solicitud de finalizar la compra
+    } else if (url.pathname === '/finalizar_compra' && req.method === 'GET') {
+        // Validar la dirección y la tarjeta de crédito
+        let direccion = url.searchParams.get('direccion');
+        let tarjeta = url.searchParams.get('tarjeta');
 
-    // Eliminar los espacios del número de la tarjeta
-    tarjeta = tarjeta.replace(/\s+/g, '');
+        // Eliminar los espacios del número de la tarjeta
+        tarjeta = tarjeta.replace(/\s+/g, '');
 
-    let mensajeError = '';
+        let mensajeError = '';
 
-    // Validar que la dirección no sea nula
-    if (!direccion) {
-        mensajeError += '<p>La dirección no puede estar vacía.</p>';
-    }
+        // Validar que la dirección no sea nula
+        if (!direccion) {
+            mensajeError += '<p>La dirección no puede estar vacía.</p>';
+        }
 
-    // Validar que la tarjeta tenga 16 dígitos y sea un número
-    if (!tarjeta || tarjeta.length !== 16 || isNaN(tarjeta)) {
-        mensajeError += '<p>El número de tarjeta debe ser de 16 dígitos numéricos.</p>';
-    }
+        // Validar que la tarjeta tenga 16 dígitos y sea un número
+        if (!tarjeta || tarjeta.length !== 16 || isNaN(tarjeta)) {
+            mensajeError += '<p>El número de tarjeta debe ser de 16 dígitos numéricos.</p>';
+        }
 
-    if (mensajeError) {
-        replaceTexto(res, RUTA_COMPRA, 'text/html', '<!-- AVISO -->', mensajeError);
-        return res.end();
-    }
+        // Si hay errores en la validación, mostrarlos y terminar la respuesta
+        if (mensajeError) {
+            replaceTexto(res, RUTA_COMPRA, 'text/html', '<!-- AVISO -->', mensajeError);
+            res.end();
+            return;
+        }
 
-    // Obtener las cookies
-    const cookieData = getCookies(req);
-    const user = cookieData.user;
-    let carrito = cookieData.carrito;
-
-    // Comprobar que el carrito tiene valores
-    if (carrito) {
-        const carritoUsuario = carrito.split(':');
-        // console.log("Carrito en finalizar compra 2:", carritoUsuario);
+        // Obtener las cookies
+        const cookieData = getCookies(req);
+        const user = cookieData.user;
+        const carrito = cookieData.carrito ? cookieData.carrito.split(':') : [];
 
         // Verificar stock y procesar pedido
-        if (procesoPedido(carrito)) {
+        const resultado = procesoPedido(carrito);
 
+        if (resultado.success) {
             // Crear un nuevo objeto de pedido
             const nuevoPedido = {
                 usuario: user,
                 direccion: direccion,
                 tarjeta: tarjeta,
-                lista_productos: carritoUsuario
+                lista_productos: carrito
             };
 
             // Agregar el nuevo pedido a la base de datos de pedidos
@@ -595,9 +623,9 @@ const server = http.createServer((req, res) => {
                     res.writeHead(500);
                     res.end();
                 } else {
-                    // Vaciamos el carrito del usuario en la base de datos
+                    // Vaciar el carrito del usuario en la base de datos
                     const usuarioIndex = tienda.usuarios.findIndex(u => u.nombre === user);
-                    if (usuarioIndex !== -1) {  //-- Si no encuentra a un usuario devuelve un -1
+                    if (usuarioIndex !== -1) {
                         tienda.usuarios[usuarioIndex].carrito = [];
                     }
 
@@ -608,25 +636,23 @@ const server = http.createServer((req, res) => {
                             res.writeHead(500);
                             res.end();
                         } else {
-                            // Eliminamos la cookie del carrito
+                            // Eliminar la cookie del carrito
                             res.setHeader('Set-Cookie', `carrito=; Max-Age=0; charset=utf-8; SameSite=None; Path=/`);
 
                             // Redirigir al usuario a una página de confirmación de compra exitosa
-                            res.writeHead(302, {'Location': '/compra-exitosa.html'});
+                            res.writeHead(302, { 'Location': '/compra-exitosa.html' });
                             res.end();
                         }
                     });
                 }
             });
-
         } else {
-            res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
-            res.end(`<html><body><h1>Algunos productos no están disponibles. Por favor, revisa tu carrito.</h1><a href="/carrito">Volver al carrito</a></body></html>`);
+            // Mostrar los productos que no tienen stock suficiente
+            const mensajeError = `<p>Los siguientes productos no están disponibles: ${resultado.productosSinStock.join(', ')}</p>`;
+            replaceTexto(res, RUTA_COMPRA, 'text/html', '<!-- AVISO -->', mensajeError);
+            res.end();
         }
-    } else {
-        res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
-        res.end(`<html><body><h1>No hay productos en tu carrito.</h1><a href="/">Volver al carrito</a></body></html>`);
-    }
+
 
     //-- Si la URL es la raíz del sitio
     } else if (url.pathname === '/') {
