@@ -286,6 +286,26 @@ function mostrarCarrito(req, res) {
         return;
     }
 
+    // Si el carrito está vacío, mostrar un aviso
+    if (carrito.length === 0) {
+        const avisoHTML = `<p>El carrito está vacío.</p>`;
+        fs.readFile(RUTA_CARRITO, 'utf8', (err, data) => {
+            if (err) {
+                res.status(500).send('Error al leer el archivo HTML');
+                return;
+            }
+
+            // Reemplazar el marcador de posición con el aviso de carrito vacío
+            let updatedHTML = data.replace('<!-- HTML_EXTRA -->', '');
+            updatedHTML = updatedHTML.replace('<!-- PRODUCTOS -->', avisoHTML);
+            
+            // Enviar la respuesta
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(updatedHTML);
+        });
+        return;
+    }
+
     // Crear un array único de productos
     const productosUnicos = [...new Set(carrito)];
 
