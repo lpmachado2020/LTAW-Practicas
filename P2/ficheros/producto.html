@@ -1,0 +1,41 @@
+<!-- Texto HTML para todos los productos -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png">
+    <title><!-- NOMBRE_PRODUCTO --> - Croqueteando</title>
+    <link rel="stylesheet" href="productos.css">
+</head>
+
+<!-- <script src="js/busqueda.js" defer></script> -->
+<script src="js/index.js" defer></script>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="name">
+                <img src="logo.png" alt="Logo" class="logo-img">
+                <span class="store-name">Croqueteando</span>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-menu-item"><a href="/" class="nav-menu-link nav-link">Inicio</a></li>
+                <li class="nav-menu-item"><a href="/carrito.html" class="nav-menu-link nav-link">Carrito</a></li>
+                <!-- HTML_EXTRA -->
+            </ul>
+        </nav>
+    </header>
+    <div class="imagen">
+        <img src="FOTO_PRODUCTO" alt="NOMBRE PRODUCTO">
+    </div>
+    <div class="description">
+        <h1><!-- NOMBRE_PRODUCTO --></h1>
+        <p><!-- DESCRIPCION_PRODUCTO --></p>
+        <p class="unidades"><!-- UNIDADES_PRODUCTO --></p>
+        <p class="price"><!-- PRECIO_PRODUCTO -->€</p>
+        <button class="cart" onclick="agregarAlCarrito('PRODUCTO')">Añadir al carrito</button>
+    </div>
+</body>
+</html>

@@ -21,6 +21,7 @@ const RUTA_INDEX = path.join(__dirname, 'ficheros', 'index.html');
 const RUTA_ERROR = path.join(__dirname, 'ficheros', 'error.html');
 const RUTA_CARRITO = path.join(__dirname, 'ficheros', 'carrito.html');
 const RUTA_COMPRA = path.join(__dirname, 'ficheros', 'finalizar_compra.html');
+const RUTA_PRODUCTO = path.join(__dirname, 'ficheros', 'producto.html');
 const CARPETA_FICHEROS = path.join(__dirname, 'ficheros');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const CARPETA_ESTILO = path.join(__dirname, 'estilo');
@@ -54,7 +55,7 @@ function servirArchivo(res, rutaArchivo, contentType) {
     });
 }
 
-// Función para reemplazar texto
+// Función para reemplazar texto en cualquier caso
 function replaceTexto(res, rutaArchivo, contentType, textoReemplazo, textoHTMLExtra) {
     try {
         let contenido = fs.readFileSync(rutaArchivo, 'utf8');
@@ -382,6 +383,36 @@ function verificarCarritoYStock(req, res, rutaArchivo, contentType) {
     return true;
 }
 
+// Función para servir la página del producto con los datos del producto
+function servirProducto(res, idProducto) {
+    const producto = productos.find(p => p.id === idProducto);
+
+    if (!producto) {
+        servirArchivo(res, RUTA_ERROR, 'text/html');
+        return;
+    }
+
+    fs.readFile(RUTA_PRODUCTO, 'utf8', (err, contenido) => {
+        if (err) {
+            res.writeHead(500);
+            res.end();
+            return;
+        }
+
+        let nuevoContenido = contenido
+            .replace(/<!-- NOMBRE_PRODUCTO -->/g, producto.nombre)
+            .replace(/<!-- DESCRIPCION_PRODUCTO -->/g, producto.descripcion)
+            .replace(/<!-- UNIDADES_PRODUCTO -->/g, producto.unidades)
+            .replace(/<!-- PRECIO_PRODUCTO -->/g, producto.precio)
+            .replace(/<!-- STOCK_PRODUCTO -->/g, producto.stock)
+            .replace(/FOTO_PRODUCTO/g, producto.foto)
+            .replace(/NOMBRE PRODUCTO/g, producto.nombre)
+            .replace(/'PRODUCTO'/g, `'${producto.nombre}'`);
+
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(nuevoContenido, 'utf-8');
+    });
+}
 
 //---------------------------------------- Creación del servidor ----------------------------------------//
 const server = http.createServer((req, res) => {
@@ -390,8 +421,18 @@ const server = http.createServer((req, res) => {
 
     console.log("Petición recibida:", url.pathname);
 
+    //-- Si se solicita un producto
+    if (url.pathname.startsWith('/producto') && extension === '.html') {
+        const match = url.pathname.match(/\/producto(\d+)\.html/);
+        if (match) {
+            const idProducto = parseInt(match[1], 10);
+            servirProducto(res, idProducto);
+        } else {
+            servirArchivo(res, RUTA_ERROR, 'text/html');
+        }
+
     //-- Petición de busqueda de productos
-    if (url.pathname === '/buscar') {
+    } else if (url.pathname === '/buscar') {
 
         //-- Leer los parámetros
         let param1 = url.searchParams.get('param1');
