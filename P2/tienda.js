@@ -16,7 +16,7 @@ const path = require('path');
 //-- Puerto de escucha del servidor
 const PUERTO = 9090;
 
-// Rutas de los archivos index, error y carpetas
+//-- Rutas de los archivos index, error y carpetas
 const RUTA_INDEX = path.join(__dirname, 'ficheros', 'index.html');
 const RUTA_ERROR = path.join(__dirname, 'ficheros', 'error.html');
 const RUTA_CARRITO = path.join(__dirname, 'ficheros', 'carrito.html');
@@ -38,16 +38,17 @@ const  tienda_json = fs.readFileSync(RUTA_TIENDA_JSON);
 const tienda = JSON.parse(tienda_json);
 let productos = tienda.productos;
 const usuarios = tienda.usuarios;
+const pedidos = tienda.pedidos;
 
 //---------------------------------------- Funciones ----------------------------------------//
-// Función para servir archivos estáticos de manera asíncrona
+//-- Función para servir archivos estáticos de manera asíncrona
 function servirArchivo(res, rutaArchivo, contentType) {
     fs.readFile(rutaArchivo, (err, contenido) => {
-        // Si hay un error al leer el archivo
+        //-- Si hay un error al leer el archivo
         if (err) {
             res.writeHead(404);
             res.end();
-        // Sino envía el código de éxito 200 y el tipo MIME correspondiente
+        //-- Sino envía el código de éxito 200 y el tipo MIME correspondiente
         } else {
             res.writeHead(200, {'Content-Type': contentType});
             res.end(contenido, 'utf-8');
@@ -55,15 +56,15 @@ function servirArchivo(res, rutaArchivo, contentType) {
     });
 }
 
-// Función para reemplazar texto en cualquier caso
+//-- Función para reemplazar texto en cualquier caso
 function replaceTexto(res, rutaArchivo, contentType, textoReemplazo, textoHTMLExtra) {
     try {
         let contenido = fs.readFileSync(rutaArchivo, 'utf8');
 
-        // Reemplazar texto con el textoHTMLExtra
+        //-- Reemplazar texto con el textoHTMLExtra
         const nuevoContenido = contenido.replace(textoReemplazo, textoHTMLExtra);
         
-        // Servir la página con el texto reemplazado
+        //-- Servir la página con el texto reemplazado
         res.writeHead(200, { 'Content-Type': contentType });
         res.end(nuevoContenido, 'utf-8');
     } catch (err) {
@@ -78,16 +79,17 @@ function procesoPedido(carrito) {
     let stockSuficiente = true;
     let productosSinStock = [];
 
-    // Comprobar el stock de cada producto en el carrito
+    //-- Comprobar el stock de cada producto en el carrito
     carrito.forEach(item => {
         let producto = productos.find(p => p.nombre === item);
         if (producto && producto.stock <= 0) {
             stockSuficiente = false;
-            productosSinStock.push(item); // Agregar el producto sin stock a la lista
+            //-- Se utiliza para comunicar qué producto está agotado cuando se accede al carrito
+            productosSinStock.push(item); //-- Agregar el producto sin stock a la lista
         }
     });
 
-    // Si hay stock suficiente, reducir el stock de cada producto
+    //-- Si hay stock suficiente, reducir el stock de cada producto
     if (stockSuficiente) {
         carrito.forEach(item => {
             let producto = productos.find(p => p.nombre === item);
@@ -96,7 +98,7 @@ function procesoPedido(carrito) {
             }
         });
 
-        // Guardar los cambios en el archivo tienda.json
+        //-- Guardar los cambios en el archivo tienda.json
         fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), 'utf-8', (err) => {
             if (err) {
                 console.error('Error al actualizar el stock en tienda.json:', err);
@@ -104,7 +106,7 @@ function procesoPedido(carrito) {
         });
     }
 
-    // Retornar el resultado del proceso y la lista de productos sin stock
+    //-- Retornar el resultado del proceso y la lista de productos sin stock
     return {
         success: stockSuficiente,
         productosSinStock: productosSinStock
@@ -112,12 +114,13 @@ function procesoPedido(carrito) {
 }
 
 
-//-- Analizar la cookie y devolver el nombre del usuario y el carrito si existen
+//-- Función que añaliza las cookies y devuelve el nombre del usuario y el carrito si existen
 function getCookies(req) {
     //-- Leer la Cookie recibida
     const cookie = req.headers.cookie;
   
     //-- Inicializar las variables para el usuario y el carrito
+    //-- Si no existe carrito o user se devuelve null
     let user = null;
     let carrito = null;
 
@@ -148,13 +151,13 @@ function getCookies(req) {
     return { user, carrito };
 }
 
-// Función para manejar la solicitud de añadir al carrito
+//-- Función para manejar la solicitud de añadir al carrito
 function productosCarrito(req, res) {
     const cookieData = getCookies(req);
     const username = cookieData.user;
     let carrito = cookieData.carrito || '';
 
-    // Si no está autenticado, redirigir al login
+    //-- Si no está autenticado, redirigir al login
     if (!username) {
         res.writeHead(302, {'Location': '/login.html'});
         res.end();
@@ -164,14 +167,13 @@ function productosCarrito(req, res) {
     const url = new URL(req.url, 'http://' + req.headers['host']);
     const producto = url.searchParams.get('producto');
 
-    // Añadir el producto al carrito
+    //-- Añadir el producto al carrito
     carrito = carrito ? `${carrito}:${producto}` : producto;
 
-    // Establecer la cookie del carrito
+    //-- Establecer la cookie del carrito
     res.setHeader('Set-Cookie', `carrito=${encodeURIComponent(carrito)}; Path=/; charset=utf-8; SameSite=None`);
-    // console.log("Carrito al agregar producto:", carrito);
 
-    // Encontrar el usuario y agregar el producto al carrito
+    //-- Encontrar el usuario y agregar el producto al carrito
     let usuarioEncontrado = false;
     usuarios.forEach(usuario => {
         if (usuario.usuario === username) {
@@ -187,7 +189,7 @@ function productosCarrito(req, res) {
 
     //-- Si encuentra el usuario
     if (usuarioEncontrado) {
-        // Guardar la lista actualizada de usuarios en el archivo tienda.json
+        //-- Guardar la lista actualizada de usuarios en el archivo tienda.json
         fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), 'utf-8',(err) => {
             if (err) {
                 console.error('Error al escribir en el archivo tienda.json:', err);
@@ -204,7 +206,7 @@ function productosCarrito(req, res) {
     }
 }
 
-// Función para generar la lista de archivos donde se encuentra la página principal
+//-- Función para generar la lista de archivos donde se encuentra la página principal
 function listarArchivosHTML(res) {
     fs.readdir(CARPETA_FICHEROS, (err, files) => {
         if (err) {
@@ -235,7 +237,7 @@ function listarArchivosHTML(res) {
     });
 }
 
-// Función para generar la lista de productos desde el archivo tienda.json
+//-- Función para generar la lista de productos desde el archivo tienda.json
 function mostrarProductos(res) {
     const disponibles = [];
     const noDisponibles = [];
@@ -274,7 +276,7 @@ function mostrarProductos(res) {
     res.end(htmlProductos);
 }
 
-// Función para obtener y mostrar el carrito
+//-- Función para obtener y mostrar el carrito
 function mostrarCarrito(req, res) {
     const cookieData = getCookies(req);
     const username = cookieData.user;
@@ -286,7 +288,7 @@ function mostrarCarrito(req, res) {
         return;
     }
 
-    // Si el carrito está vacío, mostrar un aviso
+    //-- Si el carrito está vacío, mostrar un aviso
     if (carrito.length === 0) {
         const avisoHTML = `<p>El carrito está vacío.</p>`;
         fs.readFile(RUTA_CARRITO, 'utf8', (err, data) => {
@@ -295,37 +297,35 @@ function mostrarCarrito(req, res) {
                 return;
             }
 
-            // Reemplazar el marcador de posición con el aviso de carrito vacío
+            //-- Reemplazar el marcador de posición con el aviso de carrito vacío
             let updatedHTML = data.replace('<!-- HTML_EXTRA -->', '');
             updatedHTML = updatedHTML.replace('<!-- PRODUCTOS -->', avisoHTML);
             
-            // Enviar la respuesta
+            //-- Enviar la respuesta
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(updatedHTML);
         });
         return;
     }
 
-    // Crear un array único de productos
+    //-- Crear un array único de productos
     const productosUnicos = [...new Set(carrito)];
 
-    // Generar el HTML del carrito
+    //-- Generar el contenido del carrito
     const carritoHTML = productosUnicos.map(producto => {
-        // Contar cuántas veces aparece cada producto en el carrito
+        //-- Contar cuántas veces aparece cada producto en el carrito
         const cantidad = carrito.filter(item => item === producto).length;
 
-        // Crear el HTML para cada producto con su cantidad y los botones de añadir y eliminar
+        //-- Crear el HTML para cada producto con su cantidad y los botones de añadir y eliminar
         return `
             <li>
                 ${cantidad} x ${producto} 
                 <button onclick="modificarCarrito('${producto}', 'add')">+</button>
                 <button onclick="modificarCarrito('${producto}', 'remove')">-</button>
             </li>`;
-    }).join(''); // Unir todos los elementos del array resultante en una sola cadena
+    }).join(''); //-- Unir todos los elementos del array resultante en una sola cadena
 
-    console.log(carritoHTML); // Esto es solo para verificar el resultado en la consola
-
-    // Leer la carrito.html
+    //-- Leer la carrito.html
     fs.readFile(RUTA_CARRITO, 'utf8', (err, data) => {
         if (err) {
             res.status(500).send('Error al leer el archivo HTML');
@@ -335,17 +335,17 @@ function mostrarCarrito(req, res) {
         textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
                         <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
 
-        // Reemplazar el marcador de posición con el HTML del carrito
+        //-- Reemplazar el marcador de posición con el HTML del carrito
         let updatedHTML = data.replace('<!-- HTML_EXTRA -->', textoHTMLExtra);
         updatedHTML = updatedHTML.replace('<!-- PRODUCTOS -->', carritoHTML);
         
-        // Enviar la respuesta
+        //-- Enviar la respuesta
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(updatedHTML);
     });
 }
 
-// Función para actualizar el carrito
+//-- Función para actualizar el carrito
 function actualizarCarrito(req, res) {
     const cookieData = getCookies(req);
     const username = cookieData.user;
@@ -377,19 +377,19 @@ function actualizarCarrito(req, res) {
     res.end(JSON.stringify({ success: true }));
 }
 
-// Función para verificar si el carrito está vacío y si hay suficiente stock de los productos
-function verificarCarritoYStock(req, res, rutaArchivo, contentType) {
+//-- Función para verificar si el carrito está vacío y si hay suficiente stock de los productos
+function verificarCarritoYStock(req, res) {
     const cookieData = getCookies(req);
     const carrito = cookieData.carrito ? cookieData.carrito.split(':') : [];
 
-    // Verificar si el carrito está vacío
+    //-- Verificar si el carrito está vacío
     if (carrito.length === 0) {
         const avisoError = '<p>El carrito está vacío, no puedes finalizar la compra.</p>';
         replaceTexto(res, RUTA_CARRITO, 'text/html', '<!-- AVISO -->', avisoError);
         return false;
     }
 
-    // Verificar si hay suficiente stock para cada producto en el carrito
+    //-- Verificar si hay suficiente stock para cada producto en el carrito
     for (let item of carrito) {
         let producto = productos.find(p => p.nombre === item);
         if (producto && producto.stock <= 0) {
@@ -399,19 +399,21 @@ function verificarCarritoYStock(req, res, rutaArchivo, contentType) {
         }
     }
 
-    // Si todo está bien, retornar true indicando que se puede proceder
+    //-- Si todo está bien, retornar true indicando que se puede proceder
     return true;
 }
 
-// Función para servir la página del producto con los datos del producto
+//-- Función para servir la página del producto con los datos del producto
 function servirProducto(res, idProducto) {
     const producto = productos.find(p => p.id === idProducto);
 
+    //-- Si no hay producto redirige a la página de error
     if (!producto) {
         servirArchivo(res, RUTA_ERROR, 'text/html');
         return;
     }
 
+    //-- Leemos el fichero producto.html
     fs.readFile(RUTA_PRODUCTO, 'utf8', (err, contenido) => {
         if (err) {
             res.writeHead(500);
@@ -419,6 +421,7 @@ function servirProducto(res, idProducto) {
             return;
         }
 
+        //-- Si se lee correctamente, se añaden los datos del producto seleccionado
         let nuevoContenido = contenido
             .replace(/<!-- NOMBRE_PRODUCTO -->/g, producto.nombre)
             .replace(/<!-- DESCRIPCION_PRODUCTO -->/g, producto.descripcion)
@@ -443,7 +446,9 @@ const server = http.createServer((req, res) => {
 
     //-- Si se solicita un producto
     if (url.pathname.startsWith('/producto') && extension === '.html') {
+        //-- Comprobamos que la url tiene la estructura de productoN.html
         const match = url.pathname.match(/\/producto(\d+)\.html/);
+        //-- Si coincide, se extrae el número N del producto
         if (match) {
             const idProducto = parseInt(match[1], 10);
             servirProducto(res, idProducto);
@@ -451,23 +456,26 @@ const server = http.createServer((req, res) => {
             servirArchivo(res, RUTA_ERROR, 'text/html');
         }
 
-    //-- Petición de busqueda de productos
+    //-- Petición de búsqueda de productos
     } else if (url.pathname === '/buscar') {
-
-        //-- Leer los parámetros
+        // Lee los parámetros de búsqueda de la URL
         let param1 = url.searchParams.get('param1');
         param1 = param1.toUpperCase();
 
-        console.log("  Param: " +  param1);
+        console.log("Param: " +  param1);
 
+        // Filtra los productos basados en el parámetro de búsqueda
         let result = productos.filter(prod => prod.nombre.toUpperCase().includes(param1));
 
-        console.log(result);
-        content = JSON.stringify(result);
+        // Construye una página HTML con los resultados de la búsqueda
+        let htmlResponse = '<h1>Resultados de la búsqueda:</h1>';
+        result.forEach(producto => {
+            htmlResponse += `<p><a href="/producto${producto.id}.html">${producto.nombre}</a></p>`;
+        });
 
-        res.setHeader('Content-Type', 'application/json');
-        res.write(content);
-        res.end();
+        // Envía la página HTML como respuesta
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(htmlResponse);
 
     //-- Petición de busqueda.js que usa el cliente en el navegador
     } else if (url.pathname === '/js/busqueda.js') {
@@ -487,19 +495,16 @@ const server = http.createServer((req, res) => {
     
     //-- Si la URL es /logout, manejar el log out eliminando las cookies de user y carrito
     } else if (url.pathname === '/logout') {
-        // console.log("Petición de log out")
         res.setHeader('Set-Cookie', ['user=; Max-Age=0; SameSite=None; Path=/', 'carrito=; Max-Age=0; charset=utf-8; SameSite=None; Path=/']);
         res.writeHead(302, { 'Location': '/' });
         res.end();
 
     //-- Si la URL es /agregar_carrito, manejar añadir un producto
     } else if (url.pathname === '/agregar_carrito') {
-        // console.log("Petición añadir producto al carrito")
         productosCarrito(req, res);
 
     //-- Si la URL es /login, manejar la solicitud de log in
     } else if (url.pathname == '/login') {
-        // console.log("Petición de login")
 
         //-- Leer los parámetros de inicio de sesión
         let username = url.searchParams.get('username');
@@ -512,14 +517,13 @@ const server = http.createServer((req, res) => {
             //-- Si el usuario y la contraseña coinciden
             if (usuario.usuario === username && usuario.contraseña === password) {
 
-                // Obtener el carrito del usuario
+                //-- Obtener el carrito del usuario
                 let carritoUsuario = usuario.carrito ? usuario.carrito.join(':') : '';
 
-                // Añadir el campo 'user' y 'carrito' a la cookie de respuesta
+                //-- Añadir el campo 'user' y 'carrito' a la cookie de respuesta
                 res.setHeader('Set-Cookie', [`user=${encodeURIComponent(username)}; SameSite=None`, `carrito=${encodeURIComponent(carritoUsuario)}; Path=/; charset=utf-8; SameSite=None`]);
-                // console.log("Carrito en finalizar compra 1:", carritoUsuario);
                 
-                // Agregar el nombre de usuario y el botón de log out al texto extra
+                //-- Agregar el nombre de usuario y el botón de log out al texto extra
                 textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
                                 <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
                 
@@ -542,17 +546,17 @@ const server = http.createServer((req, res) => {
             replaceTexto(res, RUTA_SIGNUP, 'text/html', '<!-- AVISO -->', textoHTMLExtra);
         }
 
-    // Si la URL es /registrar, manejar la solicitud de registro
+    //-- Si la URL es /registrar, manejar la solicitud de registro
     } else if (url.pathname === '/registrar' && req.method === 'POST') {
         let body = '';
         
         //-- Los datos vienen en el cuerpo
         req.on('data', chunk => {
-            body += chunk.toString(); // Convertir el buffer a cadena
+            body += chunk.toString(); //-- Convertir el buffer a cadena
         });
         
         req.on('end', () => {
-            // Parsear los datos del formulario
+            //-- Parsear los datos del formulario
             const formData = new URLSearchParams(body);
             const username = formData.get('username');
             const name = formData.get('name');
@@ -561,24 +565,24 @@ const server = http.createServer((req, res) => {
 
             let mensajeError = '';
 
-            // Validar si todos los campos están completos
+            //-- Validar si todos los campos están completos
             if (!username || !name || !email || !password) {
                 mensajeError += `<p>Faltan campos por rellenar. Por favor, complete todos los campos.</p>`;
             }
     
-            // Validar si el nombre de usuario ya existe
+            //-- Validar si el nombre de usuario ya existe
             const usuarioExistente = usuarios.find(usuario => usuario.usuario === username);
             if (usuarioExistente) {
                 mensajeError += `<p>Nombre de usuario existente. Introduzca un nombre de usuario diferente.</p>`;
             }
     
-            // Validar si el correo electrónico ya existe
+            //-- Validar si el correo electrónico ya existe
             const emailExistente = usuarios.find(usuario => usuario.email === email);
             if (emailExistente) {
                 mensajeError += `<p>Correo electrónico existente. Introduzca una dirección diferente.</p>`;
             }
     
-            // Validar si el correo electrónico es válido
+            //-- Validar si el correo electrónico es válido
             const emailValido = /\S+@\S+\.\S+/.test(email);
             if (!emailValido) {
                 mensajeError += `<p>Correo electrónico no válido.</p>`;
@@ -598,21 +602,21 @@ const server = http.createServer((req, res) => {
                 carrito: []
             };
             
-            // Agregar el nuevo usuario a la base de datos de los usuarios
+            //-- Agregar el nuevo usuario a la base de datos de los usuarios
             usuarios.push(nuevoUsuario);
             
-            // Guardar la lista actualizada de usuarios en el archivo tienda.json
+            //-- Guardar la lista actualizada de usuarios en el archivo tienda.json
             fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), 'utf-8',(err) => {
                 if (err) {
                     console.error('Error al escribir en el archivo tienda.json:', err);
                     res.writeHead(500);
                     res.end();
                 } else {
-                    // Redirigir al usuario a una página index.html
-                    // Añadir el campo 'user' a la cookie de respuesta
+                    //-- Redirigir al usuario a una página index.html
+                    //-- Añadir el campo 'user' a la cookie de respuesta
                     res.setHeader('Set-Cookie', `user=${username}; charset=utf-8; SameSite=None`);
 
-                    // Agregar el nombre de usuario y el botón de log out al texto extra
+                    //-- Agregar el nombre de usuario y el botón de log out al texto extra
                     textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
                                     <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
                     
@@ -622,51 +626,51 @@ const server = http.createServer((req, res) => {
             });
         });
 
-    // Manejo de la solicitud para finalizar_compra.html
-     } else if (url.pathname === '/finalizar_compra.html') {
+    //-- Manejo de la solicitud para finalizar_compra.html
+    } else if (url.pathname === '/finalizar_compra.html') {
         // Verificar carrito y stock antes de servir la página
-        if (verificarCarritoYStock(req, res, RUTA_COMPRA, 'text/html')) {
+        if (verificarCarritoYStock(req, res)) {
             servirArchivo(res, RUTA_COMPRA, 'text/html');
         }
 
     //-- Si la URL es /finalizar_compra, manejar la solicitud de finalizar la compra
     } else if (url.pathname === '/finalizar_compra' && req.method === 'GET') {
-        // Validar la dirección y la tarjeta de crédito
+        //-- Validar la dirección y la tarjeta de crédito
         let direccion = url.searchParams.get('direccion');
         let tarjeta = url.searchParams.get('tarjeta');
 
-        // Eliminar los espacios del número de la tarjeta
+        //-- Eliminar los espacios del número de la tarjeta
         tarjeta = tarjeta.replace(/\s+/g, '');
 
         let mensajeError = '';
 
-        // Validar que la dirección no sea nula
+        //-- Validar que la dirección no sea nula
         if (!direccion) {
             mensajeError += '<p>La dirección no puede estar vacía.</p>';
         }
 
-        // Validar que la tarjeta tenga 16 dígitos y sea un número
+        //-- Validar que la tarjeta tenga 16 dígitos y sea un número
         if (!tarjeta || tarjeta.length !== 16 || isNaN(tarjeta)) {
             mensajeError += '<p>El número de tarjeta debe ser de 16 dígitos numéricos.</p>';
         }
 
-        // Si hay errores en la validación, mostrarlos y terminar la respuesta
+        //-- Si hay errores en la validación, mostrarlos y terminar la respuesta
         if (mensajeError) {
             replaceTexto(res, RUTA_COMPRA, 'text/html', '<!-- AVISO -->', mensajeError);
             res.end();
             return;
         }
 
-        // Obtener las cookies
+        //-- Obtener las cookies
         const cookieData = getCookies(req);
         const user = cookieData.user;
         const carrito = cookieData.carrito ? cookieData.carrito.split(':') : [];
 
-        // Verificar stock y procesar pedido
+        //-- Verificar stock y procesar pedido
         const resultado = procesoPedido(carrito);
 
         if (resultado.success) {
-            // Crear un nuevo objeto de pedido
+            //-- Crear un nuevo objeto de pedido
             const nuevoPedido = {
                 usuario: user,
                 direccion: direccion,
@@ -674,33 +678,33 @@ const server = http.createServer((req, res) => {
                 lista_productos: carrito
             };
 
-            // Agregar el nuevo pedido a la base de datos de pedidos
+            //-- Agregar el nuevo pedido a la base de datos de pedidos
             tienda.pedidos.push(nuevoPedido);
 
-            // Guardar la lista actualizada de pedidos en el archivo tienda.json
+            //-- Guardar la lista actualizada de pedidos en el archivo tienda.json
             fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), 'utf-8', (err) => {
                 if (err) {
                     console.error('Error al escribir en el archivo tienda.json:', err);
                     res.writeHead(500);
                     res.end();
                 } else {
-                    // Vaciar el carrito del usuario en la base de datos
+                    //-- Vaciar el carrito del usuario en la base de datos
                     const usuarioIndex = tienda.usuarios.findIndex(u => u.nombre === user);
                     if (usuarioIndex !== -1) {
                         tienda.usuarios[usuarioIndex].carrito = [];
                     }
 
-                    // Guardar la lista actualizada de usuarios en el archivo tienda.json
+                    //-- Guardar la lista actualizada de usuarios en el archivo tienda.json
                     fs.writeFile(RUTA_TIENDA_JSON, JSON.stringify(tienda, null, 2), 'utf-8', (err) => {
                         if (err) {
                             console.error('Error al escribir en el archivo tienda.json:', err);
                             res.writeHead(500);
                             res.end();
                         } else {
-                            // Eliminar la cookie del carrito
+                            //-- Eliminar la cookie del carrito
                             res.setHeader('Set-Cookie', `carrito=; Max-Age=0; charset=utf-8; SameSite=None; Path=/`);
 
-                            // Redirigir al usuario a una página de confirmación de compra exitosa
+                            //-- Redirigir al usuario a una página de confirmación de compra exitosa
                             res.writeHead(302, { 'Location': '/compra-exitosa.html' });
                             res.end();
                         }
@@ -708,7 +712,7 @@ const server = http.createServer((req, res) => {
                 }
             });
         } else {
-            // Mostrar los productos que no tienen stock suficiente
+            //-- Mostrar los productos que no tienen stock suficiente
             const mensajeError = `<p>Los siguientes productos no están disponibles: ${resultado.productosSinStock.join(', ')}</p>`;
             replaceTexto(res, RUTA_COMPRA, 'text/html', '<!-- AVISO -->', mensajeError);
             res.end();
@@ -717,7 +721,6 @@ const server = http.createServer((req, res) => {
 
     //-- Si la URL es la raíz del sitio
     } else if (url.pathname === '/') {
-        // console.log("Petición main");
 
         //-- Obtenemos las cookies
         const cookieData = getCookies(req);
@@ -725,36 +728,33 @@ const server = http.createServer((req, res) => {
 
         //-- Si hay un usario registrado cambia la barra del navegador
         if (user) {
-            // Agregar el nombre de usuario y el botón de log out al texto extra
+            //-- Agregar el nombre de usuario y el botón de log out al texto extra
             textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
                             <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
         } else {
-            // Si el usuario no está autenticado, mostrar el enlace al login
+            //-- Si el usuario no está autenticado, mostrar el enlace al login
             textoHTMLExtra = `<li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>
                             <li class="nav-menu-item"><a href="registro.html" class="nav-menu-link nav-link">Sign Up</a></li>`;
         }
 
         replaceTexto(res, RUTA_INDEX, 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
     
-    // Si la URL es /ls, mostrar la lista de archivos en la carpeta principal
+    //-- Si la URL es /ls, mostrar la lista de archivos en la carpeta principal
     } else if (url.pathname === '/ls') {
-        // console.log("Petición listado de archivos");
         listarArchivosHTML(res);
 
-    // Si la URL es /productos, mostrar la lista de productos disponibles
+    //-- Si la URL es /productos, mostrar la lista de productos disponibles
     } else if (url.pathname === '/productos') {
-        // console.log("Petición listado de productos");
         mostrarProductos(res);
     
     //-- Si la URL es la raíz del sitio
     } else if (url.pathname === '/carrito') {
-        // console.log("Petición carrito");
 
-        // Obtener las cookies
+        //-- Obtener las cookies
         const cookieData = getCookies(req);
         const user = cookieData.user;
 
-        // Si no está autenticado, redirigir al login
+        //-- Si no está autenticado, redirigir al login
         if (!user) {
             res.writeHead(302, {'Location': '/login.html'});
             res.end();
@@ -763,17 +763,21 @@ const server = http.createServer((req, res) => {
 
         mostrarCarrito(req, res);
 
-    // Ruta para actualizar el carrito
+    //-- Ruta para actualizar el carrito
     } else if (url.pathname === '/actualizar_carrito') {
         actualizarCarrito(req, res);
 
     } else if (url.pathname === '/js/carrito.js') {
         const filePath = path.join(CARPETA_JS, 'carrito.js');
         servirArchivo(res, filePath, 'application/javascript');
+    
+    //-- Si se accede al perfil, muestra los pedidos que haya en la base de datos
+    } else if (url.pathname === 'perfil.html') {
 
-    // Si la extensión es .html, servir desde la carpeta ficheros/...
+    
+
+    //-- Si la extensión es .html, servir desde la carpeta ficheros/...
     } else if (extension === '.html') {
-        // console.log("Petición recursos");
 
         //-- Obtenemos las cookies
         const cookieData = getCookies(req);
@@ -781,39 +785,34 @@ const server = http.createServer((req, res) => {
 
         //-- Si hay un usario registrado cambia la barra del navegador
         if (user) {
-            // Agregar el nombre de usuario y el botón de log out al texto extra
+            //-- Agregar el nombre de usuario y el botón de log out al texto extra
             textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
                             <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
         } else {
-            // Si el usuario no está autenticado, mostrar el enlace al login
+            //-- Si el usuario no está autenticado, mostrar el enlace al login
             textoHTMLExtra = `<li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>
                             <li class="nav-menu-item"><a href="registro.html" class="nav-menu-link nav-link">Sign Up</a></li>`;        }
 
         replaceTexto(res, path.join(__dirname, 'ficheros', url.pathname), 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
 
-    // Si la extensión es .css, servir desde la carpeta estilo/...
+    //-- Si la extensión es .css, servir desde la carpeta estilo/...
     } else if (extension === '.css') {
-        // console.log("Petición estilo .css");
         servirArchivo(res, path.join(CARPETA_ESTILO, path.basename(url.pathname)), 'text/css');
 
-    // Si la extensión es .jpg, servir desde la carpeta imagenes/...
+    //-- Si la extensión es .jpg, servir desde la carpeta imagenes/...
     } else if (extension === '.jpg') {
-        // console.log("Petición imágenes .jpg");
         servirArchivo(res, path.join(CARPETA_IMAGENES, path.basename(url.pathname)), 'image/jpg');
 
-    // Si la extensión es .png, servir desde la carpeta imagenes/...
+    //-- Si la extensión es .png, servir desde la carpeta imagenes/...
     } else if (extension === '.png') {
-        // console.log("Petición imágenes .png");
         servirArchivo(res, path.join(CARPETA_IMAGENES, path.basename(url.pathname)), 'image/png');
 
-    // Si la extensión es .js, servir desde la carpeta js/...
+    //-- Si la extensión es .js, servir desde la carpeta js/...
     } else if (extension === '.js') {
-        // console.log("Petición javascript");
         servirArchivo(res, path.join(CARPETA_JS, path.basename(url.pathname)), 'text/javascript');
     
-    // En cualquier otro caso sirve la página de error
+    //-- En cualquier otro caso sirve la página de error
     } else {
-        // console.log("Página error");
         servirArchivo(res, RUTA_ERROR, 'text/html');
     }
 });
