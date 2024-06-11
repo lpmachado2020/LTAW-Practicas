@@ -92,14 +92,6 @@
       ]
     },
     {
-      "usuario": "nuevo",
-      "direccion": "avenida la que sea",
-      "tarjeta": "1234567891011121",
-      "lista_productos": [
-        "Croquetas de Bacalao"
-      ]
-    },
-    {
       "usuario": "root",
       "direccion": "calle la que sea",
       "tarjeta": "1234567891011121",

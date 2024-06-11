@@ -22,6 +22,7 @@ const RUTA_ERROR = path.join(__dirname, 'ficheros', 'error.html');
 const RUTA_CARRITO = path.join(__dirname, 'ficheros', 'carrito.html');
 const RUTA_COMPRA = path.join(__dirname, 'ficheros', 'finalizar_compra.html');
 const RUTA_PRODUCTO = path.join(__dirname, 'ficheros', 'producto.html');
+const RUTA_PERFIL = path.join(__dirname, 'ficheros', 'perfil.html');
 const CARPETA_FICHEROS = path.join(__dirname, 'ficheros');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const CARPETA_ESTILO = path.join(__dirname, 'estilo');
@@ -772,9 +773,47 @@ const server = http.createServer((req, res) => {
         servirArchivo(res, filePath, 'application/javascript');
     
     //-- Si se accede al perfil, muestra los pedidos que haya en la base de datos
-    } else if (url.pathname === 'perfil.html') {
+    } else if (url.pathname === '/perfil.html') {
+        const cookieData = getCookies(req);
+        const user = cookieData.user;
 
-    
+        //-- Obtener datos del usuario
+        // const usuario = usuarios.find(userObj => userObj.usuario === user);
+
+        //-- Obtener pedidos del usuario
+        const pedidosUsuario = pedidos.filter(pedido => pedido.usuario === user);
+
+        //-- Leer el contenido de perfil.html
+        fs.readFile(RUTA_PERFIL, 'utf8', (err, data) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Error interno del servidor');
+                return;
+            }
+
+            let pedidosHTML;
+
+            //-- Condición por si no hay ningún pedido aún en nombre del user
+            if (pedidosUsuario.length === 0) {
+                pedidosHTML = '<p>No has realizado aún ningún pedido.</p>';
+            } else {
+                pedidosHTML = pedidosUsuario.map(pedido => `
+                    <div>
+                        <h3>Pedido a ${pedido.direccion}</h3>
+                        <ul>
+                            ${pedido.lista_productos.map(producto => `<li>${producto}</li>`).join('')}
+                        </ul>
+                    </div>
+                `).join('');
+            }
+
+            //-- Reemplazar el marcador <!-- DATOS_PEDIDOS --> con el contenido dinámico
+            data = data.replace('<!-- DATOS_PEDIDOS -->', pedidosHTML);
+
+            //-- Enviar la respuesta
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(data);
+        });
 
     //-- Si la extensión es .html, servir desde la carpeta ficheros/...
     } else if (extension === '.html') {
