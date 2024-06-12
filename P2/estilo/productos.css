@@ -97,6 +97,50 @@ body {
    display: none;
 }
 
+/* Estilos para la barra de búsqueda */
+.search-result {
+   margin: auto; /* Centrar horizontalmente */
+   max-width: 600px; /* Ancho máximo del contenedor */
+}
+
+#search-box {
+   width: 600px; /* Ancho de la barra de búsqueda */
+   padding: 10px 10px 10px 40px; /* Espaciado interno (arriba, derecha, abajo, izquierda) */
+   border-radius: 20px; /* Bordes redondeados */
+   border: 1px solid #ccc; /* Borde delgado */
+   outline: none; /* Quita el contorno al hacer focus */
+   margin: 20px auto; /* Centrado horizontalmente */
+   display: block; /* Para que ocupe todo el ancho disponible */
+}
+
+#search-box::placeholder {
+   color: #999; /* Color del texto de marcador de posición */
+}
+
+/* Estilos para el resultado de la búsqueda */
+#display a {
+   display: block; /* Mostrar los resultados uno detrás del otro */
+   background-color: #fff; /* Fondo blanco */
+   color: #000; /* Texto negro */
+   text-decoration: none; /* Quitar el subrayado */
+   padding: 0px 0px 0px 40px; /* Espaciado interno */
+   margin-bottom: 10px; /* Margen inferior entre resultados */
+}
+
+.search-container {
+   position: relative;
+   display: inline-block; /* Para que el contenedor se ajuste al tamaño de sus elementos internos */
+}
+
+.search-icon {
+   position: absolute;
+   left: 10px; /* Espacio desde el borde izquierdo */
+   top: 50%; /* Centrado vertical */
+   transform: translateY(-50%); /* Ajuste para centrar verticalmente */
+   width: 20px; /* Ancho deseado */
+   height: auto; /* Altura automática según la proporción */
+}
+
 /* Diseño de producto */
 
 .imagen {

@@ -515,7 +515,7 @@ const server = http.createServer((req, res) => {
             let result = productos.filter(prod => prod.nombre.toUpperCase().includes(param1));
 
             // Construye una página HTML con los resultados de la búsqueda
-            let htmlResponse = '<h1>Resultados de la búsqueda:</h1>';
+            let htmlResponse = '';
             result.forEach(producto => {
                 htmlResponse += `<p><a href="/producto${producto.id}.html">${producto.nombre}</a></p>`;
             });
