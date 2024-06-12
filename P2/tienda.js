@@ -23,6 +23,7 @@ const RUTA_CARRITO = path.join(__dirname, 'ficheros', 'carrito.html');
 const RUTA_COMPRA = path.join(__dirname, 'ficheros', 'finalizar_compra.html');
 const RUTA_PRODUCTO = path.join(__dirname, 'ficheros', 'producto.html');
 const RUTA_PERFIL = path.join(__dirname, 'ficheros', 'perfil.html');
+const RUTA_COMPRA_EXITOSA  = path.join(__dirname, 'ficheros', 'compra-exitosa.html');
 const CARPETA_FICHEROS = path.join(__dirname, 'ficheros');
 const CARPETA_IMAGENES = path.join(__dirname, 'imagenes');
 const CARPETA_ESTILO = path.join(__dirname, 'estilo');
@@ -278,7 +279,7 @@ function mostrarProductos(res) {
 }
 
 //-- Función para obtener y mostrar el carrito
-function mostrarCarrito(req, res) {
+function mostrarCarrito(req, res, avisoError) {
     const cookieData = getCookies(req);
     const username = cookieData.user;
     const carrito = cookieData.carrito ? cookieData.carrito.split(':') : [];
@@ -299,7 +300,8 @@ function mostrarCarrito(req, res) {
             }
 
             //-- Reemplazar el marcador de posición con el aviso de carrito vacío
-            let updatedHTML = data.replace('<!-- HTML_EXTRA -->', '');
+            let updatedHTML = data.replace('<!-- HTML_EXTRA -->', `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${username}</a></li>
+                        <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`);
             updatedHTML = updatedHTML.replace('<!-- PRODUCTOS -->', avisoHTML);
             
             //-- Enviar la respuesta
@@ -339,6 +341,7 @@ function mostrarCarrito(req, res) {
         //-- Reemplazar el marcador de posición con el HTML del carrito
         let updatedHTML = data.replace('<!-- HTML_EXTRA -->', textoHTMLExtra);
         updatedHTML = updatedHTML.replace('<!-- PRODUCTOS -->', carritoHTML);
+        updatedHTML = updatedHTML.replace('<!-- AVISO -->', avisoError);
         
         //-- Enviar la respuesta
         res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -381,32 +384,65 @@ function actualizarCarrito(req, res) {
 //-- Función para verificar si el carrito está vacío y si hay suficiente stock de los productos
 function verificarCarritoYStock(req, res) {
     const cookieData = getCookies(req);
+    const user = cookieData.user;
     const carrito = cookieData.carrito ? cookieData.carrito.split(':') : [];
 
-    //-- Verificar si el carrito está vacío
-    if (carrito.length === 0) {
-        const avisoError = '<p>El carrito está vacío, no puedes finalizar la compra.</p>';
-        replaceTexto(res, RUTA_CARRITO, 'text/html', '<!-- AVISO -->', avisoError);
-        return false;
-    }
-
-    //-- Verificar si hay suficiente stock para cada producto en el carrito
-    for (let item of carrito) {
-        let producto = productos.find(p => p.nombre === item);
-        if (producto && producto.stock <= 0) {
-            const avisoError = `<p>El producto ${item} no tiene suficiente stock.</p>`;
-            replaceTexto(res, RUTA_CARRITO, 'text/html', '<!-- AVISO -->', avisoError);
-            return false;
+    //-- Leer el contenido de carrito.html
+    fs.readFile(RUTA_CARRITO, 'utf8', (err, data) => {
+        if (err) {
+            res.writeHead(500);
+            res.end('Error interno del servidor');
+            return;
         }
-    }
 
-    //-- Si todo está bien, retornar true indicando que se puede proceder
-    return true;
+        //-- Reemplazar el marcador <!-- HTML_EXTRA --> si hay un usuario registrado
+        let nuevoContenido = data;
+        if (user) {
+            nuevoContenido = nuevoContenido.replace('<!-- HTML_EXTRA -->', `
+                <li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
+                <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>
+            `);
+        }
+
+        //-- Verificar si el carrito está vacío
+        if (carrito.length === 0) {
+            const avisoError = '<p>El carrito está vacío, no puedes finalizar la compra.</p>';
+            nuevoContenido = nuevoContenido.replace('<!-- AVISO -->', avisoError);
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(nuevoContenido);
+            return;
+        }
+
+        //-- Verificar si hay suficiente stock para cada producto en el carrito
+        for (let item of carrito) {
+            let producto = productos.find(p => p.nombre === item);
+            if (producto && producto.stock <= 0) {
+                //-- Mostrar aviso de falta de stock y los productos del carrito
+                mostrarCarrito(req, res, `<p>El producto ${item} no tiene suficiente stock.</p>`);
+                return false;
+            }
+        }
+
+        //-- Si todo está bien, servir la página de finalizar_compra.html
+        fs.readFile(RUTA_COMPRA, 'utf8', (err, data) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Error interno del servidor');
+                return;
+            }
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(data);
+        });
+    });
 }
 
 //-- Función para servir la página del producto con los datos del producto
-function servirProducto(res, idProducto) {
+function servirProducto(req, res, idProducto) {
     const producto = productos.find(p => p.id === idProducto);
+
+    //-- Obtener las cookies
+    const cookieData = getCookies(req);
+    const user = cookieData.user;
 
     //-- Si no hay producto redirige a la página de error
     if (!producto) {
@@ -433,6 +469,14 @@ function servirProducto(res, idProducto) {
             .replace(/NOMBRE PRODUCTO/g, producto.nombre)
             .replace(/'PRODUCTO'/g, `'${producto.nombre}'`);
 
+            //-- Reemplazar el marcador <!-- HTML_EXTRA --> si hay un usuario registrado
+        if (user) {
+            nuevoContenido = nuevoContenido.replace('<!-- HTML_EXTRA -->', `
+                <li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
+                <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>
+            `);
+        }
+
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(nuevoContenido, 'utf-8');
     });
@@ -452,7 +496,7 @@ const server = http.createServer((req, res) => {
         //-- Si coincide, se extrae el número N del producto
         if (match) {
             const idProducto = parseInt(match[1], 10);
-            servirProducto(res, idProducto);
+            servirProducto(req, res, idProducto);
         } else {
             servirArchivo(res, RUTA_ERROR, 'text/html');
         }
@@ -463,20 +507,27 @@ const server = http.createServer((req, res) => {
         let param1 = url.searchParams.get('param1');
         param1 = param1.toUpperCase();
 
-        console.log("Param: " +  param1);
+        // Verifica si el parámetro tiene al menos 3 caracteres
+        if (param1.length >= 3) {
+            console.log("Param: " + param1);
 
-        // Filtra los productos basados en el parámetro de búsqueda
-        let result = productos.filter(prod => prod.nombre.toUpperCase().includes(param1));
+            // Filtra los productos basados en el parámetro de búsqueda
+            let result = productos.filter(prod => prod.nombre.toUpperCase().includes(param1));
 
-        // Construye una página HTML con los resultados de la búsqueda
-        let htmlResponse = '<h1>Resultados de la búsqueda:</h1>';
-        result.forEach(producto => {
-            htmlResponse += `<p><a href="/producto${producto.id}.html">${producto.nombre}</a></p>`;
-        });
+            // Construye una página HTML con los resultados de la búsqueda
+            let htmlResponse = '<h1>Resultados de la búsqueda:</h1>';
+            result.forEach(producto => {
+                htmlResponse += `<p><a href="/producto${producto.id}.html">${producto.nombre}</a></p>`;
+            });
 
-        // Envía la página HTML como respuesta
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(htmlResponse);
+            // Envía la página HTML como respuesta
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(htmlResponse);
+        } else {
+            // Respuesta vacía si la longitud del parámetro es menor a 3 caracteres
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end('<p>Escribe al menos 3 caracteres para buscar.</p>');
+        }
 
     //-- Petición de busqueda.js que usa el cliente en el navegador
     } else if (url.pathname === '/js/busqueda.js') {
@@ -629,10 +680,7 @@ const server = http.createServer((req, res) => {
 
     //-- Manejo de la solicitud para finalizar_compra.html
     } else if (url.pathname === '/finalizar_compra.html') {
-        // Verificar carrito y stock antes de servir la página
-        if (verificarCarritoYStock(req, res)) {
-            servirArchivo(res, RUTA_COMPRA, 'text/html');
-        }
+        verificarCarritoYStock(req, res);
 
     //-- Si la URL es /finalizar_compra, manejar la solicitud de finalizar la compra
     } else if (url.pathname === '/finalizar_compra' && req.method === 'GET') {
@@ -704,10 +752,37 @@ const server = http.createServer((req, res) => {
                         } else {
                             //-- Eliminar la cookie del carrito
                             res.setHeader('Set-Cookie', `carrito=; Max-Age=0; charset=utf-8; SameSite=None; Path=/`);
+                            
+                            // Crear HTML del pedido realizado
+                            const pedidoHTML = `
+                            <ul>
+                                <li><strong>Usuario:</strong> ${user}</li>
+                                <li><strong>Dirección de envío:</strong> ${direccion}</li>
+                                <li><strong>Productos:</strong>
+                                    <ul>
+                                        ${carrito.map(producto => `<li>${producto}</li>`).join('')}
+                                    </ul>
+                                </li>
+                            </ul>
+                            `;
 
-                            //-- Redirigir al usuario a una página de confirmación de compra exitosa
-                            res.writeHead(302, { 'Location': '/compra-exitosa.html' });
-                            res.end();
+                            // Leer contenido de compra-exitosa.html
+                            fs.readFile(RUTA_COMPRA_EXITOSA, 'utf8', (err, data) => {
+                                if (err) {
+                                    console.error('Error al leer el archivo compra-exitosa.html:', err);
+                                    res.writeHead(500);
+                                    res.end();
+                                } else {
+                                    // Reemplazar el marcador <!-- COMPRA_REALIZADA --> con el HTML del pedido
+                                    let nuevoContenido = data.replace('<!-- COMPRA_REALIZADA -->', pedidoHTML);
+                                    nuevoContenido = nuevoContenido.replace('<!-- HTML_EXTRA -->', `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
+                                <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`)
+
+                                    // Enviar la página HTML como respuesta
+                                    res.writeHead(200, { 'Content-Type': 'text/html' });
+                                    res.end(nuevoContenido);
+                                }
+                            });
                         }
                     });
                 }
@@ -718,7 +793,6 @@ const server = http.createServer((req, res) => {
             replaceTexto(res, RUTA_COMPRA, 'text/html', '<!-- AVISO -->', mensajeError);
             res.end();
         }
-
 
     //-- Si la URL es la raíz del sitio
     } else if (url.pathname === '/') {
@@ -762,7 +836,7 @@ const server = http.createServer((req, res) => {
             return;
         }
 
-        mostrarCarrito(req, res);
+        mostrarCarrito(req, res, '<!-- AVISO -->');
 
     //-- Ruta para actualizar el carrito
     } else if (url.pathname === '/actualizar_carrito') {

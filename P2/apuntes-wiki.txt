@@ -17,11 +17,21 @@
 
     - Añadido un enlace al log in
 
-- Añadido el log in en todas las páginas html: main
+- Añadido log out cuando se hace log in
 
-- Añadido log out
 - Añadido stock, cuando se compra se comprueba si hay stock y si no hay no te deja añadirlo al carrito
 - Cuendo se finaliza la compra, se vacia el carrito del usuario y se actualiza el valor de stock
 
 - Añadida página de mi perfil, que aparecen los pedidos realizados
 
+- La página de cada producto, es una sola, llamada producto.html, que se rellena
+según el producto seleccionado
+
+- Dentro del carrito está finalizar el pedido, que procesa el pedido
+
+- Usuarios registrados:
+- root y laura
+. y uno nuevo para pruebas
+
+- Tengo que hacer la wiki
+- Añadir que se pueda ver la contraseña en el log in y en sign up

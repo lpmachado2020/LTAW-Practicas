@@ -10,8 +10,8 @@ const search_box = document.getElementById("search-box");
 search_box.oninput = () => {
     console.log(search_box.value.length);
 
-    //-- La petición se realiza solo si hay al menos 1 carácter
-    if (search_box.value.length >= 1) {
+    //-- La petición se realiza solo si hay al menos 3 caracteres
+    if (search_box.value.length >= 3) {
         //-- Procesar los resultados de la búsqueda
         fetch('/buscar?param1=' + search_box.value)
             .then(response => response.text())
