@@ -1,0 +1,226 @@
+/* Barra de navegación */
+* {
+   margin: 0;  /* Eliminamos los margénes predeterminados del navegador */
+   box-sizing: border-box;
+}
+
+body {
+   font-family: sans-serif;
+   padding: 90px 20px 0;   /* Padding para que no se junte el body con la barra de navegación y no se pegue a los bordes */
+}
+
+/* Cabecera */
+.header {
+   background-color: #EDC557;
+   height: 80px;
+   position: fixed;  /* Para que se quede fijo si hago scroll */
+   width: 100%;
+   top: 0;
+   left: 0;
+   z-index: 1000;  /* Asegurarse de que esté en primer plano */
+}
+
+/* Barra de la navegación. Para colocar los elementos dentro */
+.nav {
+   display: flex;
+   justify-content: space-between;  /* Para que queden separados en izquierda y derecha */
+
+   /* Para hacer responsive la barra del navegador */
+   /* Cuando llegue a este tamaño el contenido se centra */
+   /*max-width: 992px; /* Ancho de máximo */
+   /* margin: 0 auto; */
+}
+
+.nav-link {
+   color: rgb(255, 255, 255);
+   text-decoration: none;  /* Para que se quite lo subrayado o lo negrita al seleccionar */
+   font-weight: bold;
+}
+
+.name {
+   color: white;
+   font-size: 30px;
+   font-weight: bold;
+   padding: 0 40px;
+   line-height: 80px;
+   text-decoration: none;
+   text-transform: uppercase;
+
+   display: flex; /* Establecer como flex container */
+   align-items: center; /* Centrar verticalmente los elementos hijos */
+}
+
+.logo-img {
+   max-width: 100px; /* Ajusta el valor según lo necesites */
+   max-height: 60px; /* Ajusta el valor según lo necesites */
+   vertical-align: middle; /* Para alinear verticalmente la imagen con el texto */
+}
+
+.store-name {
+   margin-left: 10px; /* Espacio entre la imagen y el texto */
+   text-transform: uppercase; /* Pone en mayúsculas las letras */
+}
+
+.nav-menu {
+   display: flex;
+   margin-right: 40px;
+   list-style: none; /* Para quitar los puntos de la lista */
+}
+
+.nav-menu-item {
+   font-size: 18px;
+   margin: 0 10px;
+   line-height: 80px;
+   text-transform: uppercase; /* Para que quede alineado en horizontal */
+   width: max-content; /* Para que las palabras no se corten */
+}
+
+/* Sombreado de los elementos de la barra */
+.nav-menu-link {
+   padding: 8px 12px;
+   border-radius: 3px;
+}
+
+.nav-menu-link:hover {
+   background-color: #c7a549;
+   transition: .5s;  /* Para que la transición al pasar el cursos sea suave*/
+}
+
+.nav-toggle {
+   color:white;
+   background-color: none;
+   border: none;
+   font-size: 100px;
+   padding: 0 20px;
+   line-height: 60px;
+
+   display: none;
+}
+
+/* Estilo para el contenedor del formulario de inicio de sesión */
+.container-login {
+   max-width: 400px; /* Ancho máximo del contenedor */
+   max-height: auto; /* Altura máxima ajustable */
+   margin: 50px auto; /* Margen superior e inferior de 50px, centrado horizontalmente */
+   background-color: white; /* Fondo blanco */
+   padding: 20px; /* Espaciado interno del contenedor */
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+}
+
+/* Estilo para el título del formulario de inicio de sesión */
+.login-title {
+   text-align: center; /* Centrar el texto */
+   padding: 20px; /* Espaciado interno */
+}
+
+/* Estilo para el mensaje de bienvenida del formulario de inicio de sesión */
+.login-welcome {
+   text-align: center; /* Centrar el texto */
+   font-size: 18px; /* Tamaño de fuente de 18px */
+}
+
+/* Estilo para el contenedor del texto del formulario */
+.text-container {
+   margin-bottom: 30px; /* Margen inferior de 30px */
+}
+
+/* Estilo para el formulario de inicio de sesión */
+.login-form {
+   display: flex; /* Mostrar los elementos en forma de columna */
+   flex-direction: column; /* Dirección de los elementos en columna */
+}
+
+/* Estilo para los campos de entrada del formulario */
+.login-input {
+   margin-bottom: 10px; /* Margen inferior de 10px */
+   padding: 10px; /* Espaciado interno de 10px */
+   border: none; /* Sin borde */
+   border-bottom: 1px solid #ccc; /* Borde inferior gris */
+   background-color: transparent; /* Fondo transparente */
+   outline: none; /* Sin contorno al hacer focus */
+}
+
+/* Estilo para el botón de enviar del formulario */
+.login-submit {
+   background-color: #EDC557; /* Color de fondo del botón */
+   color: #fff; /* Color de texto del botón */
+   border: none; /* Sin borde */
+   padding: 10px; /* Espaciado interno de 10px */
+   cursor: pointer; /* Cursor apuntador */
+   transition: background-color 0.3s ease; /* Transición suave del color de fondo */
+}
+
+/* Estilo para el botón de enviar del formulario al pasar el cursor */
+.login-submit:hover {
+   background-color: #c7a549; /* Color de fondo del botón al pasar el cursor */
+}
+
+/* Estilo para los párrafos dentro del formulario */
+p {
+   padding: 10px; /* Espaciado interno de 10px */
+   text-align: center; /* Centrar el texto */
+}
+
+/* Estilo para el contenedor del formulario de registro */
+.container-register {
+   max-width: 400px; /* Ancho máximo del contenedor */
+   max-height: auto; /* Altura máxima ajustable */
+   margin: 50px auto; /* Margen superior e inferior de 50px, centrado horizontalmente */
+   background-color: white; /* Fondo blanco */
+   padding: 20px; /* Espaciado interno del contenedor */
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+}
+
+/* Estilo para el título del formulario de registro */
+.register-title {
+   text-align: center; /* Centrar el texto */
+   padding: 20px; /* Espaciado interno */
+}
+
+/* Estilo para el mensaje de bienvenida del formulario de registro */
+.register-welcome {
+   text-align: center; /* Centrar el texto */
+   font-size: 18px; /* Tamaño de fuente de 18px */
+}
+
+/* Estilo para el contenedor del texto del formulario */
+.text-container {
+   margin-bottom: 30px; /* Margen inferior de 30px */
+}
+
+/* Estilo para el formulario de registro */
+.register-form {
+   display: flex; /* Mostrar los elementos en forma de columna */
+   flex-direction: column; /* Dirección de los elementos en columna */
+}
+
+/* Estilo para los campos de entrada del formulario */
+.register-input {
+   margin-bottom: 10px; /* Margen inferior de 10px */
+   padding: 10px; /* Espaciado interno de 10px */
+   border: none; /* Sin borde */
+   border-bottom: 1px solid #ccc; /* Borde inferior gris */
+   background-color: transparent; /* Fondo transparente */
+   outline: none; /* Sin contorno al hacer focus */
+}
+
+/* Estilo para el botón de enviar del formulario */
+.register-submit {
+   background-color: #EDC557; /* Color de fondo del botón */
+   color: #fff; /* Color de texto del botón */
+   border: none; /* Sin borde */
+   padding: 10px; /* Espaciado interno de 10px */
+   cursor: pointer; /* Cursor apuntador */
+   transition: background-color 0.3s ease; /* Transición suave del color de fondo */
+}
+
+/* Estilo para el botón de enviar del formulario al pasar el cursor */
+.register-submit:hover {
+   background-color: #c7a549; /* Color de fondo del botón al pasar el cursor */
+}
+
+/* Estilo para los párrafos dentro del formulario */
+p {
+   padding: 10px; /* Espaciado interno de 10px */
+   text-align: center; /* Centrar el texto */
+}

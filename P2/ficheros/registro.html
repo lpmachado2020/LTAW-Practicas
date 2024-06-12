@@ -8,7 +8,7 @@
     <link rel="icon" href="logo.png">
     <title>Regístrate - Croqueteando</title>
 
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="registro.css">
 </head>
 <body>
     <header class="header">
@@ -23,25 +23,27 @@
             </ul>
         </nav>
     </header>
-<body>    
-    <div class="container-login">
-        <h1>Registro</h1>
-        <p>¡Bienvenido/a a Croqueteando!</p>
-        <!-- AVISO -->
-        <form action="/registrar" method="post">
-            Nombre de usuario:
-            <input type="text" name="username"/>
+    
+    <div class="container-register">
+        <div class="text-container">
+            <h1 class="register-title">Registro</h1>
+            <p class="register-welcome">¡Bienvenido/a a Croqueteando!</p>
+            <!-- AVISO -->
+        </div>
+        <form action="/registrar" method="post" class="register-form">
+            <label for="username" class="register-label">Nombre de usuario:</label>
+            <input type="text" id="username" name="username" class="register-input"/>
             <p></p>
-            Nombre:
-            <input type="text" name="name"/>
+            <label for="name" class="register-label">Nombre:</label>
+            <input type="text" id="name" name="name" class="register-input"/>
             <p></p>
-            Correo electrónico:
-            <input type="text" name="email"/>
+            <label for="email" class="register-label">Correo electrónico:</label>
+            <input type="text" id="email" name="email" class="register-input"/>
             <p></p>
-            Contraseña:
-            <input type="password" name="password" />
+            <label for="password" class="register-label">Contraseña:</label>
+            <input type="password" id="password" name="password" class="register-input"/>
             <p></p>
-            <input type="submit" value="Enviar"/>
+            <input type="submit" value="Registrar" class="register-submit"/>
         </form>
     </div>
 </body>
