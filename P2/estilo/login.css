@@ -97,21 +97,66 @@ body {
    display: none;
 }
 
-/* Diseño página log in */
+/* Estilo para el contenedor del formulario de inicio de sesión */
 .container-login {
-   display: flex; /* Establecer como flex container */
-   flex-direction: column; /* Para colocar los elementos uno debajo del otro */
-   align-items: center; /* Centrar los elementos horizontalmente */
-   padding: 20px; /* Padding entre los elementos */
+   max-width: 400px; /* Ancho máximo del contenedor */
+   max-height: auto; /* Altura máxima ajustable */
+   margin: 50px auto; /* Margen superior e inferior de 50px, centrado horizontalmente */
+   background-color: white; /* Fondo blanco */
+   padding: 20px; /* Espaciado interno del contenedor */
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+}
+
+/* Estilo para el título del formulario de inicio de sesión */
+.login-title {
    text-align: center; /* Centrar el texto */
-   overflow: hidden; /* Para ocular todo el alineamieto duera del contenedor */
+   padding: 20px; /* Espaciado interno */
 }
 
-.container-login h1 {
-   padding: 20px;
-   font-size: 40px;
+/* Estilo para el mensaje de bienvenida del formulario de inicio de sesión */
+.login-welcome {
+   text-align: center; /* Centrar el texto */
+   font-size: 18px; /* Tamaño de fuente de 18px */
 }
 
-.container-login p {
-   font-size: 20px;
+/* Estilo para el contenedor del texto del formulario */
+.text-container {
+   margin-bottom: 30px; /* Margen inferior de 30px */
+}
+
+/* Estilo para el formulario de inicio de sesión */
+.login-form {
+   display: flex; /* Mostrar los elementos en forma de columna */
+   flex-direction: column; /* Dirección de los elementos en columna */
+}
+
+/* Estilo para los campos de entrada del formulario */
+.login-input {
+   margin-bottom: 10px; /* Margen inferior de 10px */
+   padding: 10px; /* Espaciado interno de 10px */
+   border: none; /* Sin borde */
+   border-bottom: 1px solid #ccc; /* Borde inferior gris */
+   background-color: transparent; /* Fondo transparente */
+   outline: none; /* Sin contorno al hacer focus */
+}
+
+/* Estilo para el botón de enviar del formulario */
+.login-submit {
+   background-color: #EDC557; /* Color de fondo del botón */
+   color: #fff; /* Color de texto del botón */
+   border: none; /* Sin borde */
+   padding: 10px; /* Espaciado interno de 10px */
+   cursor: pointer; /* Cursor apuntador */
+   transition: background-color 0.3s ease; /* Transición suave del color de fondo */
+}
+
+/* Estilo para el botón de enviar del formulario al pasar el cursor */
+.login-submit:hover {
+   background-color: #c7a549; /* Color de fondo del botón al pasar el cursor */
+}
+
+/* Estilo para los párrafos dentro del formulario */
+p {
+   padding: 10px; /* Espaciado interno de 10px */
+   text-align: center; /* Centrar el texto */
 }

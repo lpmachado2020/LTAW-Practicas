@@ -584,7 +584,7 @@ const server = http.createServer((req, res) => {
             //-- Si el usuario coincide, pero no la contraseña
             } else if (usuario.usuario === username && usuario.contraseña != password) {
                 //-- Añade un aviso indicando que la contraseña no es válida
-                textoHTMLExtra = `<p>¡Contraseña incorrecta!</p><p>Introduzca una contraseña válida</p>`;
+                textoHTMLExtra = `<p>¡Contraseña incorrecta! Introduzca una contraseña válida</p>`;
 
                 replaceTexto(res, RUTA_LOGIN, 'text/html', '<!-- AVISO -->', textoHTMLExtra);
                 usuarioEncontrado = true;
