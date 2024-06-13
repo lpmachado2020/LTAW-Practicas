@@ -91,26 +91,8 @@ body {
    
 } */
 
- /* Diseño página error */
-.error {
-   display: flex; /* Establecer como flex container */
-   flex-direction: column; /* Para colocar los elementos uno debajo del otro */
-   align-items: center; /* Centrar los elementos horizontalmente */
-   padding: 20px; /* Padding entre los elementos */
-   text-align: center; /* Centrar el texto */
-   overflow: hidden; /* Para ocular todo el alineamieto duera del contenedor */
- }
 
-.error img {
-width: 250px;
-height: auto;
-}
+/* Estilo para el contenido del carrito */
 
-.error h1 {
-   padding: 20px;
-   font-size: 40px;
-}
 
-.error p {
-   font-size: 20px;
-}
+

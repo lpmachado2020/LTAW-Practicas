@@ -292,7 +292,7 @@ function mostrarCarrito(req, res, avisoError) {
 
     //-- Si el carrito está vacío, mostrar un aviso
     if (carrito.length === 0) {
-        const avisoHTML = `<p>El carrito está vacío.</p>`;
+        const avisoHTML = `<p class=carrito-aviso>El carrito está vacío.</p>`;
         fs.readFile(RUTA_CARRITO, 'utf8', (err, data) => {
             if (err) {
                 res.status(500).send('Error al leer el archivo HTML');
@@ -321,10 +321,12 @@ function mostrarCarrito(req, res, avisoError) {
 
         //-- Crear el HTML para cada producto con su cantidad y los botones de añadir y eliminar
         return `
-            <li>
-                ${cantidad} x ${producto} 
-                <button onclick="modificarCarrito('${producto}', 'add')">+</button>
-                <button onclick="modificarCarrito('${producto}', 'remove')">-</button>
+            <li class="cart-item">
+                <span class="item-details">${cantidad} x ${producto}</span>
+                <div class="item-actions">
+                    <button class="cart-button add-button" onclick="modificarCarrito('${producto}', 'add')">+</button>
+                    <button class="cart-button remove-button" onclick="modificarCarrito('${producto}', 'remove')">-</button>
+                </div>
             </li>`;
     }).join(''); //-- Unir todos los elementos del array resultante en una sola cadena
 
@@ -406,7 +408,7 @@ function verificarCarritoYStock(req, res) {
 
         //-- Verificar si el carrito está vacío
         if (carrito.length === 0) {
-            const avisoError = '<p>El carrito está vacío, no puedes finalizar la compra.</p>';
+            const avisoError = '<p class=carrito-aviso>El carrito está vacío, no puedes finalizar la compra.</p>';
             nuevoContenido = nuevoContenido.replace('<!-- AVISO -->', avisoError);
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(nuevoContenido);
@@ -418,7 +420,7 @@ function verificarCarritoYStock(req, res) {
             let producto = productos.find(p => p.nombre === item);
             if (producto && producto.stock <= 0) {
                 //-- Mostrar aviso de falta de stock y los productos del carrito
-                mostrarCarrito(req, res, `<p>El producto ${item} no tiene suficiente stock.</p>`);
+                mostrarCarrito(req, res, `<p class=carrito-aviso>El producto ${item} no tiene suficiente stock.</p>`);
                 return false;
             }
         }
