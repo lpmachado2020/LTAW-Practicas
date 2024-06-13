@@ -853,9 +853,6 @@ const server = http.createServer((req, res) => {
         const cookieData = getCookies(req);
         const user = cookieData.user;
 
-        //-- Obtener datos del usuario
-        // const usuario = usuarios.find(userObj => userObj.usuario === user);
-
         //-- Obtener pedidos del usuario
         const pedidosUsuario = pedidos.filter(pedido => pedido.usuario === user);
 
@@ -874,13 +871,13 @@ const server = http.createServer((req, res) => {
                 pedidosHTML = '<p>No has realizado aún ningún pedido.</p>';
             } else {
                 pedidosHTML = pedidosUsuario.map(pedido => `
-                    <div>
-                        <h3>Pedido a ${pedido.direccion}</h3>
-                        <ul>
-                            ${pedido.lista_productos.map(producto => `<li>${producto}</li>`).join('')}
+                    <div class="pedido">
+                        <h3 class="pedido-title">Pedido a ${pedido.direccion}</h3>
+                        <ul class="pedido-list">
+                            ${pedido.lista_productos.map(producto => `<li class="pedido-item">${producto}</li>`).join('')}
                         </ul>
                     </div>
-                `).join('');
+                `).join('');                
             }
 
             //-- Reemplazar el marcador <!-- DATOS_PEDIDOS --> con el contenido dinámico
