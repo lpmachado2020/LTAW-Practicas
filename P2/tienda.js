@@ -387,6 +387,7 @@ function actualizarCarrito(req, res) {
 function verificarCarritoYStock(req, res) {
     const cookieData = getCookies(req);
     const user = cookieData.user;
+    console.log("USUARIOOO", user);
     const carrito = cookieData.carrito ? cookieData.carrito.split(':') : [];
 
     //-- Leer el contenido de carrito.html
@@ -412,7 +413,7 @@ function verificarCarritoYStock(req, res) {
             nuevoContenido = nuevoContenido.replace('<!-- AVISO -->', avisoError);
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(nuevoContenido);
-            return;
+            return true;
         }
 
         //-- Verificar si hay suficiente stock para cada producto en el carrito
@@ -421,21 +422,12 @@ function verificarCarritoYStock(req, res) {
             if (producto && producto.stock <= 0) {
                 //-- Mostrar aviso de falta de stock y los productos del carrito
                 mostrarCarrito(req, res, `<p class=carrito-aviso>El producto ${item} no tiene suficiente stock.</p>`);
-                return;
+                return true;
             }
         }
-
-        //-- Si todo está bien, servir la página de finalizar_compra.html
-        fs.readFile(RUTA_COMPRA, 'utf8', (err, data) => {
-            if (err) {
-                res.writeHead(500);
-                res.end('Error interno del servidor');
-                return;
-            }
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(data);
-        });
     });
+
+    return false;
 }
 
 //-- Función para servir la página del producto con los datos del producto
@@ -477,6 +469,10 @@ function servirProducto(req, res, idProducto) {
                 <li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
                 <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>
             `);
+        } else {
+            nuevoContenido = nuevoContenido.replace('<!-- HTML_EXTRA -->', `
+                <li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>
+                <li class="nav-menu-item"><a href="registro.html" class="nav-menu-link nav-link">Sign Up</a></li>`);
         }
 
         res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -682,7 +678,17 @@ const server = http.createServer((req, res) => {
 
     //-- Manejo de la solicitud para finalizar_compra.html
     } else if (url.pathname === '/finalizar_compra.html') {
-        verificarCarritoYStock(req, res);
+         //-- Obtenemos las cookies
+         const cookieData = getCookies(req);
+         const user = cookieData.user;
+
+        if (!(verificarCarritoYStock(req, res))) {
+            //-- Agregar el nombre de usuario y el botón de log out al texto extra
+            textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
+            <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
+
+            replaceTexto(res, RUTA_COMPRA, 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
+        }
 
     //-- Si la URL es /finalizar_compra, manejar la solicitud de finalizar la compra
     } else if (url.pathname === '/finalizar_compra' && req.method === 'GET') {
@@ -903,7 +909,8 @@ const server = http.createServer((req, res) => {
         } else {
             //-- Si el usuario no está autenticado, mostrar el enlace al login
             textoHTMLExtra = `<li class="nav-menu-item"><a href="login.html" class="nav-menu-link nav-link">Log In</a></li>
-                            <li class="nav-menu-item"><a href="registro.html" class="nav-menu-link nav-link">Sign Up</a></li>`;        }
+                            <li class="nav-menu-item"><a href="registro.html" class="nav-menu-link nav-link">Sign Up</a></li>`;       
+        }
 
         replaceTexto(res, path.join(__dirname, 'ficheros', url.pathname), 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
 

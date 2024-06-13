@@ -35,3 +35,16 @@ según el producto seleccionado
 
 - Tengo que hacer la wiki
 - Añadir que se pueda ver la contraseña en el log in y en sign up
+
+
+MEJORAS
+
+BASE DE DATOS
+- En la base de datos los usuarios cuentan con contraseña
+y una lista para almacenar el carrito de la compra
+
+- Los productos tienen un id para facilitar su uso en el
+procesamiento en el servidor, su imagen asociada, las unidades 
+y el precio
+
+- 
