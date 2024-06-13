@@ -166,7 +166,7 @@ body {
 }
 
 .description p {
-   margin: 10px;
+   margin: 10px 50px;
    text-align: center;
 }
 
@@ -181,8 +181,8 @@ body {
    cursor: pointer;
    transition: background-color 0.3s;
    text-decoration: none;
-   width: 100%; /* Aseguramos que el botón ocupe todo el ancho del contenedor */
-   margin: 10px 0;
+   width: auto; /* Aseguramos que el botón ocupe todo el ancho del contenedor */
+   margin: 10px 10px;
 }
 
 .cart:hover {
