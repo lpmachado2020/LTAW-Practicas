@@ -384,10 +384,9 @@ function actualizarCarrito(req, res) {
 }
 
 //-- Función para verificar si el carrito está vacío y si hay suficiente stock de los productos
-function verificarCarritoYStock(req, res) {
+function verificarCarritoYStock(req, res, resultado, callback) {
     const cookieData = getCookies(req);
     const user = cookieData.user;
-    console.log("USUARIOOO", user);
     const carrito = cookieData.carrito ? cookieData.carrito.split(':') : [];
 
     //-- Leer el contenido de carrito.html
@@ -395,6 +394,8 @@ function verificarCarritoYStock(req, res) {
         if (err) {
             res.writeHead(500);
             res.end('Error interno del servidor');
+            resultado.error = true;
+            callback();
             return;
         }
 
@@ -413,7 +414,9 @@ function verificarCarritoYStock(req, res) {
             nuevoContenido = nuevoContenido.replace('<!-- AVISO -->', avisoError);
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(nuevoContenido);
-            return true;
+            resultado.error = true;
+            callback();
+            return;
         }
 
         //-- Verificar si hay suficiente stock para cada producto en el carrito
@@ -422,13 +425,17 @@ function verificarCarritoYStock(req, res) {
             if (producto && producto.stock <= 0) {
                 //-- Mostrar aviso de falta de stock y los productos del carrito
                 mostrarCarrito(req, res, `<p class=carrito-aviso>El producto ${item} no tiene suficiente stock.</p>`);
-                return true;
+                resultado.error = true;
+                callback();
+                return;
             }
         }
-    });
 
-    return false;
+        resultado.error = false;
+        callback();
+    });
 }
+
 
 //-- Función para servir la página del producto con los datos del producto
 function servirProducto(req, res, idProducto) {
@@ -678,17 +685,33 @@ const server = http.createServer((req, res) => {
 
     //-- Manejo de la solicitud para finalizar_compra.html
     } else if (url.pathname === '/finalizar_compra.html') {
-         //-- Obtenemos las cookies
-         const cookieData = getCookies(req);
-         const user = cookieData.user;
+        let resultado = { error: false };
+        verificarCarritoYStock(req, res, resultado, () => {
+            if (!resultado.error) {
+                // Servir la página de finalizar_compra.html con los enlaces correspondientes
+                fs.readFile(RUTA_COMPRA, 'utf8', (err, data) => {
+                    if (err) {
+                        res.writeHead(500);
+                        res.end('Error interno del servidor');
+                        return;
+                    }
 
-        if (!(verificarCarritoYStock(req, res))) {
-            //-- Agregar el nombre de usuario y el botón de log out al texto extra
-            textoHTMLExtra = `<li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
-            <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>`;
+                    const cookieData = getCookies(req);
+                    const user = cookieData.user;
 
-            replaceTexto(res, RUTA_COMPRA, 'text/html', '<!-- HTML_EXTRA -->', textoHTMLExtra);
-        }
+                    let nuevoContenido = data;
+                    if (user) {
+                        nuevoContenido = nuevoContenido.replace('<!-- HTML_EXTRA -->', `
+                            <li class="nav-menu-item"><a href="perfil.html" class="nav-menu-link nav-link">${user}</a></li>
+                            <li class="nav-menu-item"><a href="/logout" class="nav-menu-link nav-link">Log out</a></li>
+                        `);
+                    }
+
+                    res.writeHead(200, { 'Content-Type': 'text/html' });
+                    res.end(nuevoContenido);
+                });
+            }
+        });
 
     //-- Si la URL es /finalizar_compra, manejar la solicitud de finalizar la compra
     } else if (url.pathname === '/finalizar_compra' && req.method === 'GET') {
@@ -763,15 +786,15 @@ const server = http.createServer((req, res) => {
                             
                             // Crear HTML del pedido realizado
                             const pedidoHTML = `
-                            <ul>
-                                <li><strong>Usuario:</strong> ${user}</li>
-                                <li><strong>Dirección de envío:</strong> ${direccion}</li>
-                                <li><strong>Productos:</strong>
-                                    <ul>
-                                        ${carrito.map(producto => `<li>${producto}</li>`).join('')}
-                                    </ul>
-                                </li>
-                            </ul>
+                                <ul class="compra-realizada-lista">
+                                    <li class="datos"><strong>Usuario:</strong> ${user}</li>
+                                    <li class="datos"><strong>Dirección de envío:</strong> ${direccion}</li>
+                                    <li class="datos"><strong>Productos:</strong>
+                                        <ul class="productos-lista">
+                                            ${carrito.map(producto => `<li class="producto-item">${producto}</li>`).join('')}
+                                        </ul>
+                                    </li>
+                                </ul>
                             `;
 
                             // Leer contenido de compra-exitosa.html
