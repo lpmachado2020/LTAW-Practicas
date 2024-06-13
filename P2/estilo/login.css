@@ -151,10 +151,11 @@ body {
    background-color: #c7a549; /* Color de fondo del botón al pasar el cursor */
 }
 
-/* Estilo para los párrafos dentro del formulario */
+/* Estilo para los avisos dentro del formulario */
 p {
    padding: 10px; /* Espaciado interno de 10px */
    text-align: center; /* Centrar el texto */
+   font-weight: bold;
 }
 
 /* Agregamos estilos para el contenedor del ícono del ojo */

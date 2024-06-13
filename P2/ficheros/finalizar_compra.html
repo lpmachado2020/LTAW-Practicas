@@ -1,6 +1,6 @@
-<!-- Texto HTML de Formulario Finalizar compra -->
+<!-- Texto HTML de Formulario Finalizar Compra -->
 <!DOCTYPE html>
-<html lang="es"><!--Esto es el idioma, español-->
+<html lang="es"><!-- Esto es el idioma, español -->
 
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,7 @@
     <link rel="icon" href="logo.png">
     <title>Finalizar Compra - Croqueteando</title>
 
-   <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="finalizar_compra.css">
 </head>
 
 <body>
@@ -21,25 +21,23 @@
             </a>
             <ul class="nav-menu">
                 <li class="nav-menu-item"><a href="/" class="nav-menu-link nav-link">Inicio</a></li>
-                <li class="nav-menu-item"><a href="" class="nav-menu-link nav-link">Carrito</a></li>
+                <li class="nav-menu-item"><a href="/carrito.html" class="nav-menu-link nav-link">Carrito</a></li>
                 <!-- HTML_EXTRA -->
             </ul>
         </nav>
     </header>
-<body>
-    <!-- Cambiar nombre de contenedor div. Que es el mismo que el log y uso la misma hoja de estilo -->
-    <div class="container-pedido">
-        <h1>Finalizar Compra</h1>
-        <!-- AVISO -->
-        <form action="/finalizar_compra" method="get">
-            Dirección de Envío:
-            <input type="text" name="direccion"/>
-            <p></p>
-            Número de Tarjeta de Crédito:
-            <input type="tarjeta" name="tarjeta" />
-            <p></p>
-            <input type="submit" value="Finalizar Compra">
+    <div class="container-finalizar-compra">
+        <div class="compra-header">
+            <h1 class="compra-title">Finalizar Compra</h1>
+            <!-- AVISO -->
+        </div>
+        <form action="/finalizar_compra" method="get" class="compra-form">
+            <label for="direccion" class="compra-label">Dirección de Envío:</label>
+            <input type="text" id="direccion" name="direccion" class="compra-input"/>
+            <label for="tarjeta" class="compra-label">Número de Tarjeta de Crédito:</label>
+            <input type="text" id="tarjeta" name="tarjeta" class="compra-input"/>
+            <input type="submit" value="Finalizar Compra" class="compra-submit">
         </form>
-    </div>
+    </div>    
 </body>
 </html>

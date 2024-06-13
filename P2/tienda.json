@@ -63,7 +63,10 @@
       "contraseña": "clave",
       "carrito": [
         "Croquetas de Espinacas con Piñones",
-        "Croquetas de Jamón"
+        "Croquetas de Jamón",
+        "Croquetas de Boletus",
+        "Croquetas de Bacalao",
+        "Croquetas de Espinacas con Piñones"
       ]
     },
     {
@@ -71,7 +74,13 @@
       "nombre": "laura",
       "email": "laura@email.com",
       "contraseña": "clave",
-      "carrito": []
+      "carrito": [
+        "Croquetas de Bacalao",
+        "Croquetas de Cocido",
+        "Croquetas de Jamón",
+        "Croquetas de Pollo Asado",
+        "Croquetas de Espinacas con Piñones"
+      ]
     },
     {
       "usuario": "nuevo",

@@ -421,7 +421,7 @@ function verificarCarritoYStock(req, res) {
             if (producto && producto.stock <= 0) {
                 //-- Mostrar aviso de falta de stock y los productos del carrito
                 mostrarCarrito(req, res, `<p class=carrito-aviso>El producto ${item} no tiene suficiente stock.</p>`);
-                return false;
+                return;
             }
         }
 

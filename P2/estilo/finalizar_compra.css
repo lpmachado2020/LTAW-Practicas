@@ -91,76 +91,65 @@ body {
    
 } */
 
-
-/* Estilo para el contenido del carrito */
-.container-cart {
-   margin: 40px;
+/* Estilo contenido de finalizar compra */
+.container-finalizar-compra {
+   max-width: 400px;
+   margin: 50px auto;
    background-color: white;
    padding: 20px;
    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-.cart-title {
+/* Título del formulario de finalizar compra */
+.compra-title {
    text-align: center;
-   font-size: 24px;
+   padding: 20px;
+}
+
+/* Formulario de finalizar compra */
+.compra-form {
+   display: flex;
+   flex-direction: column;
+}
+
+/* Etiquetas del formulario */
+.compra-label {
+   margin-bottom: 10px;
+}
+
+/* Campos de entrada del formulario */
+.compra-input {
+   margin-bottom: 10px;
    padding: 10px;
-   text-transform: uppercase;
-}
-
-.cart-divider {
    border: none;
-   height: 1px;
-   background-color: #ccc;
-   margin: 10px 0 20px 0;
+   border-bottom: 1px solid #ccc;
+   background-color: transparent;
+   outline: none;
+   width: 100%;
 }
 
-.cart-container {
-   list-style: none;
-   padding: 0;
-}
-
-.cart-item {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   padding: 10px 0;
-   border-bottom: 1px solid #eee;
-}
-
-.cart-item:last-child {
-   border-bottom: none;
-}
-
-.item-details {
-   flex-grow: 1;
-   margin-right: 40px;
-}
-
-.item-actions {
-   display: flex;
-   align-items: center;
-}
-
-.cart-button {
+/* Botón de envío del formulario */
+.compra-submit {
    background-color: #EDC557;
-   color: white;
+   color: #fff;
    border: none;
-   width: 30px;
-   height: 30px;
-   font-size: 16px;
+   padding: 10px;
    cursor: pointer;
-   margin-left: 10px;
-   display: inline-flex;
-   align-items: center;
-   justify-content: center;
+   transition: background-color 0.3s ease;
+   margin-top: 20px;
 }
 
-.cart-button:hover {
+.compra-submit:hover {
    background-color: #c7a549;
 }
 
-.carrito-aviso {
-   font-weight: bold;
+.compra-header {
+    margin-bottom: 20px; /* Ajusta el valor del margen según tus necesidades */
 }
 
-
+/* Estilo para los párrafos dentro del formulario */
+p {
+   padding: 10px;
+   text-align: center;
+   font-weight: bold;
+}
