@@ -6,7 +6,7 @@
       "nombre": "Croquetas de Jamón",
       "descripcion": "Cada bocado es una explosión de sabor, con trozos jugosos de jamón ibérico envueltos en una cremosa bechamel. ¡Las clásicas, no te las puedes perder!",
       "unidades": "6 Unidades",
-      "stock": 6,
+      "stock": 7,
       "precio": 9
     },
     {
@@ -15,7 +15,7 @@
       "nombre": "Croquetas de Bacalao",
       "descripcion": "Si quieres algo diferente, estas son tus croquetas! El sabor único y la textura crujiente por fuera y suave por dentro te conquistarán al primer bocado. Acompañadas con una salsa de ali-oli casera.",
       "unidades": "5 Unidades",
-      "stock": 2,
+      "stock": 3,
       "precio": 8
     },
     {
@@ -42,7 +42,7 @@
       "nombre": "Croquetas de Boletus",
       "descripcion": "Descubre la sofisticación en cada bocado con nuestras croquetas de boletus. El intenso sabor a setas se combina armoniosamente con una cremosa textura, creando una experiencia culinaria digna de los paladares más exigentes. Una opción gourmet que deleitará tus sentidos.",
       "unidades": "5 Unidades",
-      "stock": 8,
+      "stock": 9,
       "precio": 8
     },
     {
@@ -112,16 +112,6 @@
       "direccion": "calle la que sea",
       "tarjeta": "1234567891011121",
       "lista_productos": [
-        "Croquetas de Bacalao"
-      ]
-    },
-    {
-      "usuario": "nuevo",
-      "direccion": "avenida la que sea",
-      "tarjeta": "1234567891011121",
-      "lista_productos": [
-        "Croquetas de Jamón",
-        "Croquetas de Boletus",
         "Croquetas de Bacalao"
       ]
     }

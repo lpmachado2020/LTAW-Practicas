@@ -47,4 +47,12 @@ y una lista para almacenar el carrito de la compra
 procesamiento en el servidor, su imagen asociada, las unidades 
 y el precio
 
+FRONT-END
+
+- Mejora porque se ha añadido una página de:
+    - compra exitosa: que recopila el pedido
+    - y una de perfil: que recopila todos pedidos ya realizados
+
+Usuarios
+- Mejora porque se ha añadido una página para poder registrarse
 - 
