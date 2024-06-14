@@ -15,7 +15,7 @@
       "nombre": "Croquetas de Bacalao",
       "descripcion": "Si quieres algo diferente, estas son tus croquetas! El sabor único y la textura crujiente por fuera y suave por dentro te conquistarán al primer bocado. Acompañadas con una salsa de ali-oli casera.",
       "unidades": "5 Unidades",
-      "stock": 3,
+      "stock": 6,
       "precio": 8
     },
     {
@@ -42,7 +42,7 @@
       "nombre": "Croquetas de Boletus",
       "descripcion": "Descubre la sofisticación en cada bocado con nuestras croquetas de boletus. El intenso sabor a setas se combina armoniosamente con una cremosa textura, creando una experiencia culinaria digna de los paladares más exigentes. Una opción gourmet que deleitará tus sentidos.",
       "unidades": "5 Unidades",
-      "stock": 9,
+      "stock": 10,
       "precio": 8
     },
     {
@@ -75,7 +75,13 @@
       "nombre": "nuevo",
       "correo": "nuevo@email.com",
       "contraseña": "clave",
-      "carrito": []
+      "carrito": [
+        "Croquetas de Espinacas con Piñones",
+        "Croquetas de Jamón",
+        "Croquetas de Boletus",
+        "Croquetas de Bacalao",
+        "Croquetas de Espinacas con Piñones"
+      ]
     }
   ],
   "pedidos": [
