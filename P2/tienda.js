@@ -531,7 +531,7 @@ const server = http.createServer((req, res) => {
         } else {
             // Respuesta vacía si la longitud del parámetro es menor a 3 caracteres
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end('<p>Escribe al menos 3 caracteres para buscar.</p>');
+            res.end();
         }
 
     //-- Petición de busqueda.js que usa el cliente en el navegador
