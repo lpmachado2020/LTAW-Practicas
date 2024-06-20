@@ -1,0 +1,27 @@
+<!-- Página de inicio para los usuarios -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home-chat</title>
+
+  <!-- Cargar la biblioteca Socket.IO. Nos la debe entregar el servidor -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!-- Cliente que usa los Sockets.io-->
+  <!-- <script src="cliente.js" defer></script> -->
+</head>
+
+<body>
+    <h2>Bienvenido a mi mini chat!!</h2>
+    <h3 class="login-title">Iniciar Sesión</h3>
+    <form action="/login" method="post" class="login-form">
+        <label for="username" class="login-label">Nombre de usuario:</label>
+        <input type="text" id="username" name="username" class="login-input"/>
+        <p></p>
+        <input type="submit" value="Iniciar Sesión"/>
+    </form>
+</body>
+</html>
