@@ -44,8 +44,8 @@ app.use(express.static('public'));
 // Manejar la solicitud POST del formulario de inicio de sesión
 app.post('/login', (req, res) => {
     const username = req.body.username;
-    // Aquí puedes hacer lo que quieras con el username, como almacenarlo en una variable o base de datos
-    console.log(`Usuario ingresado: ${username}`);
+
+    console.log(`-- Usuario ingresado: ${username.green} --`);
 
     // Redireccionar al usuario a la página chat.html dentro del directorio 'public'
     res.redirect('public/chat.html');
