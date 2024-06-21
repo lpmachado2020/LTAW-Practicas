@@ -17,20 +17,21 @@
     <!-- Cargar el proceso asociado a esta página -->
     <script src="index.js" defer></script>
 
-    <title>Mi APP (version 11)</title>
+    <title>Chat Server</title>
 </head>
 <body>
-    <h1>INTERFAZ GRÁFICA</h1>
-    <img src="logo-urjc.png" alt="Logo-URJC" width=150px>
+    <h1>Home Chat (Server)</h1>
 
     <hr>
     <h2>Información:</h2>
     <ul>
-        <li>Arquitectura: <span id="info1" class="blue"></span> </li>
-        <li>Plataforma: <span id="info2" class="blue"></span></li>
-        <li>Diretorio: <span id="info3" class="blue"></span></li>
+        <li>Versión de Node: <span id="info1" class="blue"></span> </li>
+        <li>Versión de Chrome: <span id="info2" class="blue"></span></li>
+        <li>Versión de Electron: <span id="info3" class="blue"></span></li>
     </ul>
 
+    <h2>Usuarios conectados:</h2>
+        <p id="lista_usuarios"></p>
     <hr>
     <p>Mensajes enviados desde el proceso main:</p>
     <p>Print:  <span id='print' class="red"></span> </p>

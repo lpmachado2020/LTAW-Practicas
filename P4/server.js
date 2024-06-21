@@ -11,8 +11,13 @@ const http = require('http');
 const express = require('express');
 const colors = require('colors');
 const electron = require('electron');   //-- Cargar el módulo de electron
+const ip = require('ip');   //-- Cargar el módulo de ip
 
+//-- Puerto
 const PUERTO = 9090;
+
+//-- Dirección del chat
+const dirección_ip = `${ip.address()}:${PUERTO}`;
 
 //-- Crear una nueva aplicación web
 const app = express();
@@ -161,6 +166,7 @@ electron.app.on('ready', () => {
     //-- lo saque por la interfaz gráfica
     win.on('ready-to-show', () => {
         win.webContents.send('print', "MENSAJE ENVIADO DESDE PROCESO MAIN");
+        win.webContents.send('lista_usuarios', users.length);
     });
 
     //-- Enviar un mensaje al proceso de renderizado para que lo saque
