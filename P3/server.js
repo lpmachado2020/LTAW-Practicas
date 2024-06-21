@@ -13,6 +13,7 @@ const http = require('http');
 const express = require('express');
 const colors = require('colors');
 
+//-- Puerto de escucha del servidor
 const PUERTO = 9090;
 
 //-- Crear una nueva aplicación web
@@ -42,75 +43,79 @@ app.use(express.static('public'));
 
 // Manejar la solicitud POST del formulario de inicio de sesión
 app.post('/login', (req, res) => {
-    const username = req.body.username;
-    const usernames = Object.values(users);
+    const username = req.body.username; //-- Extraemos el nombre del usuario del cuerpo
+    const usernames = Object.values(users); //-- Obtenemos una lista con los nombres de usuarios
     
+    //-- Si el nombre de usuario ya ha sido introducido
     if (usernames.includes(username)) {
+        //-- Redirige a la página de home.html pero muestra un error
         return res.redirect('/?error=El nombre de usuario ya está en uso. Por favor, elige otro.');
     } else {
-        console.log(`-- Usuario ingresado: ${username.green} --`);
+        //-- Si el usuario es válido redirigeme al chat.html
+        console.log(`-- Usuario ingresado: ${username.green} --`);  //-- Aparece en verde el nombre del usuario
         res.redirect('/chat.html');
     }
 });
 
-// Almacenar usuarios conectados
+//-- Almacena los usuarios conectados
 const users = {};
 
 //------------------- GESTION SOCKETS IO
 //-- Evento: Nueva conexión recibida
 io.on('connection', (socket) => {
-    let username;
+    let username;   //-- Variable para almacenar el nombre de usuario
 
+    //-- Evento setUsername
     socket.on('setUsername', (name) => {
-        username = name;
-        users[socket.id] = username;
-        socket.emit('message', `¡Bienvenido al chat, ${username}!`);
-        socket.broadcast.emit('message', `${username} se ha unido al chat`);
-        io.emit('updateUserList', Object.values(users));
-        console.log(`** NUEVA CONEXIÓN: ${username} **`.yellow);
+        username = name;    //-- El nombre recibido ahora es username
+        users[socket.id] = username;    //-- Almacena el nombre de usuario en el objeto users con el id del socket como clave
+        socket.emit('message', `¡Bienvenido al chat, ${username}!`);    //-- Envía la usuario que se acaba de conectar un mensaje de bienvenida
+        socket.broadcast.emit('message', `${username} se ha unido al chat`);    //-- Al resto se les notifica del nuevo usuario conectado
+        io.emit('updateUserList', Object.values(users));    //-- Se actualiza la lista de los usuarios conectados
+        console.log(`** NUEVA CONEXIÓN: ${username} **`.yellow);    //-- Nos aparece en amarillo la nueva conexión en la consola
     });
 
     //-- Evento de desconexión
     socket.on('disconnect', function(){
-        if (username) {
-            delete users[socket.id];
-            io.emit('message', `${username} ha abandonado el chat`);
-            io.emit('updateUserList', Object.values(users));
-            console.log(`** CONEXIÓN TERMINADA: ${username} **`.yellow);
+        if (username) { //-- Comprueba si existe usuario
+            delete users[socket.id];    //-- Lo eliminamos del objeto user con el id que es la clave
+            io.emit('message', `${username} ha abandonado el chat`);    //-- Se notifica al resto de clientes de la desconexión
+            io.emit('updateUserList', Object.values(users));    //-- Se actualiza la lista de los usuarios conectados
+            console.log(`** CONEXIÓN TERMINADA: ${username} **`.orange);    //-- En la consola aparece la desconexión en naranja  
         }
     });
 
     //-- Mensaje recibido: Reenviarlo a todos los clientes conectados
     socket.on("message", (msg) => {
-        if (msg.startsWith('/')) {
-            // Es un comando
-            let response;
+        //-- Si el mensaje es /help, /list, /hello y /date solo se manda la respuesta al cliente que lo ha solicitado
+        if (msg.startsWith('/')) {  //-- Verificamos que el mensaje empieza por '/'
+            let response;   //-- Se almacena la respuesta
             switch (msg) {
-                case '/help':
+                case '/help':   //-- Si el comando es /help muestra todos los comandos que se pueden usar
                     response = "Comandos soportados: /help, /list, /hello, /date";
                     break;
-                case '/list':
+                case '/list':   //-- Si el comando es /list muestra la lista de usuarios conectados
                     response = `Usuarios conectados: ${Object.values(users).join(', ')}`;
                     break;
-                case '/hello':
-                    response = `¡Hola, ${username}!`;
+                case '/hello':  //-- Si es hello, saluda al usuario
+                    response = `¡Hola, ${username}! Bienvenido al chat!`;
                     break;
-                case '/date':
+                case '/date':   //-- Si es /date, muestra la fecha actual
                     response = `Fecha y hora actual: ${new Date()}`;
                     break;
-                default:
+                default:    //-- Si introduce un comando barra lo que sea diferente manda este aviso
                     response = "Comando no reconocido. Escribe /help para ver la lista de comandos disponibles.";
                     break;
             }
-            socket.emit('message', response);
+            socket.emit('message', response);   //-- La respuesta se envía al cliente que lo envío con .emit
         } else {
-            // Es un mensaje normal
+            // Si es un mensaje sin la barra
             console.log("Mensaje Recibido!: " + msg.blue);
-            io.emit('message', `${username}: ${msg}`);
+            io.emit('message', `${username}: ${msg}`);  //-- Envíalo a todos poniéndo el nombre de usuario antes y luego el mensaje enviado
         }
     });
 
-    //-- Emitimos el mensaje de escribiendo a todos
+    //-- Emitimos el mensaje de escribiendo a todos, si para también
     socket.on('typing', () => {
         socket.broadcast.emit('typing', username);
     });

@@ -11,19 +11,20 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <!-- Cliente que usa los Sockets.io-->
-    <!-- <script src="cliente.js" defer></script> -->
     <script>
+        //-- Guarda el nombre del usuario en el localStorage
         function saveUsername(event) {
         const username = document.getElementById('username').value;
-        localStorage.setItem('username', username);
+        localStorage.setItem('username', username); //-- Este valor se usa para identificarse en el chat
         }
 
+        //-- Si se introduce un nombre de usuario ya en uso se envía un error que manda el servidor
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const error = urlParams.get('error');
             if (error) {
-                document.getElementById('aviso').innerText = error;
-                document.getElementById('aviso').style.color = 'red'; // Para mostrar el mensaje en color rojo
+                document.getElementById('aviso').innerText = error; //-- Se añade al párrafo con id aviso
+                document.getElementById('aviso').style.color = 'red'; //-- El mensaje se muestra en color rojo
             }
         };
     </script>
