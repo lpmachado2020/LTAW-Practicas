@@ -60,11 +60,21 @@ app.post('/login', (req, res) => {
 // Almacenar usuarios conectados
 const users = {};
 
+let count = 0;
+
 //------------------- GESTION SOCKETS IO
 //-- Evento: Nueva conexión recibida
 io.on('connection', (socket) => {
     let username;
 
+    count++;
+
+    // Enviar el conteo actualizado al proceso de renderizado
+    if (win) {
+        win.webContents.send('lista_usuarios', count);
+    }
+
+    console.log("Contador 1", count);
     socket.on('setUsername', (name) => {
         username = name;
         users[socket.id] = username;
@@ -72,15 +82,25 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('message', `${username} se ha unido al chat`);
         io.emit('updateUserList', Object.values(users));
         console.log(`** NUEVA CONEXIÓN: ${username} **`.yellow);
+
+        
     });
 
     //-- Evento de desconexión
     socket.on('disconnect', function(){
         if (username) {
+            count--;
+
+            // Enviar el conteo actualizado al proceso de renderizado
+            if (win) {
+                win.webContents.send('lista_usuarios', count);
+            }
+            console.log("Contador 2", count);
             delete users[socket.id];
             io.emit('message', `${username} ha abandonado el chat`);
             io.emit('updateUserList', Object.values(users));
             console.log(`** CONEXIÓN TERMINADA: ${username} **`.yellow);
+            
         }
     });
 
@@ -165,14 +185,15 @@ electron.app.on('ready', () => {
     //-- y luego enviar el mensaje al proceso de renderizado para que 
     //-- lo saque por la interfaz gráfica
     win.on('ready-to-show', () => {
-        win.webContents.send('print', "MENSAJE ENVIADO DESDE PROCESO MAIN");
-        win.webContents.send('lista_usuarios', users.length);
+        // win.webContents.send('print', "MENSAJE ENVIADO DESDE PROCESO MAIN");
+        win.webContents.send('lista_usuarios', count);
+        win.webContents.send('ip', dirección_ip);
     });
 
     //-- Enviar un mensaje al proceso de renderizado para que lo saque
     //-- por la interfaz gráfica
-    win.webContents.send('print', "MENSAJE ENVIADO DESDE PROCESO MAIN");
-
+    // win.webContents.send('print', "MENSAJE ENVIADO DESDE PROCESO MAIN");
+    // win.webContents.send('lista_usuarios', count);
 });
 
 
@@ -180,6 +201,7 @@ electron.app.on('ready', () => {
 //-- renderizado. Al recibirlos se escribe una cadena en la consola
 electron.ipcMain.handle('test', (event, msg) => {
     console.log("-> Mensaje: " + msg);
+    io.send(message);   //-- Mensaje desde el servidor a todos los clientes
 });
 
 
