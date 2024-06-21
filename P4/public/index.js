@@ -10,7 +10,6 @@ const info2 = document.getElementById("info2");
 const info3 = document.getElementById("info3");
 const users = document.getElementById('lista_usuarios');
 const ip = document.getElementById('ip');
-// const print = document.getElementById("print");
 
 //-- Acceder a la API de node para obtener la info
 //-- Sólo es posible si nos han dado permisos desde
@@ -28,12 +27,6 @@ btn_test.onclick = () => {
     display.innerHTML += "Mensaje de prueba del servidor!!!";
 }
 
-// //-- Mensaje recibido del proceso MAIN --> Server.js
-// electron.ipcRenderer.on('print', (event, message) => {
-//     console.log("Recibido: " + message);
-//     print.textContent = message;
-//   });
-
 //-- Mensaje recibido del proceso Main --> Server.js
 //-- Recibimos el número de usuarios conectados
 electron.ipcRenderer.on('lista_usuarios', (event, message) => {
@@ -47,8 +40,6 @@ electron.ipcRenderer.on('ip', (event, message) => {
     console.log("Recibido: " + message);
     ip.textContent = message;
 });
-
-//-- Botón de mensaje de prueba que envía el servidor a todos los clientes
 
 //-- Evento recibido del proceso principal con los mensajes de los clientes
 electron.ipcRenderer.on('message', (event, message) => {

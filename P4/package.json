@@ -1,14 +1,32 @@
 {
-  "name": "mi-electron-app",
+  "name": "mini-chat",
   "description": "Aplicación chat en Electron",
   "version": "0.1.0",
   "main": "server.js",
-  "scripts": {
-    "start": "electron ."
+  "author": {
+    "name": "Laura Machado"
   },
-  "dependencies": {
+  "homepage": "",
+  "license": "LGPL",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "mi-electron-app-1-id",
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Utility"
+    }
+  },
+  "devDependencies": {
     "colors": "^1.4.0",
     "electron": "^31.0.2",
+    "electron-builder": "^24.13.3",
     "express": "^4.19.2",
     "ip": "^2.0.1",
     "socket.io": "^4.7.5"
