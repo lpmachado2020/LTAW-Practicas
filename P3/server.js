@@ -43,11 +43,14 @@ app.use(express.static('public'));
 // Manejar la solicitud POST del formulario de inicio de sesión
 app.post('/login', (req, res) => {
     const username = req.body.username;
-
-    console.log(`-- Usuario ingresado: ${username.green} --`);
-
-    // Redireccionar al usuario a la página chat.html dentro del directorio 'public'
-    res.redirect('/chat.html');
+    const usernames = Object.values(users);
+    
+    if (usernames.includes(username)) {
+        return res.redirect('/?error=El nombre de usuario ya está en uso. Por favor, elige otro.');
+    } else {
+        console.log(`-- Usuario ingresado: ${username.green} --`);
+        res.redirect('/chat.html');
+    }
 });
 
 // Almacenar usuarios conectados

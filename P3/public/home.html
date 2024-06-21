@@ -17,12 +17,22 @@
         const username = document.getElementById('username').value;
         localStorage.setItem('username', username);
         }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            if (error) {
+                document.getElementById('aviso').innerText = error;
+                document.getElementById('aviso').style.color = 'red'; // Para mostrar el mensaje en color rojo
+            }
+        };
     </script>
 </head>
 
 <body>
     <h2>Bienvenido a mi mini chat!!</h2>
     <h3 class="login-title">Iniciar Sesión</h3>
+    <p id="aviso"></p>
     <form action="/login" method="post" class="login-form" onsubmit="saveUsername()">
         <label for="username" class="login-label">Nombre de usuario:</label>
         <input type="text" id="username" name="username" class="login-input" required/>
