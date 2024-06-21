@@ -63,6 +63,7 @@ io.on('connection', (socket) => {
         users[socket.id] = username;
         socket.emit('message', `¡Bienvenido al chat, ${username}!`);
         socket.broadcast.emit('message', `${username} se ha unido al chat`);
+        io.emit('updateUserList', Object.values(users));
         console.log(`** NUEVA CONEXIÓN: ${username} **`.yellow);
     });
 
@@ -71,6 +72,7 @@ io.on('connection', (socket) => {
         if (username) {
             delete users[socket.id];
             io.emit('message', `${username} ha abandonado el chat`);
+            io.emit('updateUserList', Object.values(users));
             console.log(`** CONEXIÓN TERMINADA: ${username} **`.yellow);
         }
     });
@@ -94,7 +96,7 @@ io.on('connection', (socket) => {
                     response = `Fecha y hora actual: ${new Date()}`;
                     break;
                 default:
-                    response = "Comando no reconocido. Escribe /help para ver la lista de comandos.";
+                    response = "Comando no reconocido. Escribe /help para ver la lista de comandos disponibles.";
                     break;
             }
             socket.emit('message', response);
@@ -103,6 +105,15 @@ io.on('connection', (socket) => {
             console.log("Mensaje Recibido!: " + msg.blue);
             io.emit('message', `${username}: ${msg}`);
         }
+    });
+
+    //-- Emitimos el mensaje de escribiendo a todos
+    socket.on('typing', () => {
+        socket.broadcast.emit('typing', username);
+    });
+
+    socket.on('stopTyping', () => {
+        socket.broadcast.emit('stopTyping', username);
     });
 });
 
