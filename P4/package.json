@@ -1,6 +1,14 @@
 {
+  "name": "mi-electron-app",
+  "description": "Aplicación chat en Electron",
+  "version": "0.1.0",
+  "main": "server.js",
+  "scripts": {
+      "start": "electron ."
+  },
   "dependencies": {
     "colors": "^1.4.0",
+    "electron": "^31.0.2",
     "express": "^4.19.2",
     "socket.io": "^4.7.5"
   }
