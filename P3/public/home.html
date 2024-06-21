@@ -12,14 +12,20 @@
 
   <!-- Cliente que usa los Sockets.io-->
   <!-- <script src="cliente.js" defer></script> -->
+  <script>
+    function saveUsername(event) {
+      const username = document.getElementById('username').value;
+      localStorage.setItem('username', username);
+    }
+  </script>
 </head>
 
 <body>
     <h2>Bienvenido a mi mini chat!!</h2>
     <h3 class="login-title">Iniciar Sesión</h3>
-    <form action="/login" method="post" class="login-form">
+    <form action="/login" method="post" class="login-form" onsubmit="saveUsername()">
         <label for="username" class="login-label">Nombre de usuario:</label>
-        <input type="text" id="username" name="username" class="login-input"/>
+        <input type="text" id="username" name="username" class="login-input" required/>
         <p></p>
         <input type="submit" value="Iniciar Sesión"/>
     </form>
