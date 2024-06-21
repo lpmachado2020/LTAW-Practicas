@@ -2,8 +2,8 @@
 
 /*
 - Activar servidor en el terminal: node server.js
-- URL para lanzar una petición: http://127.0.0.1:8080/ o http://localhost:8080/
-  Significa: "Conéctate al puerto 8080 de tu propia máquina"
+- URL para lanzar una petición: http://127.0.0.1:9090/ o http://localhost:9090/
+  Significa: "Conéctate al puerto 9090 de tu propia máquina"
 - El servidor se detiene pulsando: Ctrl-C
 */
 
@@ -13,7 +13,7 @@ const http = require('http');
 const express = require('express');
 const colors = require('colors');
 
-const PUERTO = 8080;
+const PUERTO = 9090;
 
 //-- Crear una nueva aplicación web
 const app = express();
