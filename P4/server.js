@@ -104,7 +104,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    //-- Mensaje recibido: Reenviarlo a todos los clientes conectados
+    //-- Mensaje recibido: Reenviarlo a todos los clientes conectados y al proceso de renderizado
     socket.on("message", (msg) => {
         if (msg.startsWith('/')) {
             // Es un comando
@@ -130,7 +130,11 @@ io.on('connection', (socket) => {
         } else {
             // Es un mensaje normal
             console.log("Mensaje Recibido!: " + msg.blue);
-            io.emit('message', `${username}: ${msg}`);
+            const completeMessage = `${username}: ${msg}`;
+            io.emit('message', completeMessage);
+            if (win) {
+                win.webContents.send('message', completeMessage); // Enviar mensaje al proceso de renderizado
+            }
         }
     });
 
@@ -172,7 +176,7 @@ electron.app.on('ready', () => {
     //-- En la parte superior se nos ha creado el menu
     //-- por defecto
     //-- Si lo queremos quitar, hay que añadir esta línea
-    //win.setMenuBarVisibility(false)
+    win.setMenuBarVisibility(false)
 
     //-- Cargar contenido web en la ventana
     //-- La ventana es en realidad.... ¡un navegador!
@@ -196,14 +200,19 @@ electron.app.on('ready', () => {
     // win.webContents.send('lista_usuarios', count);
 });
 
+// //-- Esperar a recibir los mensajes de botón apretado (Test) del proceso de 
+// //-- renderizado. Al recibirlos se escribe una cadena en la consola
+// electron.ipcMain.handle('test', (event, msg) => {
+//     console.log("-> Mensaje: " + msg);
+//     io.send(message);   //-- Mensaje desde el servidor a todos los clientes
+// });
 
 //-- Esperar a recibir los mensajes de botón apretado (Test) del proceso de 
 //-- renderizado. Al recibirlos se escribe una cadena en la consola
-electron.ipcMain.handle('test', (event, msg) => {
-    console.log("-> Mensaje: " + msg);
+electron.ipcMain.handle('test', (event, message) => {
+    console.log("-> Mensaje: " + message);
     io.send(message);   //-- Mensaje desde el servidor a todos los clientes
 });
-
 
 //-- Lanzar el servidor HTTP
 //-- ¡Que empiecen los juegos de los WebSockets!
