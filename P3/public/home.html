@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home-chat</title>
-
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
     <!-- Cargar la biblioteca Socket.IO. Nos la debe entregar el servidor -->
     <script src="/socket.io/socket.io.js"></script>
 
@@ -31,14 +32,25 @@
 </head>
 
 <body>
-    <h2>Bienvenido a mi mini chat!!</h2>
-    <h3 class="login-title">Iniciar Sesión</h3>
-    <p id="aviso"></p>
-    <form action="/login" method="post" class="login-form" onsubmit="saveUsername()">
-        <label for="username" class="login-label">Nombre de usuario:</label>
-        <input type="text" id="username" name="username" class="login-input" required/>
-        <p></p>
-        <input type="submit" value="Iniciar Sesión"/>
-    </form>
+<div class="container">
+        <div class="login-section">
+            <div class="login-box">
+                <h3 class="login-title">Iniciar Sesión</h3>
+                <p id="aviso"></p>
+                <p>Introduzca un nombre de usuario para entrar en el chat</p>
+                <form action="/login" method="post" class="login-form" onsubmit="saveUsername()">
+                    <div class="input-group">
+                        <label for="username" class="login-label">Nombre de usuario:</label>
+                        <input type="text" id="username" name="username" class="login-input" required/>
+                    </div>
+                    <input class="login-submit" type="submit" value="Iniciar Sesión"/>
+                </form>
+            </div>
+        </div>
+        <div class="message-section">
+            <p class="welcome-top">Bienvenido/a</p>
+            <p class="welcome-bottom">a mi Chat</p>
+        </div>
+    </div>
 </body>
 </html>

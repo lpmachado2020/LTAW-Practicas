@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mini-chat</title>
-
+    <link rel="stylesheet" href="chat.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
     <!-- Cargar la biblioteca Socket.IO. Nos la debe entregar el servidor -->
     <script src="/socket.io/socket.io.js"></script>
 
@@ -15,13 +16,18 @@
 </head>
 
 <body>
-    <h2>Mini-chat</h2>
-    <input type="text" placeholder="Escribe aquí los mensajes..." autocomplete="off" id="msg_entry">
-    <h3>Usuarios conectados</h3>
-    <p id="user_list"></p>
-    <h3>Mensajes recibidos</h3>
-    <p id="typingDisplay"></p>
-    <p id="display"></p>
+  <div class="container">
+    <div class="sidebar">
+        <h3>Usuarios Conectados:</h3>
+        <p id="user_list"></p>
+    </div>
+    <div class="main">
+        <h2>Mi chat</h2>
+        <div class="message-container" id="display"></div>
+        <input type="text" placeholder="Escribe un mensaje..." autocomplete="off" id="msg_entry">
+        <p id="typingDisplay"></p>
+    </div>
+  </div>
 
     <!-- Sonido para cuando reciben mensajes -->
     <audio id="sound-notification" src="public/sound-notification.mp3"></audio>
