@@ -44,7 +44,7 @@ app.use('/', express.static(__dirname + '/'));
 //-- El directorio público contiene ficheros estáticos
 app.use(express.static('public'));
 
-// Manejar la solicitud POST del formulario de inicio de sesión
+//-- Manejar la solicitud POST del formulario de inicio de sesión
 app.post('/login', (req, res) => {
     const username = req.body.username;
     const usernames = Object.values(users);
@@ -57,9 +57,10 @@ app.post('/login', (req, res) => {
     }
 });
 
-// Almacenar usuarios conectados
+//-- Almacenar usuarios conectados
 const users = {};
 
+//-- Contador de los usuarios conectados
 let count = 0;
 
 //------------------- GESTION SOCKETS IO
@@ -67,73 +68,73 @@ let count = 0;
 io.on('connection', (socket) => {
     let username;
 
+    //-- Aumento en una unidad del contador por la nueva conexción
     count++;
 
-    // Enviar el conteo actualizado al proceso de renderizado
+    //-- Enviar el conteo actualizado al proceso de renderizado
     if (win) {
         win.webContents.send('lista_usuarios', count);
     }
 
-    console.log("Contador 1", count);
+    //-- Evento setUsername
     socket.on('setUsername', (name) => {
-        username = name;
-        users[socket.id] = username;
-        socket.emit('message', `¡Bienvenido al chat, ${username}!`);
-        socket.broadcast.emit('message', `${username} se ha unido al chat`);
-        io.emit('updateUserList', Object.values(users));
-        console.log(`** NUEVA CONEXIÓN: ${username} **`.yellow);
-
-        
+        username = name;    //-- El nombre recibido ahora es username
+        users[socket.id] = username;    //-- Almacena el nombre de usuario en el objeto users con el id del socket como clave
+        socket.emit('message', `¡Bienvenido al chat, ${username}!`);    //-- Envía la usuario que se acaba de conectar un mensaje de bienvenida
+        socket.broadcast.emit('message', `${username} se ha unido al chat`);    //-- Al resto se les notifica del nuevo usuario conectado
+        io.emit('updateUserList', Object.values(users));    //-- Se actualiza la lista de los usuarios conectados
+        console.log(`** NUEVA CONEXIÓN: ${username} **`.yellow);    //-- Nos aparece en amarillo la nueva conexión en la consola
     });
 
     //-- Evento de desconexión
     socket.on('disconnect', function(){
         if (username) {
+
+            //-- Decremento en una unidad del contador por la desconexción
             count--;
 
-            // Enviar el conteo actualizado al proceso de renderizado
+            //-- Enviar el conteo actualizado al proceso de renderizado
             if (win) {
                 win.webContents.send('lista_usuarios', count);
             }
-            console.log("Contador 2", count);
-            delete users[socket.id];
-            io.emit('message', `${username} ha abandonado el chat`);
-            io.emit('updateUserList', Object.values(users));
-            console.log(`** CONEXIÓN TERMINADA: ${username} **`.yellow);
-            
+
+            delete users[socket.id];    //-- Lo eliminamos del objeto user con el id que es la clave
+            io.emit('message', `${username} ha abandonado el chat`);    //-- Se notifica al resto de clientes de la desconexión
+            io.emit('updateUserList', Object.values(users));    //-- Se actualiza la lista de los usuarios conectados
+            console.log(`** CONEXIÓN TERMINADA: ${username} **`.orange);    //-- En la consola aparece la desconexión en naranja  
         }
     });
 
-    //-- Mensaje recibido: Reenviarlo a todos los clientes conectados y al proceso de renderizado
+    //-- Mensaje recibido: Reenviarlo a todos los clientes conectados
     socket.on("message", (msg) => {
-        if (msg.startsWith('/')) {
-            // Es un comando
-            let response;
+        //-- Si el mensaje es /help, /list, /hello y /date solo se manda la respuesta al cliente que lo ha solicitado
+        if (msg.startsWith('/')) {  //-- Verificamos que el mensaje empieza por '/'
+            let response;   //-- Se almacena la respuesta
             switch (msg) {
-                case '/help':
+                case '/help':   //-- Si el comando es /help muestra todos los comandos que se pueden usar
                     response = "Comandos soportados: /help, /list, /hello, /date";
                     break;
-                case '/list':
+                case '/list':   //-- Si el comando es /list muestra la lista de usuarios conectados
                     response = `Usuarios conectados: ${Object.values(users).join(', ')}`;
                     break;
-                case '/hello':
-                    response = `¡Hola, ${username}!`;
+                case '/hello':  //-- Si es hello, saluda al usuario
+                    response = `¡Hola, ${username}! Bienvenido/a al chat!`;
                     break;
-                case '/date':
+                case '/date':   //-- Si es /date, muestra la fecha actual
                     response = `Fecha y hora actual: ${new Date()}`;
                     break;
-                default:
+                default:    //-- Si introduce un comando barra lo que sea diferente manda este aviso
                     response = "Comando no reconocido. Escribe /help para ver la lista de comandos disponibles.";
                     break;
             }
-            socket.emit('message', response);
+            socket.emit('message', response);   //-- La respuesta se envía al cliente que lo envío con .emit
         } else {
-            // Es un mensaje normal
+            //-- Si es un mensaje sin la barra
             console.log("Mensaje Recibido!: " + msg.blue);
-            const completeMessage = `${username}: ${msg}`;
-            io.emit('message', completeMessage);
+            io.emit('message', `${username}: ${msg}`);  //-- Envíalo a todos poniéndo el nombre de usuario antes y luego el mensaje enviado
+            
             if (win) {
-                win.webContents.send('message', completeMessage); // Enviar mensaje al proceso de renderizado
+                win.webContents.send('message', `${username}: ${msg}`); //-- Enviar mensaje al proceso de renderizado
             }
         }
     });
@@ -147,7 +148,6 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('stopTyping', username);
     });
 });
-
 
 //------------------- ELECTRÓN
 console.log("Arrancando electron...");
@@ -178,10 +178,6 @@ electron.app.on('ready', () => {
     //-- Si lo queremos quitar, hay que añadir esta línea
     win.setMenuBarVisibility(false)
 
-    //-- Cargar contenido web en la ventana
-    //-- La ventana es en realidad.... ¡un navegador!
-    //win.loadURL('https://www.urjc.es/etsit');
-
     //-- Cargar interfaz gráfica en HTML
     win.loadFile("public/index.html");
 
@@ -193,19 +189,7 @@ electron.app.on('ready', () => {
         win.webContents.send('lista_usuarios', count);
         win.webContents.send('ip', dirección_ip);
     });
-
-    //-- Enviar un mensaje al proceso de renderizado para que lo saque
-    //-- por la interfaz gráfica
-    // win.webContents.send('print', "MENSAJE ENVIADO DESDE PROCESO MAIN");
-    // win.webContents.send('lista_usuarios', count);
 });
-
-// //-- Esperar a recibir los mensajes de botón apretado (Test) del proceso de 
-// //-- renderizado. Al recibirlos se escribe una cadena en la consola
-// electron.ipcMain.handle('test', (event, msg) => {
-//     console.log("-> Mensaje: " + msg);
-//     io.send(message);   //-- Mensaje desde el servidor a todos los clientes
-// });
 
 //-- Esperar a recibir los mensajes de botón apretado (Test) del proceso de 
 //-- renderizado. Al recibirlos se escribe una cadena en la consola

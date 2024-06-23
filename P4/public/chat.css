@@ -1,0 +1,132 @@
+/* chat.css */
+
+/* Estilos generales para el cuerpo del documento */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+/* Contenedor principal */
+.container {
+    display: flex;
+    max-width: 1200px;
+    width: 100%;
+    height: 80%;
+    /* border: 1px solid #ccc; */
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff; /* Fondo blanco para el contenedor principal */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+/* Lado izquierdo (sidebar) */
+.sidebar {
+    flex: 1;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+    background-color: #fff;
+    overflow-y: auto;
+    background-color: #488368; /* Fondo verde oliva */
+    color: #fff; /* Texto blanco */
+}
+
+.sidebar h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+/* Lado derecho (main) */
+.main {
+    flex: 2;
+    padding: 20px;
+    background-color: #f9f9f9;
+    /* overflow-y: auto; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main .logo {
+    width: 40px; /* Ajusta el tamaño según sea necesario */
+    margin-top: 20px;
+}
+
+.main h2 {
+    font-size: 60px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5px;  /* Reduce el margen superior */
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Contenedor de mensajes */
+.message-container {
+    width: 100%;
+    height: 60%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow-y: auto;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1); /* Sombra interior ligera */
+}
+
+/* Entrada de mensaje */
+#msg_entry {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+#msg_entry:focus {
+    border-color: #488368; /* Cambia el color del borde al enfocar */
+}
+
+/* Indicador de escritura */
+#typingDisplay {
+    font-style: italic;
+    color: #888;
+    margin-top: 10px;
+    height: 20px; /* Fijar altura para evitar saltos de diseño */
+}
+
+/* Estilos para el bocadillo del mensaje */
+.message {
+    color: #ffffff; /* Texto en color blanco */
+    background-color: #488368; /* Fondo del bocadillo */
+    padding: 10px 15px; /* Relleno interno del bocadillo */
+    border-radius: 15px; /* Bordes redondeados para dar forma de bocadillo */
+    margin-left: 10px; /* Margen en el lado izquierdo */
+    margin-right: 10px; /* Margen en el lado derecho */
+    margin-bottom: 10px; /* Margen en la parte inferior para separar mensajes */
+    max-width: 100%; /* Usar todo el ancho */
+    word-break: break-word; /* Ajustar texto largo dentro del bocadillo */
+}
+
+/* Estilos para el bocadillo del mensaje del servidor */
+.server-message {
+    color: #ffffff; /* Texto en color blanco */
+    background-color: #6fbf8f; /* Fondo más claro que el original */
+    padding: 10px 15px; /* Relleno interno del bocadillo */
+    border-radius: 15px; /* Bordes redondeados para dar forma de bocadillo */
+    margin-left: 10px; /* Margen en el lado izquierdo */
+    margin-right: 10px; /* Margen en el lado derecho */
+    margin-bottom: 10px; /* Margen en la parte inferior para separar mensajes */
+    max-width: 100%; /* Usar todo el ancho */
+    word-break: break-word; /* Ajustar texto largo dentro del bocadillo */
+}

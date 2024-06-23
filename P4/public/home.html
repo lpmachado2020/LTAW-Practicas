@@ -5,39 +5,53 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home-chat</title>
-
+    <title>Home</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
     <!-- Cargar la biblioteca Socket.IO. Nos la debe entregar el servidor -->
     <script src="/socket.io/socket.io.js"></script>
 
     <!-- Cliente que usa los Sockets.io-->
-    <!-- <script src="cliente.js" defer></script> -->
     <script>
+        //-- Guarda el nombre del usuario en el localStorage
         function saveUsername(event) {
         const username = document.getElementById('username').value;
-        localStorage.setItem('username', username);
+        localStorage.setItem('username', username); //-- Este valor se usa para identificarse en el chat
         }
 
+        //-- Si se introduce un nombre de usuario ya en uso se envía un error que manda el servidor
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const error = urlParams.get('error');
             if (error) {
-                document.getElementById('aviso').innerText = error;
-                document.getElementById('aviso').style.color = 'red'; // Para mostrar el mensaje en color rojo
+                document.getElementById('aviso').innerText = error; //-- Se añade al párrafo con id aviso
+                document.getElementById('aviso').style.color = 'red'; //-- El mensaje se muestra en color rojo
             }
         };
     </script>
 </head>
 
 <body>
-    <h2>Bienvenido a mi mini chat!!</h2>
-    <h3 class="login-title">Iniciar Sesión</h3>
-    <p id="aviso"></p>
-    <form action="/login" method="post" class="login-form" onsubmit="saveUsername()">
-        <label for="username" class="login-label">Nombre de usuario:</label>
-        <input type="text" id="username" name="username" class="login-input" required/>
-        <p></p>
-        <input type="submit" value="Iniciar Sesión"/>
-    </form>
+<div class="container">
+        <div class="login-section">
+            <div class="login-box">
+                <h3 class="login-title">Iniciar Sesión</h3>
+                <p id="aviso"></p>
+                <p>Introduzca un nombre de usuario para entrar en el chat</p>
+                <form action="/login" method="post" class="login-form" onsubmit="saveUsername()">
+                    <div class="input-group">
+                        <label for="username" class="login-label">Nombre de usuario:</label>
+                        <input type="text" id="username" name="username" class="login-input" required/>
+                    </div>
+                    <input class="login-submit" type="submit" value="Iniciar Sesión"/>
+                </form>
+            </div>
+        </div>
+        <div class="message-section">
+            <p class="welcome-top">Bienvenido/a</p>
+            <p class="welcome-bottom">a talkio</p>
+        </div>
+    </div>
 </body>
 </html>
