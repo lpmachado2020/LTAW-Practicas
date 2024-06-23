@@ -98,7 +98,7 @@ io.on('connection', (socket) => {
                     response = `Usuarios conectados: ${Object.values(users).join(', ')}`;
                     break;
                 case '/hello':  //-- Si es hello, saluda al usuario
-                    response = `¡Hola, ${username}! Bienvenido al chat!`;
+                    response = `¡Hola, ${username}! Bienvenido/a al chat!`;
                     break;
                 case '/date':   //-- Si es /date, muestra la fecha actual
                     response = `Fecha y hora actual: ${new Date()}`;

@@ -19,9 +19,16 @@ socket.on("connect", () => {
     }
 });
 
+
 socket.on("message", (msg) => {
-    display.innerHTML += '<p style="color:blue">' + msg + '</p>'; //-- Muestra el mensaje recibido de color azúl
-    sound_notification.play();  // Reproducir el sonido cuando se recibe un mensaje
+  // Detectar si el mensaje es del servidor y debe ser más claro
+  let msgClass = 'message';
+  if (msg.includes('Comandos soportados') || msg.includes('Usuarios conectados') || msg.includes('¡Hola,') || msg.includes('Fecha y hora actual') || msg.includes('Comando no reconocido')) {
+      msgClass = 'server-message';
+  }
+
+  display.innerHTML += `<p class="${msgClass}">${msg}</p>`; //-- Muestra el mensaje recibido con la clase correspondiente
+  sound_notification.play();  // Reproducir el sonido cuando se recibe un mensaje
 });
 
 socket.on("updateUserList", (users) => {

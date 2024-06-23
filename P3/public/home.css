@@ -50,7 +50,8 @@ body {
 
 .login-title {
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    font-size: 30px;
 }
 
 .login-form {
