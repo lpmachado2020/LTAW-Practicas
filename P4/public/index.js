@@ -40,7 +40,6 @@ electron.ipcRenderer.on('lista_usuarios', (event, message) => {
     users.textContent = message;
 });
 
-//-- Mensaje recibido del proceso Main --> Server.js
 //-- Recibimos la dirección ip
 electron.ipcRenderer.on('ip', (event, message) => {
     console.log("Recibido: " + message);

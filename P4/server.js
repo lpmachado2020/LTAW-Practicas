@@ -149,7 +149,7 @@ io.on('connection', (socket) => {
     });
 });
 
-//------------------- ELECTRÓN
+//------------------- ELECTRON
 console.log("Arrancando electron...");
 
 //-- Variable para acceder a la ventana principal
