@@ -30,5 +30,8 @@
     "express": "^4.19.2",
     "ip": "^2.0.1",
     "socket.io": "^4.7.5"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.3"
   }
 }

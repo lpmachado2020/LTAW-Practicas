@@ -8,11 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Permitir sólo scripts y ficheros de la máquina local -->
-    <!-- Con esto se elimina el aviso de seguridad: Insecure Content-Security-Policy -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
 
     <!-- Hoja de estilo de la interfaz -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="index.css">
 
     <!-- Cargar el proceso asociado a esta página -->
     <script src="index.js" defer></script>
@@ -20,26 +19,40 @@
     <title>Chat Server</title>
 </head>
 <body>
-    <h1>Home Chat (Server)</h1>
+    <div class="header">
+        <h1>Home Chat (Server)</h1>
+    </div>
 
-    <hr>
-    <h2>Información:</h2>
-    <ul>
-        <li>Versión de Node: <span id="info1" class="blue"></span> </li>
-        <li>Versión de Chrome: <span id="info2" class="blue"></span></li>
-        <li>Versión de Electron: <span id="info3" class="blue"></span></li>
-    </ul>
+    <div class="container">
+        <div class="left">
+            <h2>Información:</h2>
+            <ul>
+                <li>Versión de Node: <span id="info1" class="blue"></span> </li>
+                <li>Versión de Chrome: <span id="info2" class="blue"></span></li>
+                <li>Versión de Electron: <span id="info3" class="blue"></span></li>
+            </ul>
+            <hr>
+            <h2>Información del Sistema:</h2>
+            <ul>
+                <li>Arquitectura: <span id="info4" class="blue"></span> </li>
+                <li>Plataforma: <span id="info5" class="blue"></span></li>
+                <li>Directorio: <span id="info6" class="blue"></span></li>
+            </ul>
+            <hr>
+            <h2>Usuarios conectados:</h2>
+            <p id="lista_usuarios"></p>
+            <hr>
+            <h2>Dirección IP:</h2>
+            <p id="ip"></p>
+        </div>
 
-    <h2>Usuarios conectados:</h2>
-        <p id="lista_usuarios"></p>
-
-    <h2>Dirección IP:</h2>
-        <p id="ip"></p>
-
-    <h2>Pruebas</h2>
-        <p><input type="button" value="Enviar Mensaje de prueba" id="btn_test"> </p></p>
-
-    <h2>Mensajes</h2>
-        <p id="display"></p>
+        <div class="right">
+            <h2>Pruebas</h2>
+            <p><input type="button" value="Enviar Mensaje de Prueba" id="btn_test"> </p>
+            <hr>
+            <h2>Mensajes</h2>
+            <p id="display"></p>
+        </div>
+    </div>
 </body>
 </html>

@@ -5,26 +5,32 @@ console.log("Hola desde el proceso de la web...");
 //-- Obtener elementos de la interfaz
 const btn_test = document.getElementById("btn_test");
 const display = document.getElementById("display");
-const info1 = document.getElementById("info1");
-const info2 = document.getElementById("info2");
-const info3 = document.getElementById("info3");
+const version_node = document.getElementById("info1");
+const version_chrome = document.getElementById("info2");
+const version_electron = document.getElementById("info3");
+const info4 = document.getElementById("info4");
+const info5 = document.getElementById("info5");
+const info6 = document.getElementById("info6");
 const users = document.getElementById('lista_usuarios');
 const ip = document.getElementById('ip');
 
 //-- Acceder a la API de node para obtener la info
 //-- Sólo es posible si nos han dado permisos desde
 //-- el proceso princpal
-info1.textContent = process.versions.node;
-info2.textContent = process.versions.chrome;
-info3.textContent = process.versions.electron;
+version_node.textContent = process.versions.node;
+version_chrome.textContent = process.versions.chrome;
+version_electron.textContent = process.versions.electron;
 
+info4.textContent = process.arch;
+info5.textContent = process.platform;
+info6.textContent = process.cwd();
 
 //-- Botón de prueba mensaje del servidor a los clientes
 btn_test.onclick = () => {
     console.log("Botón prueba!");
     //-- Enviar mensaje al proceso principal
     electron.ipcRenderer.invoke('test', "Mensaje de prueba del servidor!!!");
-    display.innerHTML += "Mensaje de prueba del servidor!!!";
+    display.innerHTML += "<p>Mensaje de prueba del servidor!!!</p>";
 }
 
 //-- Mensaje recibido del proceso Main --> Server.js
