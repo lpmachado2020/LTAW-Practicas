@@ -1,5 +1,5 @@
 {
-  "name": "mini-chat",
+  "name": "talkio",
   "description": "Aplicación chat en Electron",
   "version": "0.1.0",
   "main": "server.js",

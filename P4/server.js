@@ -163,7 +163,7 @@ electron.app.on('ready', () => {
 
     //-- Crear la ventana principal de nuestra aplicación
     win = new electron.BrowserWindow({
-        width: 1000,   //-- Anchura 
+        width: 1200,   //-- Anchura 
         height: 800,  //-- Altura
 
         //-- Permitir que la ventana tenga ACCESO AL SISTEMA
